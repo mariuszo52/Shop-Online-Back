@@ -36,12 +36,15 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
     private String platform;
-    private String releaseDate;
+    private LocalDate releaseDate;
     private Boolean isPreorder;
     private String regionalLimitations;
     @OneToOne(cascade = CascadeType.PERSIST)
     private SystemRequirements systemRequirements;
     private String ageRating;
-    private String ActivationDetails;
+    private String activationDetails;
+    private Integer regionId;
+    private Boolean isPolishVersion;
+    private String languages;
 
 }

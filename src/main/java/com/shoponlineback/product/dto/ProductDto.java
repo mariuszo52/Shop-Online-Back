@@ -1,8 +1,13 @@
 package com.shoponlineback.product.dto;
 
+import com.shoponlineback.genre.Genre;
+import com.shoponlineback.genre.GenreDto;
+import com.shoponlineback.systemRequirements.SystemRequirements;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class ProductDto {
     private Long id;
     @NotNull
@@ -22,26 +28,21 @@ public class ProductDto {
     @NotNull
     @Min(0)
     private Double price;
-    @NotNull
     private String description;
-    @NotNull
     private String coverImage;
-    @NotNull
-    private List<Long> genresIds;
-    @NotNull
-    private Long platformId;
-    @NotNull
-    private String releaseDate;
-    @NotNull
+    private List<GenreDto> genres;
+    private String platform;
+    private LocalDate releaseDate;
     private Boolean isPreorder;
-    @NotNull
     private String regionalLimitations;
-    @NotNull
-    private Long systemRequirementsId;
-    @NotNull
-    private Long ageRatingId;
-    @NotNull
-    private String ActivationDetails;
+    private String system;
+    private String systemRequirements;
+    private String ageRating;
+    private String activationDetails;
+    private Integer regionId;
+    private Boolean isPolishVersion;
+    private String languages;
+    private List<String> screens;
 
 }
 

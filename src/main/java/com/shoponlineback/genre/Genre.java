@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
+
 public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +20,8 @@ public class Genre {
     private String name;
     @ManyToMany
     private List<Product> products;
+
+    public Genre(String name) {
+        this.name = name;
+    }
 }
