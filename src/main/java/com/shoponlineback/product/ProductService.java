@@ -15,10 +15,13 @@ import java.util.*;
 
 @Service
 public class ProductService {
+    private final ProductDtoMapper productDtoMapper;
     private final ProductRepository productRepository;
+    private final static int REGION_EUROPE = 1;
+    private final static int REGION_FREE = 3;
 
-
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository) {
+        this.productDtoMapper = productDtoMapper;
         this.productRepository = productRepository;
     }
 
@@ -39,16 +42,18 @@ public class ProductService {
         for (int i = 0; i < responseJSONArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) responseJSONArray.get(i);
             ProductDto productDto = JsonObjectToProductMapper.map(jsonObject);
-            Product product = ProductDtoMapper.map(productDto);
+            Product product = productDtoMapper.map(productDto);
             products.add(productDto);
-            //productRepository.save(product);
+            productRepository.save(product);
         }
 
         return products;
     }
 
+
     private static JSONArray createJsonArrayFromResponse(int page) throws IOException {
-        URL url = new URL("https://gateway.kinguin.net/esa/api/v1/products?page=" + page + "&limit=100");
+        URL url = new URL("https://gateway.kinguin.net/esa/api/v1/products?regionId="
+                + REGION_EUROPE + "&regionId=" + REGION_FREE + "&languages=Polish&limit=100&page=" +page);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("X-Api-Key", "98d4916a75acf3834bb87c6d223d5337");
         InputStream inputStream = httpURLConnection.getInputStream();
