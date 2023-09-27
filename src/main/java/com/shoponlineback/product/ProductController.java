@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,8 +30,12 @@ public class ProductController {
 
     @GetMapping("/")
     Page<ProductDto> getProducts(@RequestParam(defaultValue = "0") int page,
-                                 @RequestParam(defaultValue = "25") int size ) throws IOException {
-        List<ProductDto> allProducts = productService.getAllProducts(40);
+                                 @RequestParam(defaultValue = "25") int size,
+                                 @RequestParam(required = false) Optional<String> name) throws IOException {
+        String nameString = name.orElse("");
+        List<ProductDto> allProducts = productService.getAllProducts(5).stream()
+                .filter(productDto -> productDto.getName().toLowerCase().contains(nameString.toLowerCase()))
+                .collect(Collectors.toList());
         List<ProductDto> currentPage = allProducts.subList(Math.min((page * size), allProducts.size()) ,
                 Math.min((page * size + size),allProducts.size()));
         PageRequest pageRequest = PageRequest.of(page, size);
