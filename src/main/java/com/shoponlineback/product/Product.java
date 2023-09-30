@@ -1,6 +1,7 @@
 package com.shoponlineback.product;
 
 import com.shoponlineback.genre.Genre;
+import com.shoponlineback.platform.Platform;
 import com.shoponlineback.systemRequirements.SystemRequirements;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -35,7 +36,8 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
-    private String platform;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Platform platform;
     private LocalDate releaseDate;
     private Boolean isPreorder;
     private String regionalLimitations;

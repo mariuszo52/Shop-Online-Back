@@ -18,7 +18,8 @@
         </column>
         <column name="cover_image" type="VARCHAR(500)">
         </column>
-        <column name="platform" type="VARCHAR(100)">
+        <column name="platform_id" type="BIGINT">
+            <constraints foreignKeyName="fk_platform" referencedTableName="platform" referencedColumnNames="id"/>
         </column>
         <column name="release_date" type="DATE">
         </column>

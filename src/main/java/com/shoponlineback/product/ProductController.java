@@ -31,10 +31,11 @@ public class ProductController {
     @GetMapping("/")
     Page<ProductDto> getProducts(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "25") int size,
-                                 @RequestParam(required = false) Optional<String> name) throws IOException {
-        String nameString = name.orElse("");
-        List<ProductDto> allProducts = productService.getAllProducts(5).stream()
-                .filter(productDto -> productDto.getName().toLowerCase().contains(nameString.toLowerCase()))
+                                 @RequestParam(required = false, defaultValue = "") String name,
+                                 @RequestParam(required = false, defaultValue = "") String platform) throws IOException {
+        List<ProductDto> allProducts = productService.getAllProducts(3).stream()
+                .filter(productDto -> productDto.getName().toLowerCase().contains(name.toLowerCase()))
+                .filter(productDto -> productDto.getPlatformDto().getDevice().contains(platform))
                 .collect(Collectors.toList());
         List<ProductDto> currentPage = allProducts.subList(Math.min((page * size), allProducts.size()) ,
                 Math.min((page * size + size),allProducts.size()));

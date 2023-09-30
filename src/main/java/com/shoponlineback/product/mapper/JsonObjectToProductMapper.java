@@ -2,6 +2,8 @@ package com.shoponlineback.product.mapper;
 
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreDto;
+import com.shoponlineback.platform.Platform;
+import com.shoponlineback.platform.dto.PlatformDto;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.systemRequirements.SystemRequirements;
 import org.json.JSONArray;
@@ -27,7 +29,8 @@ public class JsonObjectToProductMapper {
         List<GenreDto> genres = getGenreList(jsonObject).stream()
                 .map(genre -> new GenreDto(genre.getName()))
                 .collect(Collectors.toList());
-        String platform = jsonObject.getString("platform");
+        String platformName = jsonObject.getString("platform");
+        PlatformDto platform = getPlatform(platformName);
         JSONArray offers = jsonObject.getJSONArray("offers");
         JSONObject jsonObject1 = offers.getJSONObject(0);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -52,7 +55,7 @@ public class JsonObjectToProductMapper {
                 .description(description)
                 .genres(genres)
                 .releaseDate(releaseDate)
-                .platform(platform)
+                .platformDto(platform)
                 .isPreorder(isPreorder)
                 .regionalLimitations(regionalLimitations)
                 .system(systemRequirements.getSystem())
@@ -64,6 +67,21 @@ public class JsonObjectToProductMapper {
                 .languages(languages.toString())
                 .screens(screenshots)
                 .build();
+    }
+
+    private static PlatformDto getPlatform(String platformName) {
+        return switch (platformName) {
+            case "Steam", "Epic Games Store", "GOG (Good Old Games) Galaxy", "EA Origin",
+                    "Uplay", "Battle.net (Blizzard)", "Microsoft Store", "Rockstar Games Launcher",
+                    "Battlefield.net", "NCSoft Launcher", "Android" ->
+                    new PlatformDto(platformName, "PC");
+            case "PlayStation 4", "PlayStation 5" -> new PlatformDto(platformName, "PSN");
+            case "XBOX ONE", "XBOX Series X|S", "XBOX 360" -> new PlatformDto(platformName, "XBOX");
+            case "Nintendo" -> new PlatformDto(platformName, "NINTENDO");
+            case "Rockstar Games" -> new PlatformDto(platformName, "ROCKSTAR GAMES");
+            default -> new PlatformDto(platformName, "OTHERS");
+        };
+
     }
 
     private static ArrayList<String> getScreenshots(JSONObject jsonObject) {
@@ -80,7 +98,7 @@ public class JsonObjectToProductMapper {
 
     private static String getCoverImage(JSONObject jsonObject) {
         String coverImage = jsonObject.optString("coverImageOriginal");
-        if(coverImage.isEmpty()) {
+        if (coverImage.isEmpty()) {
             coverImage = "https://i0.wp.com/imicare.pl/wp-content/uploads/2018/06/brak-zdjecia_1030x578.jpg?ssl=1";
         }
         return coverImage;
@@ -88,9 +106,9 @@ public class JsonObjectToProductMapper {
 
     private static LocalDate getReleaseDate(String releaseDateString, DateTimeFormatter dateTimeFormatter) {
         LocalDate releaseDate;
-        if(!releaseDateString.isEmpty()){
+        if (!releaseDateString.isEmpty()) {
             releaseDate = LocalDate.parse(releaseDateString, dateTimeFormatter);
-        }else {
+        } else {
             releaseDate = LocalDate.now();
         }
         return releaseDate;
@@ -114,8 +132,7 @@ public class JsonObjectToProductMapper {
             String system = jsonObjectSystem.optString("system");
             String requirement = jsonObjectSystem.optJSONArray("requirement").toString();
             return new SystemRequirements(system, requirement);
-        }
-        else {
+        } else {
             return new SystemRequirements("None", "None");
         }
     }

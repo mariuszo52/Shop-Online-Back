@@ -2,6 +2,7 @@ package com.shoponlineback.product.dto;
 
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreDto;
+import com.shoponlineback.platform.dto.PlatformDto;
 import com.shoponlineback.systemRequirements.SystemRequirements;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -31,7 +32,6 @@ public class ProductDto {
     private String description;
     private String coverImage;
     private List<GenreDto> genres;
-    private String platform;
     private LocalDate releaseDate;
     private Boolean isPreorder;
     private String regionalLimitations;
@@ -43,6 +43,7 @@ public class ProductDto {
     private Boolean isPolishVersion;
     private String languages;
     private List<String> screens;
+    private PlatformDto platformDto;
 
 }
 
