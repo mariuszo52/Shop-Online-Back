@@ -43,7 +43,7 @@ public class JsonObjectToProductMapper {
         String ageRating = jsonObject.optString("ageRating");
         String activationDetails = jsonObject.optString("activationDetails");
         int regionId = jsonObject.optInt("regionId");
-        JSONArray languages = jsonObject.getJSONArray("languages");
+        List<String> languages = getLanguages(jsonObject);
         boolean isPolishVersion = languages.toString().contains("Polish");
         ArrayList<String> screenshots = getScreenshots(jsonObject);
 
@@ -64,9 +64,21 @@ public class JsonObjectToProductMapper {
                 .activationDetails(activationDetails)
                 .regionId(regionId)
                 .isPolishVersion(isPolishVersion)
-                .languages(languages.toString())
+                .languages(languages)
                 .screens(screenshots)
                 .build();
+    }
+
+    private static List<String> getLanguages(JSONObject jsonObject) {
+        JSONArray languages = jsonObject.getJSONArray("languages");
+        List<String> lanuagesList = new ArrayList<>();
+        for (int i=0 ; i<languages.length(); i++){
+            String language = languages.getString(i);
+            if(!lanuagesList.contains(language)){
+                lanuagesList.add(language);
+            }
+        }
+        return lanuagesList;
     }
 
     private static PlatformDto getPlatform(String platformName) {

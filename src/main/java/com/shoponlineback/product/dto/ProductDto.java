@@ -41,7 +41,7 @@ public class ProductDto {
     private String activationDetails;
     private Integer regionId;
     private Boolean isPolishVersion;
-    private String languages;
+    private List<String> languages;
     private List<String> screens;
     private PlatformDto platformDto;
 

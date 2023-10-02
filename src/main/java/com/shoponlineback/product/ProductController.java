@@ -32,10 +32,12 @@ public class ProductController {
     Page<ProductDto> getProducts(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "25") int size,
                                  @RequestParam(required = false, defaultValue = "") String name,
+                                 @RequestParam(required = false, defaultValue = "") String device,
                                  @RequestParam(required = false, defaultValue = "") String platform) throws IOException {
         List<ProductDto> allProducts = productService.getAllProducts(3).stream()
                 .filter(productDto -> productDto.getName().toLowerCase().contains(name.toLowerCase()))
-                .filter(productDto -> productDto.getPlatformDto().getDevice().contains(platform))
+                .filter(productDto -> productDto.getPlatformDto().getDevice().contains(device))
+                .filter(productDto -> productDto.getPlatformDto().getName().contains(platform))
                 .collect(Collectors.toList());
         List<ProductDto> currentPage = allProducts.subList(Math.min((page * size), allProducts.size()) ,
                 Math.min((page * size + size),allProducts.size()));
