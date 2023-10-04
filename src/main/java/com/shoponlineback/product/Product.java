@@ -1,6 +1,7 @@
 package com.shoponlineback.product;
 
 import com.shoponlineback.genre.Genre;
+import com.shoponlineback.language.Language;
 import com.shoponlineback.platform.Platform;
 import com.shoponlineback.systemRequirements.SystemRequirements;
 import jakarta.persistence.*;
@@ -47,6 +48,7 @@ public class Product {
     private String activationDetails;
     private Integer regionId;
     private Boolean isPolishVersion;
-    private String languages;
+    @ManyToMany
+    private List<Language> languages;
 
 }

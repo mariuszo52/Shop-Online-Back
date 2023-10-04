@@ -37,7 +37,7 @@ public class ProductDtoMapper {
                 .isPolishVersion(productDto.getIsPolishVersion())
                 .regionId(productDto.getRegionId())
                 .isPreorder(productDto.getIsPreorder())
-                .languages(productDto.getLanguages().toString())
+              //  .languages(productDto.getLanguages())
                 .systemRequirements(new SystemRequirements(productDto.getSystem(), productDto.getSystemRequirements()))
                 .ageRating(productDto.getAgeRating())
                 .releaseDate(productDto.getReleaseDate())
