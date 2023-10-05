@@ -37,8 +37,6 @@
         <column name="region_id" type="INTEGER">
         </column>
         <column name="is_polish_version" type="BOOLEAN"/>
-        <column name="languages" type="VARCHAR(1000)"/>
-
     </createTable>
 </changeSet>
 </databaseChangeLog>

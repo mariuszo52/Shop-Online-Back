@@ -48,7 +48,11 @@ public class Product {
     private String activationDetails;
     private Integer regionId;
     private Boolean isPolishVersion;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "product_language",
+            joinColumns = @JoinColumn(name = "language_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Language> languages;
 
 }

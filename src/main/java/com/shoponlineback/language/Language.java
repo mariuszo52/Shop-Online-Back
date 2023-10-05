@@ -18,9 +18,10 @@ public class Language {
     private Long id;
     private String name;
     @ManyToMany
-    @JoinTable(
-            name = "product_languages",
-            joinColumns = @JoinColumn(name = "language_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
     List<Product> products;
+
+    public Language(String name) {
+        this.name = name;
+    }
 }
+

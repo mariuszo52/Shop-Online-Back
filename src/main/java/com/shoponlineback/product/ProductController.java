@@ -1,5 +1,6 @@
 package com.shoponlineback.product;
 
+import com.shoponlineback.genre.GenreDto;
 import com.shoponlineback.product.dto.ProductDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,13 +32,22 @@ public class ProductController {
     @GetMapping("/")
     Page<ProductDto> getProducts(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "25") int size,
-                                 @RequestParam(required = false, defaultValue = "") String name,
-                                 @RequestParam(required = false, defaultValue = "") String device,
-                                 @RequestParam(required = false, defaultValue = "") String platform) throws IOException {
+                                 @RequestParam(defaultValue = "") String name,
+                                 @RequestParam(defaultValue = "") String device,
+                                 @RequestParam(defaultValue = "") String platform,
+                                 @RequestParam(defaultValue = "") String genre,
+                                 @RequestParam(defaultValue = "") String language,
+                                 @RequestParam(required = false) Double minPrice,
+                                 @RequestParam(required = false) Double maxPrice)
+            throws IOException {
         List<ProductDto> allProducts = productService.getAllProducts(3).stream()
                 .filter(productDto -> productDto.getName().toLowerCase().contains(name.toLowerCase()))
                 .filter(productDto -> productDto.getPlatformDto().getDevice().contains(device))
                 .filter(productDto -> productDto.getPlatformDto().getName().contains(platform))
+                .filter(productDto -> genre.isEmpty() || productDto.getGenres().stream().map(GenreDto::getName).toList().contains(genre))
+                .filter(productDto -> language.isEmpty() || productDto.getLanguages().contains(language))
+                .filter(productDto -> minPrice == null || productDto.getPrice() >= minPrice)
+                .filter(productDto -> maxPrice == null || productDto.getPrice() <= maxPrice)
                 .collect(Collectors.toList());
         List<ProductDto> currentPage = allProducts.subList(Math.min((page * size), allProducts.size()) ,
                 Math.min((page * size + size),allProducts.size()));

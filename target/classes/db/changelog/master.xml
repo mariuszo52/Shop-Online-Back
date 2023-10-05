@@ -10,7 +10,7 @@
     <include file="0003_create_table_genre.xml" relativeToChangelogFile="true"/>
     <include file="0004_create_table_product_genres.xml" relativeToChangelogFile="true"/>
     <include file="0006_create_table_language.xml" relativeToChangelogFile="true"/>
-    <include file="0007_create_table_product_languages.xml" relativeToChangelogFile="true"/>
+    <include file="0007_create_table_product_language.xml" relativeToChangelogFile="true"/>
 
 
     <include file="data.sql" relativeToChangelogFile="true"/>

@@ -3,6 +3,8 @@ package com.shoponlineback.product.mapper;
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreDto;
 import com.shoponlineback.genre.GenreRepository;
+import com.shoponlineback.language.Language;
+import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.Platform;
 import com.shoponlineback.platform.PlatformDtoMapper;
 import com.shoponlineback.platform.PlatformRepository;
@@ -11,6 +13,7 @@ import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.systemRequirements.SystemRequirements;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,11 +21,13 @@ public class ProductDtoMapper {
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
     private final PlatformDtoMapper platformDtoMapper;
+    private final LanguageRepository languageRepository;
 
-    public ProductDtoMapper(GenreRepository genreRepository, PlatformRepository platformRepository, PlatformDtoMapper platformDtoMapper) {
+    public ProductDtoMapper(GenreRepository genreRepository, PlatformRepository platformRepository, PlatformDtoMapper platformDtoMapper, LanguageRepository languageRepository) {
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
         this.platformDtoMapper = platformDtoMapper;
+        this.languageRepository = languageRepository;
     }
 
      public Product map(ProductDto productDto){
@@ -32,12 +37,13 @@ public class ProductDtoMapper {
          List<Genre> genres = genreRepository.findByNameIn(genresNames);
          Platform platform = platformRepository.findByName(productDto.getPlatformDto().getName())
                  .orElse(platformDtoMapper.map(productDto.getPlatformDto()));
+         List<Language> languages = getLanguages(productDto);
          return Product.builder()
                 .activationDetails(productDto.getActivationDetails())
                 .isPolishVersion(productDto.getIsPolishVersion())
                 .regionId(productDto.getRegionId())
                 .isPreorder(productDto.getIsPreorder())
-              //  .languages(productDto.getLanguages())
+                .languages(languages)
                 .systemRequirements(new SystemRequirements(productDto.getSystem(), productDto.getSystemRequirements()))
                 .ageRating(productDto.getAgeRating())
                 .releaseDate(productDto.getReleaseDate())
@@ -49,5 +55,15 @@ public class ProductDtoMapper {
                 .description(productDto.getDescription())
                 .genres(genres)
                 .build();
+    }
+
+    private List<Language> getLanguages(ProductDto productDto) {
+        List<Language> languages = new ArrayList<>();
+        for (String languageName : productDto.getLanguages()) {
+            Language language = languageRepository.findLanguageByName(languageName)
+                    .orElse(new Language(languageName));
+            languages.add(language);
+        }
+        return languages;
     }
 }
