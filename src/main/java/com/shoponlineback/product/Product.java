@@ -19,6 +19,7 @@ import java.util.List;
 @Setter
 @Builder
 @AllArgsConstructor
+@ToString
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

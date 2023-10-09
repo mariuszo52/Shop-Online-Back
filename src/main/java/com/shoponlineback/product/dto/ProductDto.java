@@ -8,10 +8,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,6 +18,8 @@ import java.util.List;
 @Setter
 @Builder
 @AllArgsConstructor
+@ToString
+@NoArgsConstructor
 public class ProductDto {
     private Long id;
     @NotNull
@@ -42,7 +41,6 @@ public class ProductDto {
     private Integer regionId;
     private Boolean isPolishVersion;
     private List<String> languages;
-    private List<String> screens;
     private PlatformDto platformDto;
 
 }

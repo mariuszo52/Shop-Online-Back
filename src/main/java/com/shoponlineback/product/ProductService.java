@@ -5,49 +5,65 @@ import com.shoponlineback.product.mapper.JsonObjectToProductMapper;
 import com.shoponlineback.product.mapper.ProductDtoMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ProductService {
     private final ProductDtoMapper productDtoMapper;
     private final ProductRepository productRepository;
+    private final ProductPagingRepository productPagingRepository;
     private final static int REGION_EUROPE = 1;
     private final static int REGION_FREE = 3;
 
-    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository) {
+    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository, ProductPagingRepository productPagingRepository) {
         this.productDtoMapper = productDtoMapper;
         this.productRepository = productRepository;
+        this.productPagingRepository = productPagingRepository;
     }
 
-    List<ProductDto> getAllProducts(int pages) throws IOException {
-        List<ProductDto> allProducts = new ArrayList<>();
+   ProductDto getProductById(long id){
+       Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Cannot find product."));
+       return ProductDtoMapper.map(product);
+   }
+    Page<ProductDto> getAllProducts(Sort sort){
+        List<ProductDto> allProducts = StreamSupport.stream(productPagingRepository.findAll(sort).spliterator(), false)
+                .map(ProductDtoMapper::map)
+                .collect(Collectors.toList());
+        return new PageImpl<>(allProducts);
+
+
+    }
+    @Transactional
+   public void saveAllProducts(int pages) throws IOException {
         for (int i = 1; i <= pages; i++) {
             System.out.println("Procent: " + (i * 100 / pages));
-            List<ProductDto> pageProducts = getProductsList(i);
-            allProducts.addAll(pageProducts);
+            saveProductsListPage(i);
         }
-        return allProducts;
-    }
+   }
 
 
-    private List<ProductDto> getProductsList(int page) throws IOException {
-        List<ProductDto> products = new ArrayList<>();
+    private void saveProductsListPage(int page) throws IOException {
         JSONArray responseJSONArray = createJsonArrayFromResponse(page);
         for (int i = 0; i < responseJSONArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) responseJSONArray.get(i);
             ProductDto productDto = JsonObjectToProductMapper.map(jsonObject);
             Product product = productDtoMapper.map(productDto);
-            products.add(productDto);
             productRepository.save(product);
         }
 
-        return products;
     }
 
 

@@ -45,7 +45,6 @@ public class JsonObjectToProductMapper {
         int regionId = jsonObject.optInt("regionId");
         List<String> languages = getLanguages(jsonObject);
         boolean isPolishVersion = languages.toString().contains("Polish");
-        ArrayList<String> screenshots = getScreenshots(jsonObject);
 
 
         return ProductDto.builder()
@@ -65,7 +64,6 @@ public class JsonObjectToProductMapper {
                 .regionId(regionId)
                 .isPolishVersion(isPolishVersion)
                 .languages(languages)
-                .screens(screenshots)
                 .build();
     }
 

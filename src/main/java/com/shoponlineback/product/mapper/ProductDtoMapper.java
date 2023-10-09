@@ -2,6 +2,7 @@ package com.shoponlineback.product.mapper;
 
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreDto;
+import com.shoponlineback.genre.GenreMapper;
 import com.shoponlineback.genre.GenreRepository;
 import com.shoponlineback.language.Language;
 import com.shoponlineback.language.LanguageRepository;
@@ -20,23 +21,41 @@ import java.util.List;
 public class ProductDtoMapper {
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
-    private final PlatformDtoMapper platformDtoMapper;
     private final LanguageRepository languageRepository;
 
-    public ProductDtoMapper(GenreRepository genreRepository, PlatformRepository platformRepository, PlatformDtoMapper platformDtoMapper, LanguageRepository languageRepository) {
+    public ProductDtoMapper(GenreRepository genreRepository, PlatformRepository platformRepository, LanguageRepository languageRepository) {
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
-        this.platformDtoMapper = platformDtoMapper;
         this.languageRepository = languageRepository;
     }
-
+    public static ProductDto map(Product product){
+        return ProductDto.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .coverImage(product.getCoverImage())
+                .genres(product.getGenres().stream().map(GenreMapper::map).toList())
+                .releaseDate(product.getReleaseDate())
+                .isPreorder(product.getIsPreorder())
+                .regionalLimitations(product.getRegionalLimitations())
+                .system(product.getSystemRequirements().getSystem())
+                .systemRequirements(product.getSystemRequirements().getRequirements())
+                .ageRating(product.getAgeRating())
+                .activationDetails(product.getActivationDetails())
+                .regionId(product.getRegionId())
+                .isPolishVersion(product.getIsPolishVersion())
+                .languages(product.getLanguages().stream().map(Language::getName).toList())
+                .platformDto(PlatformDtoMapper.map(product.getPlatform()))
+                .build();
+    }
      public Product map(ProductDto productDto){
          List<String> genresNames = productDto.getGenres().stream()
                  .map(GenreDto::getName)
                  .toList();
          List<Genre> genres = genreRepository.findByNameIn(genresNames);
          Platform platform = platformRepository.findByName(productDto.getPlatformDto().getName())
-                 .orElse(platformDtoMapper.map(productDto.getPlatformDto()));
+                 .orElse(PlatformDtoMapper.map(productDto.getPlatformDto()));
          List<Language> languages = getLanguages(productDto);
          return Product.builder()
                 .activationDetails(productDto.getActivationDetails())
