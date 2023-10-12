@@ -1,10 +1,7 @@
 package com.shoponlineback.language;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,5 +17,10 @@ public class LanguageController {
     @GetMapping("/all")
     ResponseEntity<List<String>> getAllLanguagesNames(){
        return ResponseEntity.ok(languageService.getAllLanguagesNames());
+    }
+
+    @GetMapping("/")
+    ResponseEntity<List<String>> getLanguageById(@RequestParam Long id){
+        return ResponseEntity.ok(languageService.getProductsLanguages(id));
     }
 }

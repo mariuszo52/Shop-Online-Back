@@ -20,4 +20,10 @@ public class LanguageService {
                 .map(Language::getName)
                 .collect(Collectors.toList());
     }
+
+    List<String> getProductsLanguages(long id){
+        return languageRepository.findLanguagesByProductId(id).stream()
+                .map(Language::getName)
+                .collect(Collectors.toList());
+    }
 }
