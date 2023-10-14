@@ -12,4 +12,5 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends CrudRepository<Product, Long> {
     List<Product> findAllByPlatform_Device(String deviceName);
+    List<Product> findAllByPlatform_Name(String platformName);
 }

@@ -68,6 +68,13 @@ public class ProductController {
 
     }
 
+    @GetMapping("/similar-products")
+    ResponseEntity<List<ProductDto>> getSimilarProducts(@RequestParam Long id){
+       List<ProductDto> similarProducts = productService.getSimilarProducts(id);
+        return ResponseEntity.ok(similarProducts);
+    }
+
+
 
 }
 

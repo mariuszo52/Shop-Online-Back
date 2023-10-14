@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +24,15 @@ public class ProductService {
     private final ProductDtoMapper productDtoMapper;
     private final ProductRepository productRepository;
     private final ProductPagingRepository productPagingRepository;
+    private final JsonObjectToProductMapper jsonObjectToProductMapper;
     private final static int REGION_EUROPE = 1;
     private final static int REGION_FREE = 3;
 
-    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository, ProductPagingRepository productPagingRepository) {
+    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository, ProductPagingRepository productPagingRepository, JsonObjectToProductMapper jsonObjectToProductMapper) {
         this.productDtoMapper = productDtoMapper;
         this.productRepository = productRepository;
         this.productPagingRepository = productPagingRepository;
+        this.jsonObjectToProductMapper = jsonObjectToProductMapper;
     }
 
    ProductDto getProductById(long id){
@@ -59,7 +60,7 @@ public class ProductService {
         JSONArray responseJSONArray = createJsonArrayFromResponse(page);
         for (int i = 0; i < responseJSONArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) responseJSONArray.get(i);
-            ProductDto productDto = JsonObjectToProductMapper.map(jsonObject);
+            ProductDto productDto = jsonObjectToProductMapper.map(jsonObject);
             Product product = productDtoMapper.map(productDto);
             productRepository.save(product);
         }
@@ -84,5 +85,15 @@ public class ProductService {
     }
 
 
+    public List<ProductDto> getSimilarProducts(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found."));
+        List<Product> allByPlatformName = productRepository.findAllByPlatform_Name(product.getPlatform().getName());
+        Collections.shuffle(allByPlatformName);
+        return allByPlatformName.stream()
+                .limit(5)
+                .map(ProductDtoMapper::map)
+                .collect(Collectors.toList());
 
+    }
 }

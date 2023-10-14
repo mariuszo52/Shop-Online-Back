@@ -2,6 +2,7 @@ package com.shoponlineback.product.dto;
 
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreDto;
+import com.shoponlineback.language.LanguageDto;
 import com.shoponlineback.platform.dto.PlatformDto;
 import com.shoponlineback.systemRequirements.SystemRequirements;
 import jakarta.persistence.*;
@@ -40,7 +41,7 @@ public class ProductDto {
     private String activationDetails;
     private Integer regionId;
     private Boolean isPolishVersion;
-    private List<String> languages;
+    private List<LanguageDto> languages;
     private PlatformDto platformDto;
 
 }

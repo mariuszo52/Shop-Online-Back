@@ -5,6 +5,8 @@ import com.shoponlineback.genre.GenreDto;
 import com.shoponlineback.genre.GenreMapper;
 import com.shoponlineback.genre.GenreRepository;
 import com.shoponlineback.language.Language;
+import com.shoponlineback.language.LanguageDto;
+import com.shoponlineback.language.LanguageMapper;
 import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.Platform;
 import com.shoponlineback.platform.PlatformDtoMapper;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductDtoMapper {
@@ -45,7 +48,7 @@ public class ProductDtoMapper {
                 .activationDetails(product.getActivationDetails())
                 .regionId(product.getRegionId())
                 .isPolishVersion(product.getIsPolishVersion())
-                .languages(product.getLanguages().stream().map(Language::getName).toList())
+                .languages(product.getLanguages().stream().map(LanguageMapper::map).toList())
                 .platformDto(PlatformDtoMapper.map(product.getPlatform()))
                 .build();
     }
@@ -56,7 +59,11 @@ public class ProductDtoMapper {
          List<Genre> genres = genreRepository.findByNameIn(genresNames);
          Platform platform = platformRepository.findByName(productDto.getPlatformDto().getName())
                  .orElse(PlatformDtoMapper.map(productDto.getPlatformDto()));
-         List<Language> languages = getLanguages(productDto);
+         List<String> languagesNames = productDto.getLanguages().stream()
+                 .map(LanguageDto::getName)
+                 .toList();
+         List<Language> languages = languageRepository.findAllByNameIn(languagesNames);
+
          return Product.builder()
                 .activationDetails(productDto.getActivationDetails())
                 .isPolishVersion(productDto.getIsPolishVersion())
@@ -76,13 +83,5 @@ public class ProductDtoMapper {
                 .build();
     }
 
-    private List<Language> getLanguages(ProductDto productDto) {
-        List<Language> languages = new ArrayList<>();
-        for (String languageName : productDto.getLanguages()) {
-            Language language = languageRepository.findLanguageByName(languageName)
-                    .orElse(new Language(languageName));
-            languages.add(language);
-        }
-        return languages;
-    }
+
 }

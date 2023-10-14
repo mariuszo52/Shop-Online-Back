@@ -21,9 +21,9 @@ public class LanguageService {
                 .collect(Collectors.toList());
     }
 
-    List<String> getProductsLanguages(long id){
+    List<LanguageDto> getProductsLanguages(long id){
         return languageRepository.findLanguagesByProductId(id).stream()
-                .map(Language::getName)
+                .map(LanguageMapper::map)
                 .collect(Collectors.toList());
     }
 }

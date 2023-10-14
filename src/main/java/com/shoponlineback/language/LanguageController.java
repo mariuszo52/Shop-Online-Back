@@ -20,7 +20,7 @@ public class LanguageController {
     }
 
     @GetMapping("/")
-    ResponseEntity<List<String>> getLanguageById(@RequestParam Long id){
+    ResponseEntity<List<LanguageDto>> getLanguageById(@RequestParam Long id){
         return ResponseEntity.ok(languageService.getProductsLanguages(id));
     }
 }

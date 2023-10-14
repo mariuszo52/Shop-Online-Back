@@ -2,7 +2,10 @@ package com.shoponlineback.product.mapper;
 
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreDto;
-import com.shoponlineback.platform.Platform;
+import com.shoponlineback.language.Language;
+import com.shoponlineback.language.LanguageDto;
+import com.shoponlineback.language.LanguageMapper;
+import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.dto.PlatformDto;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.systemRequirements.SystemRequirements;
@@ -19,7 +22,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class JsonObjectToProductMapper {
-    public static ProductDto map(JSONObject jsonObject) {
+    private final LanguageRepository languageRepository;
+
+    public JsonObjectToProductMapper(LanguageRepository languageRepository) {
+        this.languageRepository = languageRepository;
+    }
+
+    public ProductDto map(JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         Double price = Double.parseDouble(decimalFormat.format(jsonObject.getDouble("price") * 5 + 30)
@@ -43,7 +52,7 @@ public class JsonObjectToProductMapper {
         String ageRating = jsonObject.optString("ageRating");
         String activationDetails = jsonObject.optString("activationDetails");
         int regionId = jsonObject.optInt("regionId");
-        List<String> languages = getLanguages(jsonObject);
+        List<LanguageDto> languages = getLanguages(jsonObject);
         boolean isPolishVersion = languages.toString().contains("Polish");
 
 
@@ -67,16 +76,15 @@ public class JsonObjectToProductMapper {
                 .build();
     }
 
-    private static List<String> getLanguages(JSONObject jsonObject) {
+    private List<LanguageDto> getLanguages(JSONObject jsonObject) {
         JSONArray languages = jsonObject.getJSONArray("languages");
-        List<String> lanuagesList = new ArrayList<>();
+        List<LanguageDto> languagesList = new ArrayList<>();
         for (int i=0 ; i<languages.length(); i++){
-            String language = languages.getString(i);
-            if(!lanuagesList.contains(language)){
-                lanuagesList.add(language);
-            }
+            String languageName = languages.getString(i);
+            Language language = languageRepository.findLanguageByName(languageName).orElseThrow();
+            languagesList.add(LanguageMapper.map(language));
         }
-        return lanuagesList;
+        return languagesList;
     }
 
     private static PlatformDto getPlatform(String platformName) {

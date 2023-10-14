@@ -49,7 +49,7 @@ public class Product {
     private String activationDetails;
     private Integer regionId;
     private Boolean isPolishVersion;
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
     @JoinTable(
             name = "product_language",
             joinColumns = @JoinColumn(name = "language_id"),
