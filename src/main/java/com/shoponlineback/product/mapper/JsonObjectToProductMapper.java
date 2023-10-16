@@ -8,7 +8,9 @@ import com.shoponlineback.language.LanguageMapper;
 import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.dto.PlatformDto;
 import com.shoponlineback.product.dto.ProductDto;
+import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.systemRequirements.SystemRequirements;
+import com.shoponlineback.video.Video;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class JsonObjectToProductMapper {
+    private final static String VIDEO_PREFIX = "https://www.youtube.com/embed/";
     private final LanguageRepository languageRepository;
 
     public JsonObjectToProductMapper(LanguageRepository languageRepository) {
         this.languageRepository = languageRepository;
+
     }
 
     public ProductDto map(JSONObject jsonObject) {
@@ -54,8 +58,6 @@ public class JsonObjectToProductMapper {
         int regionId = jsonObject.optInt("regionId");
         List<LanguageDto> languages = getLanguages(jsonObject);
         boolean isPolishVersion = languages.toString().contains("Polish");
-
-
         return ProductDto.builder()
                 .name(name)
                 .price(price)
@@ -74,6 +76,23 @@ public class JsonObjectToProductMapper {
                 .isPolishVersion(isPolishVersion)
                 .languages(languages)
                 .build();
+    }
+
+    public List<Video> getVideos(JSONObject jsonObject) {
+        JSONArray jsonArrayVideos = jsonObject.optJSONArray("videos");
+        List<Video> videos = new ArrayList<>();
+        if(jsonArrayVideos != null) {
+            for (int i = 0; i < jsonArrayVideos.length(); i++) {
+                JSONObject videoObject = (JSONObject) jsonArrayVideos.get(i);
+                String videoId = videoObject.optString("video_id");
+                String videoUrl = VIDEO_PREFIX + videoId;
+                Video video = new Video();
+                video.setUrl(videoUrl);
+                videos.add(video);
+            }
+        }
+            return videos;
+
     }
 
     private List<LanguageDto> getLanguages(JSONObject jsonObject) {
@@ -102,14 +121,16 @@ public class JsonObjectToProductMapper {
 
     }
 
-    private static ArrayList<String> getScreenshots(JSONObject jsonObject) {
-        ArrayList<String> images = new ArrayList<>();
+    public List<Screenshot> getScreenshots(JSONObject jsonObject) {
+        ArrayList<Screenshot> images = new ArrayList<>();
         JSONObject screens = jsonObject.optJSONObject("images");
         JSONArray screenshots = screens.getJSONArray("screenshots");
         for (int j = 0; j < screenshots.length(); j++) {
-            JSONObject screenshot = screenshots.getJSONObject(j);
-            String screenUrl = screenshot.optString("url");
-            images.add(screenUrl);
+            JSONObject screenshotObject = screenshots.getJSONObject(j);
+            String screenUrl = screenshotObject.optString("url");
+            Screenshot screenshot = new Screenshot();
+            screenshot.setUrl(screenUrl);
+            images.add(screenshot);
         }
         return images;
     }

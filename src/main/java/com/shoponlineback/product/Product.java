@@ -3,7 +3,9 @@ package com.shoponlineback.product;
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.language.Language;
 import com.shoponlineback.platform.Platform;
+import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.systemRequirements.SystemRequirements;
+import com.shoponlineback.video.Video;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -55,5 +57,8 @@ public class Product {
             joinColumns = @JoinColumn(name = "language_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Language> languages;
-
+    @OneToMany(mappedBy = "product")
+    private List<Video> videos;
+    @OneToMany(mappedBy = "product")
+    List<Screenshot> screenshots;
 }

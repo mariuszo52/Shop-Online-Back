@@ -13,7 +13,9 @@ import com.shoponlineback.platform.PlatformDtoMapper;
 import com.shoponlineback.platform.PlatformRepository;
 import com.shoponlineback.product.Product;
 import com.shoponlineback.product.dto.ProductDto;
+import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.systemRequirements.SystemRequirements;
+import com.shoponlineback.video.Video;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,6 +52,8 @@ public class ProductDtoMapper {
                 .isPolishVersion(product.getIsPolishVersion())
                 .languages(product.getLanguages().stream().map(LanguageMapper::map).toList())
                 .platformDto(PlatformDtoMapper.map(product.getPlatform()))
+                .videoUrls(product.getVideos().stream().map(Video::getUrl).toList())
+                .screenshotsUrls(product.getScreenshots().stream().map(Screenshot::getUrl).toList())
                 .build();
     }
      public Product map(ProductDto productDto){

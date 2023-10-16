@@ -11,7 +11,7 @@
     <include file="0004_create_table_product_genres.xml" relativeToChangelogFile="true"/>
     <include file="0006_create_table_language.xml" relativeToChangelogFile="true"/>
     <include file="0007_create_table_product_language.xml" relativeToChangelogFile="true"/>
-
-
+    <include file="0008_create_table_video.xml" relativeToChangelogFile="true"/>
+    <include file="0009_create_table_screenshot.xml" relativeToChangelogFile="true"/>
     <include file="data.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

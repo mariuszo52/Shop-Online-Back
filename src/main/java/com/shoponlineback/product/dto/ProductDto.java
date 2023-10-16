@@ -5,6 +5,7 @@ import com.shoponlineback.genre.GenreDto;
 import com.shoponlineback.language.LanguageDto;
 import com.shoponlineback.platform.dto.PlatformDto;
 import com.shoponlineback.systemRequirements.SystemRequirements;
+import com.shoponlineback.video.VideoDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -43,6 +44,8 @@ public class ProductDto {
     private Boolean isPolishVersion;
     private List<LanguageDto> languages;
     private PlatformDto platformDto;
+    private List<String> videoUrls;
+    private List<String> screenshotsUrls;
 
 }
 

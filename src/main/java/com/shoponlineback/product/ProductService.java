@@ -3,6 +3,10 @@ package com.shoponlineback.product;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.product.mapper.JsonObjectToProductMapper;
 import com.shoponlineback.product.mapper.ProductDtoMapper;
+import com.shoponlineback.screenshot.Screenshot;
+import com.shoponlineback.screenshot.ScreenshotRepository;
+import com.shoponlineback.video.Video;
+import com.shoponlineback.video.VideoRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
@@ -24,14 +28,18 @@ public class ProductService {
     private final ProductDtoMapper productDtoMapper;
     private final ProductRepository productRepository;
     private final ProductPagingRepository productPagingRepository;
+    private final VideoRepository videoRepository;
+    private final ScreenshotRepository screenshotRepository;
     private final JsonObjectToProductMapper jsonObjectToProductMapper;
     private final static int REGION_EUROPE = 1;
     private final static int REGION_FREE = 3;
 
-    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository, ProductPagingRepository productPagingRepository, JsonObjectToProductMapper jsonObjectToProductMapper) {
+    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository, ProductPagingRepository productPagingRepository, VideoRepository videoRepository, ScreenshotRepository screenshotRepository, JsonObjectToProductMapper jsonObjectToProductMapper) {
         this.productDtoMapper = productDtoMapper;
         this.productRepository = productRepository;
         this.productPagingRepository = productPagingRepository;
+        this.videoRepository = videoRepository;
+        this.screenshotRepository = screenshotRepository;
         this.jsonObjectToProductMapper = jsonObjectToProductMapper;
     }
 
@@ -62,7 +70,17 @@ public class ProductService {
             JSONObject jsonObject = (JSONObject) responseJSONArray.get(i);
             ProductDto productDto = jsonObjectToProductMapper.map(jsonObject);
             Product product = productDtoMapper.map(productDto);
-            productRepository.save(product);
+            Product productEntity = productRepository.save(product);
+            List<Video> videos = jsonObjectToProductMapper.getVideos(jsonObject);
+            videos.forEach(video -> {
+                video.setProduct(productEntity);
+                videoRepository.save(video);
+            });
+            List<Screenshot> screenshots = jsonObjectToProductMapper.getScreenshots(jsonObject);
+            screenshots.forEach(screenshot ->{
+                screenshot.setProduct(productEntity);
+                screenshotRepository.save(screenshot);
+            });
         }
 
     }
@@ -86,6 +104,7 @@ public class ProductService {
 
 
     public List<ProductDto> getSimilarProducts(Long id) {
+        System.out.println(id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found."));
         List<Product> allByPlatformName = productRepository.findAllByPlatform_Name(product.getPlatform().getName());
