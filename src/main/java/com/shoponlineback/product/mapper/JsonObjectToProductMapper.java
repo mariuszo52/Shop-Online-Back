@@ -75,6 +75,7 @@ public class JsonObjectToProductMapper {
                 .regionId(regionId)
                 .isPolishVersion(isPolishVersion)
                 .languages(languages)
+                .cartQuantity(0L)
                 .build();
     }
 

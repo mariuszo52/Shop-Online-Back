@@ -37,6 +37,8 @@
         <column name="region_id" type="INTEGER">
         </column>
         <column name="is_polish_version" type="BOOLEAN"/>
+        <column name="cart_quantity" type="BIGINT">
+        </column>
     </createTable>
 </changeSet>
 </databaseChangeLog>

@@ -1,6 +1,7 @@
 package com.shoponlineback.product;
 
 import com.shoponlineback.genre.GenreDto;
+import com.shoponlineback.language.LanguageDto;
 import com.shoponlineback.product.dto.ProductDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,7 +59,7 @@ public class ProductController {
                 .filter(productDto -> productDto.getPlatformDto().getDevice().contains(device))
                 .filter(productDto -> productDto.getPlatformDto().getName().contains(platform))
                 .filter(productDto -> genre.isEmpty() || productDto.getGenres().stream().map(GenreDto::getName).toList().contains(genre))
-                .filter(productDto -> language.isEmpty() || productDto.getLanguages().contains(language))
+                .filter(productDto -> language.isEmpty() || productDto.getLanguages().stream().map(LanguageDto::getName).toList().contains(language))
                 .filter(productDto -> minPrice == null || productDto.getPrice() >= minPrice)
                 .filter(productDto -> maxPrice == null || productDto.getPrice() <= maxPrice)
                 .toList();

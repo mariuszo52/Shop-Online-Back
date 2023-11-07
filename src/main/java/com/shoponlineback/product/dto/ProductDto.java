@@ -46,6 +46,7 @@ public class ProductDto {
     private PlatformDto platformDto;
     private List<String> videoUrls;
     private List<String> screenshotsUrls;
+    private Long cartQuantity;
 
 }
 

@@ -13,5 +13,7 @@
     <include file="0007_create_table_product_language.xml" relativeToChangelogFile="true"/>
     <include file="0008_create_table_video.xml" relativeToChangelogFile="true"/>
     <include file="0009_create_table_screenshot.xml" relativeToChangelogFile="true"/>
+    <include file="0010_create_table_user_role.xml" relativeToChangelogFile="true"/>
+    <include file="0011_create_table_users.xml" relativeToChangelogFile="true"/>
     <include file="data.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

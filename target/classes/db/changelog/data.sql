@@ -1,4 +1,4 @@
-
+INSERT INTO user_role (name) values ('ADMIN'), ('USER');
 INSERT INTO Genre (name) VALUES
                               ('Action'),
                               ('Adventure'),

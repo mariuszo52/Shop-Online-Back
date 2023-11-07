@@ -13,7 +13,7 @@ public class ShopOnlineBackApplication {
     public static void main(String[] args) throws IOException {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplication.class, args);
         ProductService productService = applicationContext.getBean(ProductService.class);
-        productService.saveAllProducts(4);
+        productService.saveAllProducts(1);
     }
 
 }

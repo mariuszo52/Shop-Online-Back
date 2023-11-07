@@ -104,7 +104,6 @@ public class ProductService {
 
 
     public List<ProductDto> getSimilarProducts(Long id) {
-        System.out.println(id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found."));
         List<Product> allByPlatformName = productRepository.findAllByPlatform_Name(product.getPlatform().getName());

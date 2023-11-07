@@ -61,4 +61,5 @@ public class Product {
     private List<Video> videos;
     @OneToMany(mappedBy = "product")
     List<Screenshot> screenshots;
+    private Long cartQuantity;
 }

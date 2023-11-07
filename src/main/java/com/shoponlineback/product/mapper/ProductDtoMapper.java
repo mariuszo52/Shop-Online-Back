@@ -18,9 +18,7 @@ import com.shoponlineback.systemRequirements.SystemRequirements;
 import com.shoponlineback.video.Video;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductDtoMapper {
@@ -33,7 +31,8 @@ public class ProductDtoMapper {
         this.platformRepository = platformRepository;
         this.languageRepository = languageRepository;
     }
-    public static ProductDto map(Product product){
+
+    public static ProductDto map(Product product) {
         return ProductDto.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -54,21 +53,23 @@ public class ProductDtoMapper {
                 .platformDto(PlatformDtoMapper.map(product.getPlatform()))
                 .videoUrls(product.getVideos().stream().map(Video::getUrl).toList())
                 .screenshotsUrls(product.getScreenshots().stream().map(Screenshot::getUrl).toList())
+                .cartQuantity(product.getCartQuantity())
                 .build();
     }
-     public Product map(ProductDto productDto){
-         List<String> genresNames = productDto.getGenres().stream()
-                 .map(GenreDto::getName)
-                 .toList();
-         List<Genre> genres = genreRepository.findByNameIn(genresNames);
-         Platform platform = platformRepository.findByName(productDto.getPlatformDto().getName())
-                 .orElse(PlatformDtoMapper.map(productDto.getPlatformDto()));
-         List<String> languagesNames = productDto.getLanguages().stream()
-                 .map(LanguageDto::getName)
-                 .toList();
-         List<Language> languages = languageRepository.findAllByNameIn(languagesNames);
 
-         return Product.builder()
+    public Product map(ProductDto productDto) {
+        List<String> genresNames = productDto.getGenres().stream()
+                .map(GenreDto::getName)
+                .toList();
+        List<Genre> genres = genreRepository.findByNameIn(genresNames);
+        Platform platform = platformRepository.findByName(productDto.getPlatformDto().getName())
+                .orElse(PlatformDtoMapper.map(productDto.getPlatformDto()));
+        List<String> languagesNames = productDto.getLanguages().stream()
+                .map(LanguageDto::getName)
+                .toList();
+        List<Language> languages = languageRepository.findAllByNameIn(languagesNames);
+
+        return Product.builder()
                 .activationDetails(productDto.getActivationDetails())
                 .isPolishVersion(productDto.getIsPolishVersion())
                 .regionId(productDto.getRegionId())
@@ -84,6 +85,7 @@ public class ProductDtoMapper {
                 .coverImage(productDto.getCoverImage())
                 .description(productDto.getDescription())
                 .genres(genres)
+                .cartQuantity(productDto.getCartQuantity())
                 .build();
     }
 
