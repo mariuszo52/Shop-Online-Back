@@ -5,6 +5,8 @@ import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
 import com.shoponlineback.user.dto.UserRegisterDto;
+import com.shoponlineback.userInfo.UserInfo;
+import com.shoponlineback.userInfo.UserInfoRepository;
 import com.shoponlineback.userRole.UserRole;
 import com.shoponlineback.userRole.UserRoleRepository;
 import lombok.NonNull;
@@ -17,11 +19,13 @@ public class RegisterService {
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final UserInfoRepository userInfoRepository;
 
-    RegisterService(UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    RegisterService(UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, UserInfoRepository userInfoRepository) {
         this.userRoleRepository = userRoleRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.userInfoRepository = userInfoRepository;
     }
 
     void registerUser(@NonNull UserRegisterDto userRegisterDto) {
@@ -34,13 +38,16 @@ public class RegisterService {
         } else if (!userRegisterDto.getPassword().equals(userRegisterDto.getConfirmPassword())) {
             throw new BadRegistrationDataException("Password not match");
         } else {
+            UserInfo userInfo = new UserInfo(userRegisterDto.getName(), userRegisterDto.getLastName());
+            UserInfo userInfoEntity = userInfoRepository.save(userInfo);
             UserRole userRole = userRoleRepository.findUserRoleByName("USER")
                     .orElseThrow(UserRoleNotFoundException::new);
             User user = User.builder()
                     .username(userRegisterDto.getUsername())
                     .email(userRegisterDto.getEmail())
                     .password(passwordEncoder.encode(userRegisterDto.getPassword()))
-                    .userRole(userRole).build();
+                    .userRole(userRole)
+                    .userInfo(userInfoEntity).build();
             userRepository.save(user);
 
         }

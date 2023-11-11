@@ -1,9 +1,11 @@
 package com.shoponlineback.user;
 
+import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,11 +33,14 @@ public class User implements UserDetails {
     @Email
     private String email;
     @NotNull
-    @Size(min = 5)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$")
     private String password;
     @NotNull
     @OneToOne
     private UserRole userRole;
+    @NotNull
+    @OneToOne
+    private UserInfo userInfo;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

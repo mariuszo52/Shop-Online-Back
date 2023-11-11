@@ -30,7 +30,9 @@ public class UserRegisterDto {
     @Email
     private String confirmEmail;
     @NotNull
-    @Size(min = 3)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$",
+            message = "Your password needs to be at least 8 characters long and use 4 different types of character" +
+                    " (Lower Case, Upper Case, Digits, Special Characters).")
     private String password;
     @NotNull
     @Size(min = 3)
