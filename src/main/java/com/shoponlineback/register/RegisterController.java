@@ -3,6 +3,7 @@ package com.shoponlineback.register;
 import com.shoponlineback.exceptions.user.BadRegistrationDataException;
 import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
 import com.shoponlineback.user.dto.UserRegisterDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +21,7 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    ResponseEntity<String> registerNewUser(@RequestBody UserRegisterDto userRegisterDto) {
+    ResponseEntity<String> registerNewUser(@Valid @RequestBody UserRegisterDto userRegisterDto) {
         try {
             registerService.registerUser(userRegisterDto);
             return ResponseEntity.status(HttpStatus.CREATED).build();

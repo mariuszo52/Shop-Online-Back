@@ -27,9 +27,11 @@ public class RegisterService {
     void registerUser(@NonNull UserRegisterDto userRegisterDto) {
         if (userRepository.existsUserByEmail(userRegisterDto.getEmail())) {
             throw new BadRegistrationDataException("Email is already exist.");
+        } else if (!userRegisterDto.getEmail().equals(userRegisterDto.getConfirmEmail())) {
+            throw new BadRegistrationDataException("Emails not match.");
         } else if (userRepository.existsUserByUsername(userRegisterDto.getUsername())) {
             throw new BadRegistrationDataException("Username is already exist.");
-        } else if (!userRegisterDto.getPassword().equals(userRegisterDto.getPasswordConfirm())) {
+        } else if (!userRegisterDto.getPassword().equals(userRegisterDto.getConfirmPassword())) {
             throw new BadRegistrationDataException("Password not match");
         } else {
             UserRole userRole = userRoleRepository.findUserRoleByName("USER")

@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Entity
 @Builder
@@ -24,16 +23,15 @@ import java.util.List;
 public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @NotNull
     private Long id;
     @NotNull
-    @Size(min = 1 , max = 30)
+    @Size(min = 1, max = 30)
     private String username;
     @NotNull
     @Email
     private String email;
     @NotNull
-    @Size(min = 6)
+    @Size(min = 5)
     private String password;
     @NotNull
     @OneToOne
