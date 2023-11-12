@@ -23,8 +23,7 @@ public class LoginService {
     public boolean authenticateUser(UserLoginDto userLoginDto){
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword());
-        Authentication authenticate = daoAuthenticationProvider.authenticate(usernamePasswordAuthenticationToken);
-        return authenticate.isAuthenticated();
+        return daoAuthenticationProvider.authenticate(usernamePasswordAuthenticationToken).isAuthenticated();
 
     }
 }
