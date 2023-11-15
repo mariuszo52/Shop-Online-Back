@@ -1,5 +1,8 @@
 package com.shoponlineback.jwt;
 
+import com.shoponlineback.exceptions.user.UserNotFoundException;
+import com.shoponlineback.user.User;
+import com.shoponlineback.user.UserRepository;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -20,6 +22,11 @@ import java.util.List;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     private final static String AUTHORIZATION_HEADER = "Authorization";
+    private final UserRepository userRepository;
+
+    public JwtFilter(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -33,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if(request.getMethod().equals(HttpMethod.OPTIONS.name())){
             filterChain.doFilter(request, response);
         }
-        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+        else if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
             response.setStatus(HttpStatus.FORBIDDEN.value());
         }
         else  {
@@ -43,18 +50,21 @@ public class JwtFilter extends OncePerRequestFilter {
         }
     }
 
-    private static void getAuthorizationByToken(String token) {
+    private void getAuthorizationByToken(String token) {
         Jws<Claims> claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(token);
         String username = claims.getBody().get("username", String.class);
         String role = claims.getBody().get("role", String.class);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority(role)));
+        User user = userRepository.findUserByUsername(username).orElseThrow(UserNotFoundException::new);
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(username, null,
+                        List.of(new SimpleGrantedAuthority(role)));
+        authentication.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
     private static boolean notFilterPaths(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.equals("/") || path.equals("/login") || path.equals("/register") || path.contains("/h2-console")
-                || path.equals("/genre") || path.contains("/device-genres") || path.contains("/language")
-                || path.contains("/platform") || path.equals("/product") || path.equals("/products")
-                || path.equals("/similar-products");
+        return path.equals("/") || path.startsWith("/login") || path.equals("/register") || path.contains("/h2-console")
+                || path.startsWith("/genre") || path.startsWith("/language")
+                || path.contains("/platform") || path.startsWith("/product");
     }
 }

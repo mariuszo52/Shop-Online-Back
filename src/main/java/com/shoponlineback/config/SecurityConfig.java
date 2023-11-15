@@ -11,8 +11,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -24,17 +28,35 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
+
     @Bean
-    public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
-        http.formLogin(AbstractHttpConfigurer::disable);
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.headers(configurer-> configurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
-        http.sessionManagement(configurer-> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        http.authorizeHttpRequests(request->request
-                .anyRequest().permitAll());
-        return http.build();
+    public SecurityFilterChain filterChain (HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspector);
+
+        return http
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfiguration()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers(configurer-> configurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .sessionManagement(configurer-> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                //.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(request->request
+                        .requestMatchers(mvc.pattern("/language/all/**")).authenticated()
+                        .anyRequest().permitAll())
+                .build();
     }
+
+    @Bean
+    UrlBasedCorsConfigurationSource corsConfiguration(){
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+        corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setAllowedMethods(List.of("*"));
+        corsConfiguration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+        return urlBasedCorsConfigurationSource;
+    }
+
 
     @Bean
     PasswordEncoder passwordEncoder(){

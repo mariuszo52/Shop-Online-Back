@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity
+@ToString
 @Builder
 @Getter
 @Setter
@@ -41,6 +42,13 @@ public class User implements UserDetails {
     @NotNull
     @OneToOne
     private UserInfo userInfo;
+
+    public User(Long id, String username, String email, UserRole userRole) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.userRole = userRole;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

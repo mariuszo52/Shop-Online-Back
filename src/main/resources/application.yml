@@ -1,4 +1,12 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 985874330130-mjutgkgsi961lgafhbkghnc4id8coa0r.apps.googleusercontent.com
+            clientSecret: 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
+
   datasource:
     url: jdbc:h2:mem:test
     username: sa
@@ -9,4 +17,5 @@ spring:
       spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
   liquibase:
     change-log: classpath:db/changelog/master.xml
+
 

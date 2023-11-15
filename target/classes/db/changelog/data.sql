@@ -1,4 +1,7 @@
+insert into user_info (name, last_name) values ('mariusz','ozga');
 INSERT INTO user_role (name) values ('ADMIN'), ('USER');
+insert into users (username, email, password, user_role_id, user_info_id)
+values ('mariuszo52', 'mariuszo19@onet.pl','{bcrypt}$2a$10$K9bRFxj3dvfQFQQ6hl.wuua.FRiOQhZNKbn3tvC2Od6c8kvohEp7e', 2, 1);
 INSERT INTO Genre (name) VALUES
                               ('Action'),
                               ('Adventure'),

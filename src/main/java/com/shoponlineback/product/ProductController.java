@@ -8,10 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -21,6 +18,7 @@ import java.util.stream.Collectors;
 import static org.springframework.data.domain.Sort.Direction.*;
 
 @RestController
+@RequestMapping("/product")
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
@@ -31,7 +29,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/product")
+    @GetMapping
     ResponseEntity<?> getProductInfo(@RequestParam Long id) {
         try {
             ProductDto productById = productService.getProductById(id);
@@ -55,9 +53,9 @@ public class ProductController {
         Sort sortBy = Sort.by(fromString(sortTable[0]),sortTable[1]);
         PageRequest pageRequest = PageRequest.of(page, size);
         List<ProductDto> allProducts = productService.getAllProducts(sortBy).stream()
-                .filter(productDto -> productDto.getName().toLowerCase().contains(name.toLowerCase()))
-                .filter(productDto -> productDto.getPlatformDto().getDevice().contains(device))
-                .filter(productDto -> productDto.getPlatformDto().getName().contains(platform))
+                .filter(productDto -> name.isEmpty() || productDto.getName().toLowerCase().contains(name.toLowerCase()))
+                .filter(productDto -> device.isEmpty() || productDto.getPlatformDto().getDevice().contains(device))
+                .filter(productDto -> platform.isEmpty() || productDto.getPlatformDto().getName().contains(platform))
                 .filter(productDto -> genre.isEmpty() || productDto.getGenres().stream().map(GenreDto::getName).toList().contains(genre))
                 .filter(productDto -> language.isEmpty() || productDto.getLanguages().stream().map(LanguageDto::getName).toList().contains(language))
                 .filter(productDto -> minPrice == null || productDto.getPrice() >= minPrice)
