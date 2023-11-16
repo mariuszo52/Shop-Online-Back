@@ -1,5 +1,6 @@
 package com.shoponlineback.user.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -10,8 +11,8 @@ import lombok.*;
 @Setter
 public class UserLoginDto {
     @NotNull
-    @Size(min = 5)
-    private String username;
+    @Email
+    private String email;
     @NotNull
     @Size(min = 3)
     private String password;

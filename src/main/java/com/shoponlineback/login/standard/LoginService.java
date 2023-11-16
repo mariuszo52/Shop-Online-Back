@@ -1,4 +1,4 @@
-package com.shoponlineback.login;
+package com.shoponlineback.login.standard;
 
 import com.shoponlineback.exceptions.user.UserNotFoundException;
 import com.shoponlineback.user.User;
@@ -22,7 +22,7 @@ public class LoginService {
 
     public boolean authenticateUser(UserLoginDto userLoginDto){
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword());
+                new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword());
         return daoAuthenticationProvider.authenticate(usernamePasswordAuthenticationToken).isAuthenticated();
 
     }

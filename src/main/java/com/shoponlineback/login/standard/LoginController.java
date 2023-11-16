@@ -1,15 +1,11 @@
-package com.shoponlineback.login;
+package com.shoponlineback.login.standard;
 
 import com.shoponlineback.jwt.JwtService;
 import com.shoponlineback.user.dto.UserLoginDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @CrossOrigin
 @RestController

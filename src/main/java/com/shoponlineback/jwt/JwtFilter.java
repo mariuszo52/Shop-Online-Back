@@ -52,11 +52,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private void getAuthorizationByToken(String token) {
         Jws<Claims> claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(token);
-        String username = claims.getBody().get("username", String.class);
+        String email = claims.getBody().get("email", String.class);
         String role = claims.getBody().get("role", String.class);
-        User user = userRepository.findUserByUsername(username).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(username, null,
+                new UsernamePasswordAuthenticationToken(email, null,
                         List.of(new SimpleGrantedAuthority(role)));
         authentication.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(authentication);

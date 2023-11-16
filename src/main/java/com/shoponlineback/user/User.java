@@ -8,12 +8,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import static org.hibernate.annotations.CascadeType.PERSIST;
 
 @Entity
 @ToString
@@ -33,7 +36,6 @@ public class User implements UserDetails {
     @NotNull
     @Email
     private String email;
-    @NotNull
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$")
     private String password;
     @NotNull
@@ -41,13 +43,14 @@ public class User implements UserDetails {
     private UserRole userRole;
     @NotNull
     @OneToOne
+    @Cascade(PERSIST)
     private UserInfo userInfo;
 
-    public User(Long id, String username, String email, UserRole userRole) {
-        this.id = id;
+    public User(String username, String email, UserRole userRole, UserInfo userInfo) {
         this.username = username;
         this.email = email;
         this.userRole = userRole;
+        this.userInfo = userInfo;
     }
 
     @Override

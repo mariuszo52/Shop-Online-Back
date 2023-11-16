@@ -22,15 +22,15 @@ public class JwtService {
     }
 
     public String generateToken(UserLoginDto userLoginDto) {
-        User user = userRepository.findUserByUsername(userLoginDto.getUsername()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findUserByEmail(userLoginDto.getEmail()).orElseThrow(UserNotFoundException::new);
         long now = System.currentTimeMillis();
         Map<String, Object> claims = new HashMap<>();
-        claims.put("username", userLoginDto.getUsername());
+        claims.put("email", userLoginDto.getEmail());
         claims.put("role", user.getUserRole().getName());
 
         return Jwts.builder()
                 .setHeaderParam("alg", "HS512")
-                .setSubject(userLoginDto.getUsername())
+                .setSubject(userLoginDto.getEmail())
                 .addClaims(claims)
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 20)))
