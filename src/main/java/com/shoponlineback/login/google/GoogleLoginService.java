@@ -29,7 +29,7 @@ public class GoogleLoginService {
 
     void googleLogin(HttpServletRequest request) throws GeneralSecurityException, IOException {
         String authorization = request.getHeader("Authorization");
-        String token = authorization.substring(7);
+        String token = authorization.substring(6);
         final String clientId = "985874330130-mjutgkgsi961lgafhbkghnc4id8coa0r.apps.googleusercontent.com";
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singleton(clientId)).build();

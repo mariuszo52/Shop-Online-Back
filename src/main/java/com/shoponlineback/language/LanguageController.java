@@ -11,21 +11,20 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/language")
 public class LanguageController {
     private final LanguageService languageService;
 
     public LanguageController(LanguageService languageService) {
         this.languageService = languageService;
     }
-    @GetMapping("/all")
+    @GetMapping("language/all")
     ResponseEntity<List<String>> getAllLanguagesNames(){
        return ResponseEntity.ok(languageService.getAllLanguagesNames());
     }
 
-    @GetMapping
-    ResponseEntity<List<LanguageDto>> getLanguageById(@RequestParam Long id){
-        SecurityContext context = SecurityContextHolder.getContext();
-        return ResponseEntity.ok(languageService.getProductsLanguages(id));
+    @GetMapping("/language")
+    List<LanguageDto> getLanguageById(@RequestParam Long id){
+        System.out.println("context" + SecurityContextHolder.getContext().getAuthentication().getDetails());
+       return languageService.getProductsLanguages(id);
     }
 }
