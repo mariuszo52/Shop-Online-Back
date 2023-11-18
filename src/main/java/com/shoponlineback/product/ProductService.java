@@ -5,6 +5,7 @@ import com.shoponlineback.product.mapper.JsonObjectToProductMapper;
 import com.shoponlineback.product.mapper.ProductDtoMapper;
 import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.screenshot.ScreenshotRepository;
+import com.shoponlineback.urlConnectionService.UrlConnectionService;
 import com.shoponlineback.video.Video;
 import com.shoponlineback.video.VideoRepository;
 import org.json.JSONArray;
@@ -91,15 +92,9 @@ public class ProductService {
                 + REGION_EUROPE + "&regionId=" + REGION_FREE + "&languages=Polish&limit=100&page=" +page);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("X-Api-Key", "98d4916a75acf3834bb87c6d223d5337");
-        InputStream inputStream = httpURLConnection.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        StringBuilder stringBuilder = new StringBuilder();
-        int c = 0;
-        while ((c = bufferedReader.read()) != -1) {
-            stringBuilder.append((char) c);
-        }
-        String JSONArrayString = stringBuilder.substring(stringBuilder.indexOf("["), stringBuilder.lastIndexOf("]") + 1);
-        return new JSONArray(JSONArrayString);
+        JSONObject jsonObject = UrlConnectionService.getConnectionResponse(httpURLConnection)
+                .orElseThrow(() -> new RuntimeException("Error during fetching products."));
+        return jsonObject.optJSONArray("results");
     }
 
 
