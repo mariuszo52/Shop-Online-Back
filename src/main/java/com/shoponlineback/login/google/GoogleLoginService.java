@@ -7,6 +7,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
+import com.shoponlineback.user.UserService;
 import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
 import com.shoponlineback.userRole.UserRoleRepository;
@@ -19,17 +20,20 @@ import java.util.Collections;
 
 @Service
 public class GoogleLoginService {
+    public final static String GOOGLE_HEADER_PREFIX = "GOOGLE ";
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
+    private final UserService userService;
 
-    public GoogleLoginService(UserRepository userRepository, UserRoleRepository userRoleRepository) {
+    public GoogleLoginService(UserRepository userRepository, UserRoleRepository userRoleRepository, UserService userService) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
+        this.userService = userService;
     }
 
     void googleLogin(HttpServletRequest request) throws GeneralSecurityException, IOException {
         String authorization = request.getHeader("Authorization");
-        String token = authorization.substring(6);
+        String token = authorization.substring(GOOGLE_HEADER_PREFIX.length());
         final String clientId = "985874330130-mjutgkgsi961lgafhbkghnc4id8coa0r.apps.googleusercontent.com";
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singleton(clientId)).build();
@@ -48,16 +52,13 @@ public class GoogleLoginService {
         if (!existsUser) {
             String name = (String) payload.get("name");
             String givenName = (String) payload.get("given_name");
-            String username = email.substring(0, email.indexOf("@"));
-            int usernameNumber = 0;
-            while(userRepository.existsUserByUsername(username)){
-                usernameNumber ++;
-                username = username + usernameNumber;
-            }
+            String username = userService.generateUsername(email);
             UserInfo userInfo = new UserInfo(name, givenName);
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
             User user = new User(username, email, userRole, userInfo);
             userRepository.save(user);
         }
     }
+
+
 }
