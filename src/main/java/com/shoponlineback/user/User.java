@@ -45,12 +45,17 @@ public class User implements UserDetails {
     @OneToOne
     @Cascade(PERSIST)
     private UserInfo userInfo;
+    @NotNull
+    private Boolean isEnabled;
+    @Size(min = 20, max = 20)
+    private String activationToken;
 
-    public User(String username, String email, UserRole userRole, UserInfo userInfo) {
+    public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled) {
         this.username = username;
         this.email = email;
         this.userRole = userRole;
         this.userInfo = userInfo;
+        this.isEnabled = isEnabled;
     }
 
     @Override
@@ -76,6 +81,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 }

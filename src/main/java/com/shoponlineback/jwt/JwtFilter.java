@@ -18,6 +18,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,13 +47,13 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
         return notFilterPaths(request);
     }
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
         if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
             filterChain.doFilter(request, response);
@@ -121,7 +122,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static boolean notFilterPaths(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.equals("/") || path.startsWith("/login") || path.equals("/register") || path.contains("/h2-console")
+        return path.equals("/") || path.startsWith("/login") || path.startsWith("/register") || path.contains("/h2-console")
                 || path.startsWith("/genre")
                 || path.contains("/platform") || path.startsWith("/product");
     }

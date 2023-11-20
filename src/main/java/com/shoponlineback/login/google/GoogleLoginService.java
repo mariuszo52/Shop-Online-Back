@@ -55,7 +55,7 @@ public class GoogleLoginService {
             String username = userService.generateUsername(email);
             UserInfo userInfo = new UserInfo(name, givenName);
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
-            User user = new User(username, email, userRole, userInfo);
+            User user = new User(username, email, userRole, userInfo, true);
             userRepository.save(user);
         }
     }
