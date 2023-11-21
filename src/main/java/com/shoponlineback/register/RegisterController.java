@@ -23,6 +23,7 @@ public class RegisterController {
     public RegisterController(RegisterService registerService) {
         this.registerService = registerService;
     }
+
     @ResponseBody
     @PostMapping("/register")
     ResponseEntity<String> registerNewUser(@Valid @RequestBody UserRegisterDto userRegisterDto) {
@@ -44,6 +45,16 @@ public class RegisterController {
 
         } catch (RuntimeException e) {
             return new RedirectView("http://localhost:3000/error");
+        }
+    }
+
+    @GetMapping("/register/suggest-pass")
+    ResponseEntity<String> suggestPassword() {
+        try {
+            String password = registerService.suggestStrongPassword();
+            return ResponseEntity.ok(password);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

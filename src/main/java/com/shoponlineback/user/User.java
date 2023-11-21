@@ -3,10 +3,7 @@ package com.shoponlineback.user;
 import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +29,7 @@ public class User implements UserDetails {
     private Long id;
     @NotNull
     @Size(min = 1, max = 30)
+    @Pattern(regexp = "\\S+", message = "Username needs to have 1-30 characters without blank spaces.")
     private String username;
     @NotNull
     @Email
@@ -47,7 +45,7 @@ public class User implements UserDetails {
     private UserInfo userInfo;
     @NotNull
     private Boolean isEnabled;
-    @Size(min = 20, max = 20)
+    @Size(min = 40, max = 40)
     private String activationToken;
 
     public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled) {

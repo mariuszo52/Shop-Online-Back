@@ -16,7 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -27,6 +28,8 @@ public class RegisterService {
     private final UserRepository userRepository;
     private final UserInfoRepository userInfoRepository;
     private final EmailService emailService;
+    private final Random random = new Random();
+    private final static String RANDOM_CHARS = "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM!@#$%^&*()_+=}{?><";
 
     RegisterService(UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder,
                     UserRepository userRepository, UserInfoRepository userInfoRepository, EmailService emailService) {
@@ -64,31 +67,42 @@ public class RegisterService {
             try {
                 emailService.sendActivationLink(generateActivationLink(token), user.getEmail());
 
-            }catch (MessagingException e) {
+            } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private String generateActivationToken(){
-        String chars = "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM";
+    private String generateActivationToken() {
         StringBuilder stringBuilder = new StringBuilder();
-        Random random = new Random();
-        for (int i=0; i<40 ; i++){
-            int randomCharIndex = random.nextInt(chars.length() - 1);
-            stringBuilder.append(chars.charAt(randomCharIndex));
+        for (int i = 0; i < 40; i++) {
+            int randomCharIndex = random.nextInt(RANDOM_CHARS.length() - 1);
+            stringBuilder.append(RANDOM_CHARS.charAt(randomCharIndex));
         }
         return stringBuilder.toString();
     }
-    private String generateActivationLink(String token){
+
+    private String generateActivationLink(String token) {
         return "http://localhost:8080/register/activate?activationToken=" + token;
     }
+
     @Transactional
-    public void activateAccount(String activationToken){
+    public void activateAccount(String activationToken) {
         User user = userRepository.findUserByActivationToken(activationToken)
                 .orElseThrow(() -> new RuntimeException("Activation failed."));
         user.setIsEnabled(true);
-
-
+    }
+    String suggestStrongPassword(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 20; i++) {
+            int randomCharIndex = random.nextInt(RANDOM_CHARS.length() - 1);
+            stringBuilder.append(RANDOM_CHARS.charAt(randomCharIndex));
+        }
+        if(stringBuilder.toString().matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$")) {
+            return stringBuilder.toString();
+        }else {
+           return suggestStrongPassword();
+        }
     }
 }
+
