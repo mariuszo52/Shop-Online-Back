@@ -28,7 +28,7 @@ public class RegisterService {
     private final UserRepository userRepository;
     private final UserInfoRepository userInfoRepository;
     private final EmailService emailService;
-    private final Random random = new Random();
+    private final static Random random = new Random();
     private final static String RANDOM_CHARS = "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM!@#$%^&*()_+=}{?><";
 
     RegisterService(UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder,
@@ -73,7 +73,7 @@ public class RegisterService {
         }
     }
 
-    private String generateActivationToken() {
+    public static String generateActivationToken() {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 40; i++) {
             int randomCharIndex = random.nextInt(RANDOM_CHARS.length() - 1);

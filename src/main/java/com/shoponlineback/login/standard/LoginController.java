@@ -2,6 +2,7 @@ package com.shoponlineback.login.standard;
 
 import com.shoponlineback.jwt.JwtService;
 import com.shoponlineback.user.dto.UserLoginDto;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,15 @@ public class LoginController {
         }else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bad credentials.");
         }
+    }
+    @GetMapping("/login/forget-password")
+    public ResponseEntity<String> sendResetPasswordConfirmEmail(@RequestParam String email){
+        try {
+            loginService.sendResetPasswordConfirmEmail(email);
+            return ResponseEntity.ok("Mail sent");
+        } catch (MessagingException | RuntimeException e ) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 }
