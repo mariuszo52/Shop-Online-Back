@@ -54,7 +54,7 @@ public class RegisterController {
             String password = registerService.suggestStrongPassword();
             return ResponseEntity.ok(password);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

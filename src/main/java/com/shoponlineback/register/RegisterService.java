@@ -29,7 +29,8 @@ public class RegisterService {
     private final UserInfoRepository userInfoRepository;
     private final EmailService emailService;
     private final static Random random = new Random();
-    private final static String RANDOM_CHARS = "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM!@#$%^&*()_+=}{?><";
+    private final static String RANDOM_TOKEN_CHARS = "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM";
+    private final static String RANDOM_PASSWORD_CHARS= "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM!@#$%^&*()_+={}:";
 
     RegisterService(UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder,
                     UserRepository userRepository, UserInfoRepository userInfoRepository, EmailService emailService) {
@@ -76,8 +77,8 @@ public class RegisterService {
     public static String generateActivationToken() {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 40; i++) {
-            int randomCharIndex = random.nextInt(RANDOM_CHARS.length() - 1);
-            stringBuilder.append(RANDOM_CHARS.charAt(randomCharIndex));
+            int randomCharIndex = random.nextInt(RANDOM_TOKEN_CHARS.length() - 1);
+            stringBuilder.append(RANDOM_TOKEN_CHARS.charAt(randomCharIndex));
         }
         return stringBuilder.toString();
     }
@@ -95,8 +96,8 @@ public class RegisterService {
     String suggestStrongPassword(){
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 20; i++) {
-            int randomCharIndex = random.nextInt(RANDOM_CHARS.length() - 1);
-            stringBuilder.append(RANDOM_CHARS.charAt(randomCharIndex));
+            int randomCharIndex = random.nextInt(RANDOM_PASSWORD_CHARS.length() - 1);
+            stringBuilder.append(RANDOM_PASSWORD_CHARS.charAt(randomCharIndex));
         }
         if(stringBuilder.toString().matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$")) {
             return stringBuilder.toString();

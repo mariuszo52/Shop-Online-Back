@@ -4,6 +4,7 @@ import com.shoponlineback.jwt.JwtService;
 import com.shoponlineback.user.dto.UserLoginDto;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,16 @@ public class LoginController {
             loginService.sendResetPasswordConfirmEmail(email);
             return ResponseEntity.ok("Mail sent");
         } catch (MessagingException | RuntimeException e ) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
+    @PostMapping("/login/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody @NonNull ResetPasswordDto resetPasswordDto){
+        try {
+            loginService.resetPassword(resetPasswordDto.getToken(), resetPasswordDto.getNewPassword());
+            return ResponseEntity.ok("Password has changed.");
+        } catch (RuntimeException e ) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 

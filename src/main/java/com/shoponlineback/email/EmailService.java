@@ -1,7 +1,6 @@
 package com.shoponlineback.email;
 
 import jakarta.mail.*;
-import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ public class EmailService {
         MimeMessage message = new MimeMessage(session);
         message.setFrom(new InternetAddress("kontakt@mowebcreations.pl"));
         message.setSubject("Email confirmation");
-        message.setText("Click on link to activate account: " + link);
+        message.setContent("<a href=\"" + link + "\">" + "Click here to activate account</a>", "text/html");
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
         Transport.send(message);
 
@@ -26,7 +25,7 @@ public class EmailService {
             MimeMessage mimeMessage = new MimeMessage(session);
             mimeMessage.setFrom(new InternetAddress("kontakt@mowebcreations.pl"));
             mimeMessage.setSubject("Password reset");
-            mimeMessage.setText("Click on link to reset password: " + link);
+            mimeMessage.setContent("<a href=\"" + link + "\">" + "Click here to activate account</a>", "text/html");
             mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAddress));
             Transport.send(mimeMessage);
 
