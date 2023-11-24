@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class Product {
     private String name;
     @NotNull
     @Min(0)
-    private Double price;
+    private BigDecimal price;
     private String description;
     private String coverImage;
     @ManyToMany(cascade = CascadeType.PERSIST)

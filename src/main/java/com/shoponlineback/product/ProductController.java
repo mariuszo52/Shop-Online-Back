@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,8 +47,8 @@ public class ProductController {
                                  @RequestParam(defaultValue = "") String platform,
                                  @RequestParam(defaultValue = "") String genre,
                                  @RequestParam(defaultValue = "") String language,
-                                 @RequestParam(required = false) Double minPrice,
-                                 @RequestParam(required = false) Double maxPrice,
+                                 @RequestParam(required = false) BigDecimal minPrice,
+                                 @RequestParam(required = false) BigDecimal maxPrice,
                                  @RequestParam(defaultValue = "DESC,name") String sort) {
         String[] sortTable = sort.split(",");
         Sort sortBy = Sort.by(fromString(sortTable[0]),sortTable[1]);
@@ -58,8 +59,8 @@ public class ProductController {
                 .filter(productDto -> platform.isEmpty() || productDto.getPlatformDto().getName().contains(platform))
                 .filter(productDto -> genre.isEmpty() || productDto.getGenres().stream().map(GenreDto::getName).toList().contains(genre))
                 .filter(productDto -> language.isEmpty() || productDto.getLanguages().stream().map(LanguageDto::getName).toList().contains(language))
-                .filter(productDto -> minPrice == null || productDto.getPrice() >= minPrice)
-                .filter(productDto -> maxPrice == null || productDto.getPrice() <= maxPrice)
+                .filter(productDto -> minPrice == null || productDto.getPrice().compareTo(minPrice) >= 0)
+                .filter(productDto -> maxPrice == null || productDto.getPrice().compareTo(maxPrice) <= 0)
                 .toList();
         List<ProductDto> currentPage = allProducts.subList(Math.min((page * size), allProducts.size()) ,
                 Math.min((page * size + size),allProducts.size()));

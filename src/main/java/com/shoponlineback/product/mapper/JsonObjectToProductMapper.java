@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -35,8 +36,9 @@ public class JsonObjectToProductMapper {
     public ProductDto map(JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        Double price = Double.parseDouble(decimalFormat.format(jsonObject.getDouble("price") * 5 + 30)
-                .replace(",", "."));
+
+        BigDecimal price = BigDecimal.valueOf(Double.parseDouble(decimalFormat.format(jsonObject.getDouble("price") * 5 + 30)
+                .replace(",", ".")));
         String coverImage = getCoverImage(jsonObject);
         String description = jsonObject.optString("description").trim();
         List<GenreDto> genres = getGenreList(jsonObject).stream()
