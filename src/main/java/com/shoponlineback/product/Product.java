@@ -1,5 +1,6 @@
 package com.shoponlineback.product;
 
+import com.shoponlineback.cart.Cart;
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.language.Language;
 import com.shoponlineback.platform.Platform;
@@ -35,7 +36,8 @@ public class Product {
     private BigDecimal price;
     private String description;
     private String coverImage;
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "product_genres",
             joinColumns = @JoinColumn(name = "product_id"),
@@ -52,15 +54,17 @@ public class Product {
     private String activationDetails;
     private Integer regionId;
     private Boolean isPolishVersion;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_language",
             joinColumns = @JoinColumn(name = "language_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Language> languages;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     private List<Video> videos;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     List<Screenshot> screenshots;
     private Long cartQuantity;
+    @ManyToMany(mappedBy = "productList")
+    List<Cart> carts;
 }

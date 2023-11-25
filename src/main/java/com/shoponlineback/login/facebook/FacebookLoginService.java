@@ -1,5 +1,6 @@
 package com.shoponlineback.login.facebook;
 
+import com.shoponlineback.cart.Cart;
 import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
 import com.shoponlineback.urlConnectionService.UrlConnectionService;
 import com.shoponlineback.user.User;
@@ -42,7 +43,7 @@ public class FacebookLoginService {
         if (tokenIsValid && !userExist) {
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
             UserInfo userInfo = new UserInfo(facebookLoginDto.getFirstName(), facebookLoginDto.getLastName());
-            User user = new User(facebookLoginDto.getUserId(), facebookLoginDto.getEmail(), userRole, userInfo, true);
+            User user = new User(facebookLoginDto.getUserId(), facebookLoginDto.getEmail(), userRole, userInfo, true, new Cart());
             userRepository.save(user);
         }
     }

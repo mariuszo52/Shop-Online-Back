@@ -1,5 +1,6 @@
 package com.shoponlineback.user;
 
+import com.shoponlineback.cart.Cart;
 import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
 import jakarta.persistence.*;
@@ -47,13 +48,16 @@ public class User implements UserDetails {
     private Boolean isEnabled;
     @Size(min = 40, max = 40)
     private String activationToken;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Cart cart;
 
-    public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled) {
+    public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled, Cart cart) {
         this.username = username;
         this.email = email;
         this.userRole = userRole;
         this.userInfo = userInfo;
         this.isEnabled = isEnabled;
+        this.cart = cart;
     }
 
     @Override

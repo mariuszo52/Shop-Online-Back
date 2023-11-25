@@ -23,9 +23,5 @@ public class Language {
     @ManyToMany
     List<Product> products;
 
-    public Language(String name, String iconUrl) {
-        this.name = name;
-        this.iconUrl = iconUrl;
-    }
 }
 

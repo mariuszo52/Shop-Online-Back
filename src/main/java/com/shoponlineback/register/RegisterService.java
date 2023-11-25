@@ -1,5 +1,6 @@
 package com.shoponlineback.register;
 
+import com.shoponlineback.cart.Cart;
 import com.shoponlineback.email.EmailService;
 import com.shoponlineback.exceptions.user.BadRegistrationDataException;
 import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
@@ -40,7 +41,6 @@ public class RegisterService {
         this.userInfoRepository = userInfoRepository;
         this.emailService = emailService;
     }
-
     void registerUser(@NonNull UserRegisterDto userRegisterDto) {
         if (userRepository.existsUserByEmail(userRegisterDto.getEmail())) {
             throw new BadRegistrationDataException("Email is already exist.");
@@ -63,6 +63,7 @@ public class RegisterService {
                     .password(passwordEncoder.encode(userRegisterDto.getPassword()))
                     .userRole(userRole)
                     .userInfo(userInfoEntity)
+                    .cart(new Cart())
                     .activationToken(token).build();
             userRepository.save(user);
             try {

@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .sessionManagement(configurer-> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> request
-                                .requestMatchers(mvc.pattern("/language/**")).authenticated()
+                                .requestMatchers(mvc.pattern("/carte/**")).authenticated()
                         .anyRequest().permitAll())
                 .build();
     }

@@ -1,7 +1,10 @@
 package com.shoponlineback.user;
 
+import com.shoponlineback.exceptions.user.UserNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -10,6 +13,12 @@ public class UserService {
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public static User getLoggedUser(){
+        return Optional.of((User) SecurityContextHolder.getContext().getAuthentication().getDetails())
+                .orElseThrow(() -> new RuntimeException("User is not logged."));
+
     }
 
     public  String generateUsername(String email) {

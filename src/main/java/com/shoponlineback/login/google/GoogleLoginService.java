@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.shoponlineback.cart.Cart;
 import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
@@ -55,7 +56,7 @@ public class GoogleLoginService {
             String username = userService.generateUsername(email);
             UserInfo userInfo = new UserInfo(name, givenName);
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
-            User user = new User(username, email, userRole, userInfo, true);
+            User user = new User(username, email, userRole, userInfo, true, new Cart());
             userRepository.save(user);
         }
     }

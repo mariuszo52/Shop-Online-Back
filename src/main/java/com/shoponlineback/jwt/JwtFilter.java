@@ -96,7 +96,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
     private void getGoogleTokenAuthorization(GoogleIdTokenVerifier verifier, String oauthToken) throws GeneralSecurityException, IOException {
-        GoogleIdToken idToken = verifier.verify(oauthToken);
+        int verifyTries = 0;
+        GoogleIdToken idToken;
+        do {
+            verifyTries++;
+            idToken = verifier.verify(oauthToken);
+        }while (idToken == null || verifyTries <= 5);
         GoogleIdToken.Payload payload = idToken.getPayload();
         String email = (String) payload.get("email");
         System.out.println(email);
@@ -123,7 +128,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private static boolean notFilterPaths(HttpServletRequest request) {
         String path = request.getRequestURI();
         return path.equals("/") || path.startsWith("/login") || path.startsWith("/register") || path.contains("/h2-console")
-                || path.startsWith("/genre")
+                || path.startsWith("/genre") || path.startsWith("/language")
                 || path.contains("/platform") || path.startsWith("/product");
     }
 }
