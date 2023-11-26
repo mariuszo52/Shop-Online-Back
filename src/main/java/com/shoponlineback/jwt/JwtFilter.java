@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 getGoogleTokenAuthorization(verifier, oauthToken);
                 filterChain.doFilter(request, response);
-            } catch (GeneralSecurityException e) {
+            } catch (ConnectException | GeneralSecurityException e) {
                 response.setStatus(FORBIDDEN.value());
             }
         } else if (authorizationHeader.startsWith(FB_HEADER_PREFIX)) {
