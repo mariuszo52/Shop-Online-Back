@@ -13,6 +13,7 @@ import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -81,8 +82,12 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } else {
             String token = authorizationHeader.substring(BEARER_PREFIX.length());
-            getAuthorizationByToken(token);
-            filterChain.doFilter(request, response);
+            try {
+                getAuthorizationByToken(token);
+                filterChain.doFilter(request, response);
+            }catch (JwtException e){
+                response.setStatus(FORBIDDEN.value());
+            }
         }
     }
 

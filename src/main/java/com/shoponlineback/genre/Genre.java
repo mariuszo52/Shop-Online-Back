@@ -19,9 +19,10 @@ public class Genre {
     private Long id;
     private String name;
     @ManyToMany
+    @JoinTable(
+            name = "product_genres",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Product> products;
 
-    public Genre(String name) {
-        this.name = name;
-    }
 }

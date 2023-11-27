@@ -36,12 +36,9 @@ public class Product {
     private BigDecimal price;
     private String description;
     private String coverImage;
-    @ManyToMany(fetch = FetchType.EAGER,
+    @ManyToMany(mappedBy = "products",
+            fetch = FetchType.EAGER,
             cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "product_genres",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
     @OneToOne(cascade = CascadeType.PERSIST)
     private Platform platform;
@@ -54,11 +51,8 @@ public class Product {
     private String activationDetails;
     private Integer regionId;
     private Boolean isPolishVersion;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "product_language",
-            joinColumns = @JoinColumn(name = "language_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
+    @ManyToMany(mappedBy = "products",
+            fetch = FetchType.EAGER)
     private List<Language> languages;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     private List<Video> videos;

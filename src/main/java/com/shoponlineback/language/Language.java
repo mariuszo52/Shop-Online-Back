@@ -21,6 +21,10 @@ public class Language {
     private String name;
     private String iconUrl;
     @ManyToMany
+    @JoinTable(
+            name = "product_language",
+            joinColumns = @JoinColumn(name = "language_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
     List<Product> products;
 
 }
