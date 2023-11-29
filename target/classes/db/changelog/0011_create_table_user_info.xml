@@ -14,6 +14,21 @@
         <column name="last_name" type="VARCHAR(50)">
             <constraints nullable="false"/>
         </column>
+        <column name="address" type="VARCHAR(100)">
+            <constraints nullable="true"/>
+        </column>
+        <column name="country" type="VARCHAR(50)">
+            <constraints nullable="true"/>
+        </column>
+        <column name="city" type="VARCHAR(50)">
+            <constraints nullable="true"/>
+        </column>
+        <column name="postal_code" type="VARCHAR(5)">
+            <constraints nullable="true"/>
+        </column>
+        <column name="phone_number" type="VARCHAR(9)">
+            <constraints nullable="true"/>
+        </column>
     </createTable>
 </changeSet>
 </databaseChangeLog>
