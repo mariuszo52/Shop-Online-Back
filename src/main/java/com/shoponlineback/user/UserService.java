@@ -1,6 +1,8 @@
 package com.shoponlineback.user;
 
 import com.shoponlineback.exceptions.user.UserNotFoundException;
+import com.shoponlineback.user.dto.UserAccountInfoDto;
+import com.shoponlineback.user.mapper.UserAccountInfoDtoMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -30,4 +32,9 @@ public class UserService {
         }
         return username;
     }
+
+     UserAccountInfoDto getLoggedUserAccountInfo() {
+         return UserAccountInfoDtoMapper.map(getLoggedUser());
+
+     }
 }

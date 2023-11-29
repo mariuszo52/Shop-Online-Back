@@ -110,7 +110,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }while (idToken == null || verifyTries <= 5);
         GoogleIdToken.Payload payload = idToken.getPayload();
         String email = (String) payload.get("email");
-        System.out.println(email);
         User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(email, null,

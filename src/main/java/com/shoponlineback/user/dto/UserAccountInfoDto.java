@@ -1,22 +1,21 @@
-package com.shoponlineback.userInfo;
+package com.shoponlineback.user.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Entity
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Getter
-@Setter
-public class UserInfo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserAccountInfoDto {
+    @NotNull
+    @Email
+    private String email;
     @NotNull
     @Size(min = 2)
     private String name;
@@ -33,10 +32,4 @@ public class UserInfo {
     private String postalCode;
     @Size(min = 9, max = 9)
     private String phoneNumber;
-
-    public UserInfo(String name, String lastName) {
-        this.name = name;
-        this.lastName = lastName;
-    }
 }
-
