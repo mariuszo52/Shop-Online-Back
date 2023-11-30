@@ -1,6 +1,7 @@
 package com.shoponlineback.user;
 
 import com.shoponlineback.exceptions.user.UserNotFoundException;
+import com.shoponlineback.exceptions.user.UserNotLoggedInException;
 import com.shoponlineback.user.dto.UserAccountInfoDto;
 import com.shoponlineback.user.mapper.UserAccountInfoDtoMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +20,7 @@ public class UserService {
 
     public static User getLoggedUser(){
         return Optional.of((User) SecurityContextHolder.getContext().getAuthentication().getDetails())
-                .orElseThrow(() -> new RuntimeException("User is not logged."));
+                .orElseThrow(UserNotLoggedInException::new);
 
     }
 

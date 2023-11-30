@@ -85,7 +85,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 getAuthorizationByToken(token);
                 filterChain.doFilter(request, response);
-            }catch (JwtException e){
+            } catch (JwtException e) {
                 response.setStatus(FORBIDDEN.value());
             }
         }
@@ -102,12 +102,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
     private void getGoogleTokenAuthorization(GoogleIdTokenVerifier verifier, String oauthToken) throws GeneralSecurityException, IOException {
-        int verifyTries = 0;
-        GoogleIdToken idToken;
-        do {
-            verifyTries++;
-            idToken = verifier.verify(oauthToken);
-        }while (idToken == null || verifyTries <= 5);
+        GoogleIdToken idToken = verifier.verify(oauthToken);
         GoogleIdToken.Payload payload = idToken.getPayload();
         String email = (String) payload.get("email");
         User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
