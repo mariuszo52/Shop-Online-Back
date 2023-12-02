@@ -2,6 +2,8 @@ package com.shoponlineback.login.facebook;
 
 import com.shoponlineback.cart.Cart;
 import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
+import com.shoponlineback.shippingAddress.ShippingAddress;
+import com.shoponlineback.shippingAddress.ShippingAddressRepository;
 import com.shoponlineback.urlConnectionService.UrlConnectionService;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
@@ -12,7 +14,6 @@ import com.shoponlineback.userRole.UserRoleRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,15 +24,17 @@ import java.net.URL;
 @Service
 public class FacebookLoginService {
     private final UserRepository userRepository;
-    private final UserService userService;
+    private final ShippingAddressRepository shippingAddressRepository;
     private final UserRoleRepository userRoleRepository;
     public final static String FB_HEADER_PREFIX = "FB ";
     private static final String APP_ID = "1062927578170362";
     private static final String SECRET_KEY = "b26135e22d86c3734dbe9f63203f5153";
 
-    public FacebookLoginService(UserRepository userRepository, UserService userService, UserRoleRepository userRoleRepository) {
+    public FacebookLoginService(UserRepository userRepository,
+                                ShippingAddressRepository shippingAddressRepository,
+                                UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
-        this.userService = userService;
+        this.shippingAddressRepository = shippingAddressRepository;
         this.userRoleRepository = userRoleRepository;
     }
 
@@ -41,8 +44,9 @@ public class FacebookLoginService {
         boolean tokenIsValid = verifyAccessToken(token);
         boolean userExist = userRepository.existsUserByEmail(facebookLoginDto.getEmail());
         if (tokenIsValid && !userExist) {
+            ShippingAddress shippingAddress = shippingAddressRepository.save(new ShippingAddress());
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
-            UserInfo userInfo = new UserInfo(facebookLoginDto.getFirstName(), facebookLoginDto.getLastName());
+            UserInfo userInfo = new UserInfo(facebookLoginDto.getFirstName(), facebookLoginDto.getLastName(), shippingAddress);
             User user = new User(facebookLoginDto.getUserId(), facebookLoginDto.getEmail(), userRole, userInfo, true, new Cart());
             userRepository.save(user);
         }

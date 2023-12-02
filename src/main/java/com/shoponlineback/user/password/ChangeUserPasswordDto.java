@@ -12,8 +12,12 @@ import lombok.NoArgsConstructor;
 public class ChangeUserPasswordDto {
     @NotNull
     private String oldPassword;
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$",
+            message = "Your password needs to be at least 8 characters long and use 4 different types of character" +
+                    " (Lower Case, Upper Case, Digits, Special Characters).")
     private String newPassword;
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$",
+            message = "Your password needs to be at least 8 characters long and use 4 different types of character" +
+                    " (Lower Case, Upper Case, Digits, Special Characters).")
     private String confirmNewPassword;
 }

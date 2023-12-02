@@ -1,12 +1,14 @@
 package com.shoponlineback.userInfo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.shoponlineback.shippingAddress.ShippingAddress;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.List;
+
+import static jakarta.persistence.CascadeType.*;
 
 @Entity
 @NoArgsConstructor
@@ -23,20 +25,14 @@ public class UserInfo {
     @NotNull
     @Size(min = 2)
     private String lastName;
-    @Size(min = 2)
-    private String address;
-    @Size(min = 2)
-    private String city;
-    @Size(min = 2)
-    private String country;
-    @Size(min = 5, max = 5)
-    private String postalCode;
-    @Size(min = 9, max = 9)
-    private String phoneNumber;
+    @OneToOne(cascade = {PERSIST, REMOVE})
+    private ShippingAddress shippingAddress;
 
-    public UserInfo(String name, String lastName) {
+
+    public UserInfo(String name, String lastName, ShippingAddress shippingAddress) {
         this.name = name;
         this.lastName = lastName;
+        this.shippingAddress = shippingAddress;
     }
 }
 

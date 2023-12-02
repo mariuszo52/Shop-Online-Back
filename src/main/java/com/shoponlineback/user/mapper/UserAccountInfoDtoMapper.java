@@ -10,11 +10,11 @@ public class UserAccountInfoDtoMapper {
                 .email(user.getEmail())
                 .name(user.getUserInfo().getName())
                 .lastName(user.getUserInfo().getLastName())
-                .address(user.getUserInfo().getAddress())
-                .city(user.getUserInfo().getCity())
-                .country(user.getUserInfo().getCountry())
-                .phoneNumber(user.getUserInfo().getPhoneNumber())
-                .postalCode(user.getUserInfo().getPostalCode())
+                .address(user.getUserInfo().getShippingAddress().getAddress())
+                .city(user.getUserInfo().getShippingAddress().getCity())
+                .country(user.getUserInfo().getShippingAddress().getCountry())
+                .phoneNumber(user.getUserInfo().getShippingAddress().getPhoneNumber())
+                .postalCode(user.getUserInfo().getShippingAddress().getPostalCode())
                 .build();
     }
 }

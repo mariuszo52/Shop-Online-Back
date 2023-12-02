@@ -16,7 +16,7 @@ public class UserPasswordController {
         this.userPasswordService = userPasswordService;
     }
 
-    @PostMapping("/")
+    @PatchMapping("")
     public ResponseEntity<?> changeUserPassword(@RequestBody @Valid ChangeUserPasswordDto passwordDto){
         try{
             userPasswordService.changePassword(passwordDto);

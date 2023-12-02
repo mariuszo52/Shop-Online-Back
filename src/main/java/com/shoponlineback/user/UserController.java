@@ -1,10 +1,11 @@
 package com.shoponlineback.user;
 
 import com.shoponlineback.user.dto.UserAccountInfoDto;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.shoponlineback.user.UserService.getLoggedUser;
 
@@ -16,14 +17,24 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @GetMapping("")
-    public ResponseEntity<?> getLoggedUserAccountInfo(){
+    ResponseEntity<?> getLoggedUserAccountInfo() {
         try {
             UserAccountInfoDto loggedUserInfo = userService.getLoggedUserAccountInfo();
             return ResponseEntity.ok(loggedUserInfo);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
 
+    @DeleteMapping("")
+    ResponseEntity<?> deleteAccount(HttpServletRequest request) {
+        try {
+            userService.deleteAccount(request);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

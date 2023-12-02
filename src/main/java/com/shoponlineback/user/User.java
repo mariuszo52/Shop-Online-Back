@@ -6,7 +6,6 @@ import com.shoponlineback.userRole.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.hibernate.annotations.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.*;
 
 @Entity
 @ToString
@@ -35,20 +34,20 @@ public class User implements UserDetails {
     @NotNull
     @Email
     private String email;
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$",
+    message = "Password must contain min 8 characters.(1 lowercase, 1 uppercase, 1 digit, 1 special character.)")
     private String password;
     @NotNull
     @OneToOne
     private UserRole userRole;
     @NotNull
-    @OneToOne
-    @Cascade(PERSIST)
+    @OneToOne(cascade = {PERSIST, REMOVE})
     private UserInfo userInfo;
     @NotNull
     private Boolean isEnabled;
     @Size(min = 40, max = 40)
     private String activationToken;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {PERSIST, REMOVE})
     private Cart cart;
 
     public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled, Cart cart) {

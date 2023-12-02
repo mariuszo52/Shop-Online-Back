@@ -6,6 +6,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.shoponlineback.cart.Cart;
 import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
+import com.shoponlineback.shippingAddress.ShippingAddress;
+import com.shoponlineback.shippingAddress.ShippingAddressRepository;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
 import com.shoponlineback.user.UserService;
@@ -25,11 +27,13 @@ public class GoogleLoginService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final UserService userService;
+    private final ShippingAddressRepository shippingAddressRepository;
 
-    public GoogleLoginService(UserRepository userRepository, UserRoleRepository userRoleRepository, UserService userService) {
+    public GoogleLoginService(UserRepository userRepository, UserRoleRepository userRoleRepository, UserService userService, ShippingAddressRepository shippingAddressRepository) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
         this.userService = userService;
+        this.shippingAddressRepository = shippingAddressRepository;
     }
 
     void googleLogin(HttpServletRequest request) throws GeneralSecurityException, IOException {
@@ -54,7 +58,8 @@ public class GoogleLoginService {
             String name = (String) payload.get("name");
             String givenName = (String) payload.get("given_name");
             String username = userService.generateUsername(email);
-            UserInfo userInfo = new UserInfo(name, givenName);
+            ShippingAddress shippingAddress = shippingAddressRepository.save(new ShippingAddress());
+            UserInfo userInfo = new UserInfo(name, givenName, shippingAddress);
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
             User user = new User(username, email, userRole, userInfo, true, new Cart());
             userRepository.save(user);

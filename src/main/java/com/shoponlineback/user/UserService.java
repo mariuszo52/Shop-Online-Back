@@ -1,10 +1,11 @@
 package com.shoponlineback.user;
 
-import com.shoponlineback.exceptions.user.UserNotFoundException;
 import com.shoponlineback.exceptions.user.UserNotLoggedInException;
 import com.shoponlineback.user.dto.UserAccountInfoDto;
 import com.shoponlineback.user.mapper.UserAccountInfoDtoMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,9 +14,11 @@ import java.util.Random;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public static User getLoggedUser(){
@@ -32,6 +35,19 @@ public class UserService {
             username = username + randomInt;
         }
         return username;
+    }
+    void deleteAccount(HttpServletRequest request){
+        String password = request.getHeader("password");
+        if(password != null) {
+            User loggedUser = getLoggedUser();
+            if (passwordEncoder.matches(password, loggedUser.getPassword())) {
+                userRepository.deleteById(loggedUser.getId());
+            }else {
+                throw new RuntimeException("Wrong password.");
+            }
+        }else {
+            throw new RuntimeException("Empty password.");
+        }
     }
 
      UserAccountInfoDto getLoggedUserAccountInfo() {

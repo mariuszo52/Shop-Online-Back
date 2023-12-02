@@ -32,7 +32,7 @@ public class RegisterController {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (BadRegistrationDataException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (UserRoleNotFoundException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }

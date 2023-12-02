@@ -1,4 +1,5 @@
-insert into user_info (name, last_name) values ('mariusz','ozga');
+insert into shipping_address (address, city, country, postal_code, phone_number) values ('Krakowska 1', 'Cracow', 'Poland', '30003', '123456789');
+insert into user_info (name, last_name, shipping_address_id) values ('mariusz','ozga', 1);
 INSERT INTO user_role (name) values ('ADMIN'), ('USER');
 insert into cart () values ();
 insert into users (username, email, password, user_role_id, user_info_id, is_enabled, cart_id)
