@@ -21,20 +21,20 @@ public class JwtService {
         this.userRepository = userRepository;
     }
 
-    public String generateToken(UserLoginDto userLoginDto) {
-        User user = userRepository.findUserByEmail(userLoginDto.getEmail()).orElseThrow(UserNotFoundException::new);
+    public String generateToken(String email, long accessTimeMinutes, String secret) {
+        User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
         long now = System.currentTimeMillis();
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", userLoginDto.getEmail());
+        claims.put("email", email);
         claims.put("role", user.getUserRole().getName());
 
         return Jwts.builder()
                 .setHeaderParam("alg", "HS512")
-                .setSubject(userLoginDto.getEmail())
+                .setSubject(email)
                 .addClaims(claims)
                 .setIssuedAt(new Date(now))
-                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 15)))
-                .signWith(SignatureAlgorithm.HS512, "secret")
+                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * accessTimeMinutes)))
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
 
 

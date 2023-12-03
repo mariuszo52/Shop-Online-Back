@@ -3,6 +3,7 @@ package com.shoponlineback.login.standard;
 import com.shoponlineback.jwt.JwtService;
 import com.shoponlineback.user.dto.UserLoginDto;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody UserLoginDto userLoginDto){
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto){
         boolean isAuthenticated;
         try{
            isAuthenticated = loginService.authenticateUser(userLoginDto);
@@ -29,8 +30,12 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
         if(isAuthenticated){
-            String token = jwtService.generateToken(userLoginDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(token);
+            String accessToken = jwtService
+                    .generateToken(userLoginDto.getEmail(), 15, "secret");
+            String refreshToken = jwtService
+                    .generateToken(userLoginDto.getEmail(), 60 * 24 * 30, "refresh");
+            LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken);
+            return ResponseEntity.status(HttpStatus.CREATED).body(loginResponseDto);
         }else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bad credentials.");
         }
@@ -53,6 +58,14 @@ public class LoginController {
         } catch (RuntimeException e ) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
+    }
+    @GetMapping("/login/access-token")
+    public ResponseEntity<String> getAccessToken(HttpServletRequest request){
+        try {
+            String accessToken = loginService.generateNewAccessToken(request);
+            return ResponseEntity.ok(accessToken);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

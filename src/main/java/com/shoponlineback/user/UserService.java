@@ -36,7 +36,7 @@ public class UserService {
         }
         return username;
     }
-    void deleteAccount(HttpServletRequest request){
+    void deleteStandardAccount(HttpServletRequest request){
         String password = request.getHeader("password");
         if(password != null) {
             User loggedUser = getLoggedUser();
@@ -48,6 +48,9 @@ public class UserService {
         }else {
             throw new RuntimeException("Empty password.");
         }
+    }
+    void deleteSocialMediaAccount(){
+        userRepository.deleteById(getLoggedUser().getId());
     }
 
      UserAccountInfoDto getLoggedUserAccountInfo() {

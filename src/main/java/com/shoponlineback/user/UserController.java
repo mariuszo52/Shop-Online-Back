@@ -28,10 +28,19 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("")
+    @DeleteMapping("/standard")
     ResponseEntity<?> deleteAccount(HttpServletRequest request) {
         try {
-            userService.deleteAccount(request);
+            userService.deleteStandardAccount(request);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/sm")
+    ResponseEntity<?> deleteSocialMediaAccount() {
+        try {
+            userService.deleteSocialMediaAccount();
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

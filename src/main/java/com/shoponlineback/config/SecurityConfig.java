@@ -31,21 +31,22 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain filterChain (HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspector);
         return http
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfiguration()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(configurer-> configurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .sessionManagement(configurer-> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(configurer -> configurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> request
-                                .requestMatchers(mvc.pattern("/cart/**"), mvc.pattern("/user/**")).authenticated()
+                        .requestMatchers(mvc.pattern("/cart/**"), mvc.pattern("/user/**")).authenticated()
                         .anyRequest().permitAll())
                 .build();
     }
+
     @Bean
-    UrlBasedCorsConfigurationSource corsConfiguration(){
+    UrlBasedCorsConfigurationSource corsConfiguration() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
@@ -58,12 +59,12 @@ public class SecurityConfig {
 
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
-    DaoAuthenticationProvider daoAuthenticationProvider(){
+    DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
