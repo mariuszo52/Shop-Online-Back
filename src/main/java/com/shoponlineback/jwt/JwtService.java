@@ -33,7 +33,7 @@ public class JwtService {
                 .setSubject(email)
                 .addClaims(claims)
                 .setIssuedAt(new Date(now))
-                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * accessTimeMinutes)))
+                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 15 * accessTimeMinutes)))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
 

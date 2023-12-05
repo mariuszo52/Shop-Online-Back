@@ -15,6 +15,7 @@ import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
 import com.shoponlineback.userRole.UserRoleRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,6 +25,8 @@ import java.util.Collections;
 @Service
 public class GoogleLoginService {
     public final static String GOOGLE_HEADER_PREFIX = "GOOGLE ";
+    @Value("${GOOGLE_CLIENT_ID")
+    private String googleClientId;
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final UserService userService;
@@ -39,9 +42,8 @@ public class GoogleLoginService {
     void googleLogin(HttpServletRequest request) throws GeneralSecurityException, IOException {
         String authorization = request.getHeader("Authorization");
         String token = authorization.substring(GOOGLE_HEADER_PREFIX.length());
-        final String clientId = "985874330130-mjutgkgsi961lgafhbkghnc4id8coa0r.apps.googleusercontent.com";
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-                .setAudience(Collections.singleton(clientId)).build();
+                .setAudience(Collections.singleton(googleClientId)).build();
         GoogleIdToken idToken = verifier.verify(token);
         if (idToken != null) {
             GoogleIdToken.Payload payload = idToken.getPayload();

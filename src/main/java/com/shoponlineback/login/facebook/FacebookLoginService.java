@@ -14,6 +14,7 @@ import com.shoponlineback.userRole.UserRoleRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,8 +28,10 @@ public class FacebookLoginService {
     private final ShippingAddressRepository shippingAddressRepository;
     private final UserRoleRepository userRoleRepository;
     public final static String FB_HEADER_PREFIX = "FB ";
-    private static final String APP_ID = "1062927578170362";
-    private static final String SECRET_KEY = "b26135e22d86c3734dbe9f63203f5153";
+    @Value("${FACEBOOK_APP_ID}")
+    private static String facebookAppId;
+    @Value("${FACEBOOK_SECRET_KEY")
+    private static String facebookSecretKey;
 
     public FacebookLoginService(UserRepository userRepository,
                                 ShippingAddressRepository shippingAddressRepository,
@@ -59,7 +62,7 @@ public class FacebookLoginService {
                     .setHost("graph.facebook.com")
                     .setPath("/debug_token")
                     .setParameter("access_token", token)
-                    .addParameter("input_token", APP_ID + "|" + SECRET_KEY)
+                    .addParameter("input_token", facebookAppId + "|" + facebookSecretKey)
                     .build().toURL();
             JSONObject jsonObject = getVerificationObject(url);
             return jsonObject.optJSONObject("data").optBoolean("is_valid", false);

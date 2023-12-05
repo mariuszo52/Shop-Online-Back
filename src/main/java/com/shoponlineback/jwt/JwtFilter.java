@@ -20,6 +20,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,13 +44,17 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 public class JwtFilter extends OncePerRequestFilter {
     private final static String AUTHORIZATION_HEADER = "Authorization";
     private final UserRepository userRepository;
+    @Value("${JWT_SECRET")
+    private String accessTokenSecret;
+    @Value("${GOOGLE_CLIENT_ID")
+    private String googleClientId;
 
     public JwtFilter(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         return notFilterPaths(request);
     }
 
@@ -63,9 +68,8 @@ public class JwtFilter extends OncePerRequestFilter {
             response.setStatus(FORBIDDEN.value());
         } else if (authorizationHeader.startsWith(GOOGLE_HEADER_PREFIX)) {
             String oauthToken = authorizationHeader.substring(GOOGLE_HEADER_PREFIX.length());
-            final String clientId = "985874330130-mjutgkgsi961lgafhbkghnc4id8coa0r.apps.googleusercontent.com";
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-                    .setAudience(Collections.singleton(clientId)).build();
+                    .setAudience(Collections.singleton(googleClientId)).build();
             try {
                 getGoogleTokenAuthorization(verifier, oauthToken);
                 filterChain.doFilter(request, response);
@@ -114,7 +118,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private void getAuthorizationByToken(String token) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(token);
+        Jws<Claims> claims = Jwts.parser().setSigningKey(accessTokenSecret).parseClaimsJws(token);
         String email = claims.getBody().get("email", String.class);
         String role = claims.getBody().get("role", String.class);
         User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);

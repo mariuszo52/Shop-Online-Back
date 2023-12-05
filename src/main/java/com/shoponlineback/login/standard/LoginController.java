@@ -6,6 +6,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
     private final LoginService loginService;
     private final JwtService jwtService;
+    @Value("${JWT_SECRET")
+    private String accessTokenSecret;
+    @Value("${REFRESH_TOKEN_SECRET")
+    private String refreshTokenSecret;
 
     public LoginController(LoginService loginService, JwtService jwtService) {
         this.loginService = loginService;
@@ -31,9 +36,9 @@ public class LoginController {
         }
         if(isAuthenticated){
             String accessToken = jwtService
-                    .generateToken(userLoginDto.getEmail(), 15, "secret");
+                    .generateToken(userLoginDto.getEmail(), 15, accessTokenSecret );
             String refreshToken = jwtService
-                    .generateToken(userLoginDto.getEmail(), 60 * 24 * 30, "refresh");
+                    .generateToken(userLoginDto.getEmail(), 60 * 24 * 30, refreshTokenSecret);
             LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken);
             return ResponseEntity.status(HttpStatus.CREATED).body(loginResponseDto);
         }else {
