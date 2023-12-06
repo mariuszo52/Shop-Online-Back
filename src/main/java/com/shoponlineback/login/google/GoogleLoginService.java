@@ -25,7 +25,7 @@ import java.util.Collections;
 @Service
 public class GoogleLoginService {
     public final static String GOOGLE_HEADER_PREFIX = "GOOGLE ";
-    @Value("${GOOGLE_CLIENT_ID")
+    @Value("${GOOGLE_CLIENT_ID}")
     private String googleClientId;
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;

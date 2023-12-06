@@ -29,9 +29,9 @@ public class FacebookLoginService {
     private final UserRoleRepository userRoleRepository;
     public final static String FB_HEADER_PREFIX = "FB ";
     @Value("${FACEBOOK_APP_ID}")
-    private static String facebookAppId;
-    @Value("${FACEBOOK_SECRET_KEY")
-    private static String facebookSecretKey;
+    private String facebookAppId;
+    @Value("${FACEBOOK_SECRET_KEY}")
+    private String facebookSecretKey;
 
     public FacebookLoginService(UserRepository userRepository,
                                 ShippingAddressRepository shippingAddressRepository,
@@ -58,7 +58,7 @@ public class FacebookLoginService {
         }
     }
 
-    public static boolean verifyAccessToken(String token) {
+    public boolean verifyAccessToken(String token) {
         try {
             URL url = new URIBuilder()
                     .setScheme("https")

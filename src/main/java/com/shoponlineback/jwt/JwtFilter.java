@@ -5,10 +5,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.shoponlineback.exceptions.user.UserNotFoundException;
-import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
 import com.shoponlineback.login.facebook.FacebookLoginService;
-import com.shoponlineback.login.google.GoogleLoginService;
-import com.shoponlineback.login.standard.LoginService;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -22,7 +19,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,13 +40,15 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 public class JwtFilter extends OncePerRequestFilter {
     private final static String AUTHORIZATION_HEADER = "Authorization";
     private final UserRepository userRepository;
+    private final FacebookLoginService facebookLoginService;
     @Value("${JWT_SECRET")
     private String accessTokenSecret;
     @Value("${GOOGLE_CLIENT_ID")
     private String googleClientId;
 
-    public JwtFilter(UserRepository userRepository) {
+    public JwtFilter(UserRepository userRepository, FacebookLoginService facebookLoginService) {
         this.userRepository = userRepository;
+        this.facebookLoginService = facebookLoginService;
     }
 
     @Override
@@ -78,7 +76,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } else if (authorizationHeader.startsWith(FB_HEADER_PREFIX)) {
             String oauthToken = authorizationHeader.substring(FB_HEADER_PREFIX.length());
-            boolean tokenValid = verifyAccessToken(oauthToken);
+            boolean tokenValid = facebookLoginService.verifyAccessToken(oauthToken);
             if (tokenValid) {
                 String facebookUserId = getFacebookUserId(oauthToken);
                 authenticateUser(facebookUserId);
