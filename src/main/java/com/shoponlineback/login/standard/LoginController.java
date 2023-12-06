@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
     private final LoginService loginService;
     private final JwtService jwtService;
-    @Value("${JWT_SECRET")
+    @Value("${JWT_ACCESS_SECRET}")
     private String accessTokenSecret;
-    @Value("${REFRESH_TOKEN_SECRET")
+    @Value("${REFRESH_TOKEN_SECRET}")
     private String refreshTokenSecret;
 
     public LoginController(LoginService loginService, JwtService jwtService) {

@@ -41,9 +41,9 @@ public class JwtFilter extends OncePerRequestFilter {
     private final static String AUTHORIZATION_HEADER = "Authorization";
     private final UserRepository userRepository;
     private final FacebookLoginService facebookLoginService;
-    @Value("${JWT_SECRET")
+    @Value("${JWT_ACCESS_SECRET}")
     private String accessTokenSecret;
-    @Value("${GOOGLE_CLIENT_ID")
+    @Value("${GOOGLE_CLIENT_ID}")
     private String googleClientId;
 
     public JwtFilter(UserRepository userRepository, FacebookLoginService facebookLoginService) {
