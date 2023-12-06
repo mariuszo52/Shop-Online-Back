@@ -38,6 +38,9 @@ public class GoogleLoginService {
         this.userService = userService;
         this.shippingAddressRepository = shippingAddressRepository;
     }
+    public String getClientId() {
+        return googleClientId;
+    }
 
     void googleLogin(HttpServletRequest request) throws GeneralSecurityException, IOException {
         String authorization = request.getHeader("Authorization");
@@ -67,6 +70,7 @@ public class GoogleLoginService {
             userRepository.save(user);
         }
     }
+
 
 
 }

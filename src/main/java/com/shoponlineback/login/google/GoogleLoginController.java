@@ -19,6 +19,12 @@ public class GoogleLoginController {
         this.googleLoginService = googleLoginService;
     }
 
+    @GetMapping("/client-id")
+    public ResponseEntity<String> getClientId() {
+        String clientId = googleLoginService.getClientId();
+        return ResponseEntity.ok(clientId);
+    }
+
     @GetMapping()
     public ResponseEntity<String> googleLogin(HttpServletRequest request) {
         try {

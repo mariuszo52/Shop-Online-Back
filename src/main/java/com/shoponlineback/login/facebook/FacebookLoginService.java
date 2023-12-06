@@ -40,6 +40,9 @@ public class FacebookLoginService {
         this.shippingAddressRepository = shippingAddressRepository;
         this.userRoleRepository = userRoleRepository;
     }
+    public String getAppId() {
+        return facebookAppId;
+    }
 
     void facebookLogin(FacebookLoginDto facebookLoginDto, HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
@@ -90,6 +93,7 @@ public class FacebookLoginService {
         return UrlConnectionService.getConnectionResponse(urlConnection)
                 .orElseThrow(() -> new RuntimeException("Error during verify access token."));
     }
+
 
 
 }

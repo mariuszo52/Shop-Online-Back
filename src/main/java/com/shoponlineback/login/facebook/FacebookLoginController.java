@@ -14,6 +14,11 @@ public class FacebookLoginController {
     public FacebookLoginController(FacebookLoginService facebookLoginService) {
         this.facebookLoginService = facebookLoginService;
     }
+    @GetMapping("/app-id")
+    public ResponseEntity<String> getAppId(){
+        String appId = facebookLoginService.getAppId();
+        return ResponseEntity.ok(appId);
+    }
 
     @PostMapping()
     public ResponseEntity<String> facebookLogin(@RequestBody FacebookLoginDto facebookLoginDto, HttpServletRequest request)  {
