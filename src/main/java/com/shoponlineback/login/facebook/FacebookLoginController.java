@@ -16,9 +16,7 @@ public class FacebookLoginController {
     }
     @GetMapping("/app-id")
     public ResponseEntity<String> getAppId(){
-        String appId = facebookLoginService.getAppId();
-        System.out.println(appId);
-        return ResponseEntity.ok(appId);
+        return ResponseEntity.ok(facebookLoginService.getAppId());
     }
 
     @PostMapping()

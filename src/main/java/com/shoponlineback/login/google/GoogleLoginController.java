@@ -21,9 +21,7 @@ public class GoogleLoginController {
 
     @GetMapping("/client-id")
     public ResponseEntity<String> getClientId() {
-        String clientId = googleLoginService.getClientId();
-        System.out.println(clientId);
-        return ResponseEntity.ok(clientId);
+        return ResponseEntity.ok(googleLoginService.getClientId());
     }
 
     @GetMapping()

@@ -44,6 +44,12 @@ public class CartController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PutMapping("/cart")
+    ResponseEntity<?> updateAllCart(@RequestBody List<ProductDto> cart){
+        cartService.updateAllCart(cart);
+        return ResponseEntity.ok(cart);
+
+    }
     @DeleteMapping("/cart")
     ResponseEntity<String> clearCart(){
         try{

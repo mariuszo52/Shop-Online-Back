@@ -21,20 +21,24 @@ public class CartService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final CartProductRepository cartProductRepository;
+    private final ProductDtoMapper productDtoMapper;
 
-    public CartService(CartRepository cartRepository, ProductRepository productRepository, CartProductRepository cartProductRepository) {
+    public CartService(CartRepository cartRepository, ProductRepository productRepository,
+                       CartProductRepository cartProductRepository, ProductDtoMapper productDtoMapper) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
         this.cartProductRepository = cartProductRepository;
+        this.productDtoMapper = productDtoMapper;
     }
+
     public void addProductToCart(ProductDto productDto) {
         User loggedUser = getLoggedUser();
         Cart cart = loggedUser.getCart();
         Product product = productRepository.findById(productDto.getId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        if(cartProductRepository.existsByCart_IdAndProduct_Id(cart.getId(), productDto.getId())){
+        if (cartProductRepository.existsByCart_IdAndProduct_Id(cart.getId(), productDto.getId())) {
             throw new RuntimeException("Product is already in a cart.");
-        }else {
+        } else {
             CartProduct cartProduct = new CartProduct(cart, product, 1);
             cartProductRepository.save(cartProduct);
         }
@@ -44,13 +48,13 @@ public class CartService {
         List<CartProduct> cartProducts = cartProductRepository.findCartProductByCart_id(getLoggedUser().getCart().getId());
         return cartProducts.stream()
                 .map(cartProduct -> {
-                    cartProduct.getProduct().setCartQuantity((long)cartProduct.getQuantity());
+                    cartProduct.getProduct().setCartQuantity((long) cartProduct.getQuantity());
                     return ProductDtoMapper.map(cartProduct.getProduct());
                 })
                 .collect(Collectors.toList());
     }
 
-    void updateProductQuantity(ProductDto productDto){
+    void updateProductQuantity(ProductDto productDto) {
         Cart cart = cartRepository.findById(getLoggedUser().getCart().getId())
                 .orElseThrow(() -> new RuntimeException("Cart not found."));
         CartProduct cartProduct = cartProductRepository.findByCart_IdAndProduct_Id(cart.getId(), productDto.getId())
@@ -59,12 +63,28 @@ public class CartService {
         cartProductRepository.save(cartProduct);
 
     }
+
     @Transactional
     public void clearCart() {
         cartProductRepository.deleteAllByCart_Id(getLoggedUser().getId());
     }
+
     @Transactional
-    public void removeProductFromCart(long id){
+    public void removeProductFromCart(long id) {
         cartProductRepository.deleteCartProductByCartIdAndProduct_id(getLoggedUser().getCart().getId(), id);
     }
+
+
+    public void updateAllCart(List<ProductDto> cart) {
+        Cart loggedUserCart = getLoggedUser().getCart();
+        List<Product> newCartProducts = cart.stream()
+                .map(productDto -> productRepository.findById(productDto.getId()).orElseThrow())
+                .toList();
+        Cart newCart = new Cart(loggedUserCart.getId(), newCartProducts);
+        cart.forEach(productDto ->{
+            Product product = productRepository.findById(productDto.getId()).orElseThrow(RuntimeException::new);
+            CartProduct cartProduct = new CartProduct(newCart, product, Math.toIntExact(productDto.getCartQuantity()));
+            cartProductRepository.save(cartProduct);
+        });
+}
 }
