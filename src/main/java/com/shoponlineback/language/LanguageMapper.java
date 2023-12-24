@@ -6,11 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class LanguageMapper {
-    private final LanguageRepository languageRepository;
-
-    public LanguageMapper(LanguageRepository languageRepository) {
-        this.languageRepository = languageRepository;
-    }
 
     public static LanguageDto map(Language language) {
         LanguageDto languageDto = new LanguageDto();

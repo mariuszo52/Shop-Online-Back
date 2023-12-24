@@ -54,7 +54,8 @@ public class Product {
     @ManyToMany(mappedBy = "products",
             fetch = FetchType.EAGER)
     private List<Language> languages;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    @OneToMany(fetch = FetchType.EAGER,
+            mappedBy = "product")
     private List<Video> videos;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     List<Screenshot> screenshots;

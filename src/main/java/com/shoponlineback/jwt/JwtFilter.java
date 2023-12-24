@@ -69,7 +69,7 @@ public class JwtFilter extends OncePerRequestFilter {
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                     .setAudience(Collections.singleton(googleClientId)).build();
             try {
-                getGoogleTokenAuthorization(verifier, oauthToken);
+                getGoogleTokenAuthorization(response, verifier, oauthToken);
                 filterChain.doFilter(request, response);
             } catch (ConnectException | GeneralSecurityException e) {
                 response.setStatus(FORBIDDEN.value());
@@ -103,16 +103,22 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
 
-    private void getGoogleTokenAuthorization(GoogleIdTokenVerifier verifier, String oauthToken) throws GeneralSecurityException, IOException {
+    private void getGoogleTokenAuthorization(HttpServletResponse response,
+                                             GoogleIdTokenVerifier verifier,
+                                             String oauthToken) throws GeneralSecurityException, IOException {
         GoogleIdToken idToken = verifier.verify(oauthToken);
-        GoogleIdToken.Payload payload = idToken.getPayload();
-        String email = (String) payload.get("email");
-        User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(email, null,
-                        List.of(new SimpleGrantedAuthority(user.getUserRole().getName())));
-        authentication.setDetails(user);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (idToken == null) {
+            response.setStatus(403);
+        } else {
+            GoogleIdToken.Payload payload = idToken.getPayload();
+            String email = (String) payload.get("email");
+            User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(email, null,
+                            List.of(new SimpleGrantedAuthority(user.getUserRole().getName())));
+            authentication.setDetails(user);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
     }
 
     private void getAuthorizationByToken(String token) {

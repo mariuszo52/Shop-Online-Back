@@ -74,17 +74,22 @@ public class CartService {
         cartProductRepository.deleteCartProductByCartIdAndProduct_id(getLoggedUser().getCart().getId(), id);
     }
 
-
-    public void updateAllCart(List<ProductDto> cart) {
+    @Transactional
+    public void updateAllCart(List<ProductDto> cartProductsDto) {
+        List<Product> cartProducts = cartProductsDto.stream()
+                .map(productDto ->{
+                    Product product = productRepository.findById(productDto.getId()).orElseThrow();
+                    product.setCartQuantity(productDto.getCartQuantity());
+                    return product;
+                }).toList();
         Cart loggedUserCart = getLoggedUser().getCart();
-        List<Product> newCartProducts = cart.stream()
-                .map(productDto -> productRepository.findById(productDto.getId()).orElseThrow())
-                .toList();
-        Cart newCart = new Cart(loggedUserCart.getId(), newCartProducts);
-        cart.forEach(productDto ->{
-            Product product = productRepository.findById(productDto.getId()).orElseThrow(RuntimeException::new);
-            CartProduct cartProduct = new CartProduct(newCart, product, Math.toIntExact(productDto.getCartQuantity()));
-            cartProductRepository.save(cartProduct);
+        cartProductRepository.deleteAllByCart_Id(loggedUserCart.getId());
+        cartProducts.forEach(cartProduct -> {
+            Product product = productRepository.findById(cartProduct.getId()).orElseThrow();
+            CartProduct cartProductToSave = new CartProduct(new Cart(loggedUserCart.getId(), cartProducts),
+                    product, Math.toIntExact(cartProduct.getCartQuantity()));
+            cartProductRepository.save(cartProductToSave);
+
         });
 }
 }

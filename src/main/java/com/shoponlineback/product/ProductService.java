@@ -1,8 +1,13 @@
 package com.shoponlineback.product;
 
+import com.shoponlineback.language.Language;
+import com.shoponlineback.language.LanguageDto;
+import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.product.mapper.JsonObjectToProductMapper;
 import com.shoponlineback.product.mapper.ProductDtoMapper;
+import com.shoponlineback.productLanguage.ProductLanguage;
+import com.shoponlineback.productLanguage.ProductLanguageRepository;
 import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.screenshot.ScreenshotRepository;
 import com.shoponlineback.urlConnectionService.UrlConnectionService;
@@ -19,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -32,16 +36,24 @@ public class ProductService {
     private final VideoRepository videoRepository;
     private final ScreenshotRepository screenshotRepository;
     private final JsonObjectToProductMapper jsonObjectToProductMapper;
+    private final LanguageRepository languageRepository;
+    private final ProductLanguageRepository productLanguageRepository;
     private final static int REGION_EUROPE = 1;
     private final static int REGION_FREE = 3;
 
-    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository, ProductPagingRepository productPagingRepository, VideoRepository videoRepository, ScreenshotRepository screenshotRepository, JsonObjectToProductMapper jsonObjectToProductMapper) {
+    public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository,
+                          ProductPagingRepository productPagingRepository, VideoRepository videoRepository,
+                          ScreenshotRepository screenshotRepository,
+                          JsonObjectToProductMapper jsonObjectToProductMapper,
+                          LanguageRepository languageRepository, ProductLanguageRepository productLanguageRepository) {
         this.productDtoMapper = productDtoMapper;
         this.productRepository = productRepository;
         this.productPagingRepository = productPagingRepository;
         this.videoRepository = videoRepository;
         this.screenshotRepository = screenshotRepository;
         this.jsonObjectToProductMapper = jsonObjectToProductMapper;
+        this.languageRepository = languageRepository;
+        this.productLanguageRepository = productLanguageRepository;
     }
 
    ProductDto getProductById(long id){
@@ -64,14 +76,23 @@ public class ProductService {
         }
    }
 
-
-    private void saveProductsListPage(int page) throws IOException {
+    @Transactional
+    public void saveProductsListPage(int page) throws IOException {
         JSONArray responseJSONArray = createJsonArrayFromResponse(page);
         for (int i = 0; i < responseJSONArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) responseJSONArray.get(i);
             ProductDto productDto = jsonObjectToProductMapper.map(jsonObject);
+            List<String> languagesNames = productDto.getLanguages().stream()
+                    .map(LanguageDto::getName)
+                    .toList();
+            List<Language> languages = languageRepository.findAllByNameIn(languagesNames);
             Product product = productDtoMapper.map(productDto);
             Product productEntity = productRepository.save(product);
+            languages.forEach(language -> {
+                ProductLanguage productLanguage = new ProductLanguage(product, language);
+                productLanguageRepository.save(productLanguage);
+            });
+
             List<Video> videos = jsonObjectToProductMapper.getVideos(jsonObject);
             videos.forEach(video -> {
                 video.setProduct(productEntity);

@@ -17,14 +17,19 @@ public class LanguageController {
     public LanguageController(LanguageService languageService) {
         this.languageService = languageService;
     }
+
     @GetMapping("language/all")
-    ResponseEntity<List<String>> getAllLanguagesNames(){
-       return ResponseEntity.ok(languageService.getAllLanguagesNames());
+    ResponseEntity<List<String>> getAllLanguagesNames() {
+        return ResponseEntity.ok(languageService.getAllLanguagesNames());
     }
 
     @GetMapping("/language")
-    List<LanguageDto> getLanguageById(@RequestParam Long id){
-        System.out.println("context" + SecurityContextHolder.getContext().getAuthentication().getDetails());
-       return languageService.getProductsLanguages(id);
+    ResponseEntity<List<LanguageDto>> getLanguageById(@RequestParam Long id) {
+        try {
+            List<LanguageDto> productsLanguages = languageService.getProductsLanguages(id);
+            return ResponseEntity.ok(productsLanguages);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

@@ -1,12 +1,12 @@
 package com.shoponlineback.user.mapper;
 
 import com.shoponlineback.user.User;
-import com.shoponlineback.user.dto.UserAccountInfoDto;
+import com.shoponlineback.user.dto.UserShippingInfoDto;
 
 public class UserAccountInfoDtoMapper {
 
-    public static UserAccountInfoDto map(User user){
-        return UserAccountInfoDto.builder()
+    public static UserShippingInfoDto map(User user){
+        return UserShippingInfoDto.builder()
                 .email(user.getEmail())
                 .name(user.getUserInfo().getName())
                 .lastName(user.getUserInfo().getLastName())

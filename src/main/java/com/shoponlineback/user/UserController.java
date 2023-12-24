@@ -1,13 +1,10 @@
 package com.shoponlineback.user;
 
-import com.shoponlineback.user.dto.UserAccountInfoDto;
+import com.shoponlineback.user.dto.UserShippingInfoDto;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static com.shoponlineback.user.UserService.getLoggedUser;
 
 @RestController
 @RequestMapping("/user")
@@ -21,7 +18,7 @@ public class UserController {
     @GetMapping("")
     ResponseEntity<?> getLoggedUserAccountInfo() {
         try {
-            UserAccountInfoDto loggedUserInfo = userService.getLoggedUserAccountInfo();
+            UserShippingInfoDto loggedUserInfo = userService.getLoggedUserAccountInfo();
             return ResponseEntity.ok(loggedUserInfo);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

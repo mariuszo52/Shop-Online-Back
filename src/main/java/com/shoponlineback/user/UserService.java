@@ -1,7 +1,7 @@
 package com.shoponlineback.user;
 
 import com.shoponlineback.exceptions.user.UserNotLoggedInException;
-import com.shoponlineback.user.dto.UserAccountInfoDto;
+import com.shoponlineback.user.dto.UserShippingInfoDto;
 import com.shoponlineback.user.mapper.UserAccountInfoDtoMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,7 +53,7 @@ public class UserService {
         userRepository.deleteById(getLoggedUser().getId());
     }
 
-     UserAccountInfoDto getLoggedUserAccountInfo() {
+     UserShippingInfoDto getLoggedUserAccountInfo() {
          return UserAccountInfoDtoMapper.map(getLoggedUser());
 
      }

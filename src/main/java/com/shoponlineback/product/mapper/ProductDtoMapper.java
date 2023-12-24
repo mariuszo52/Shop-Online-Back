@@ -64,17 +64,12 @@ public class ProductDtoMapper {
         List<Genre> genres = genreRepository.findByNameIn(genresNames);
         Platform platform = platformRepository.findByName(productDto.getPlatformDto().getName())
                 .orElse(PlatformDtoMapper.map(productDto.getPlatformDto()));
-        List<String> languagesNames = productDto.getLanguages().stream()
-                .map(LanguageDto::getName)
-                .toList();
-        List<Language> languages = languageRepository.findAllByNameIn(languagesNames);
 
         return Product.builder()
                 .activationDetails(productDto.getActivationDetails())
                 .isPolishVersion(productDto.getIsPolishVersion())
                 .regionId(productDto.getRegionId())
                 .isPreorder(productDto.getIsPreorder())
-                .languages(languages)
                 .systemRequirements(new SystemRequirements(productDto.getSystem(), productDto.getSystemRequirements()))
                 .ageRating(productDto.getAgeRating())
                 .releaseDate(productDto.getReleaseDate())
