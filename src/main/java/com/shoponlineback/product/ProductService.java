@@ -1,11 +1,16 @@
 package com.shoponlineback.product;
 
+import com.shoponlineback.genre.Genre;
+import com.shoponlineback.genre.GenreDto;
+import com.shoponlineback.genre.GenreRepository;
 import com.shoponlineback.language.Language;
 import com.shoponlineback.language.LanguageDto;
 import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.product.mapper.JsonObjectToProductMapper;
 import com.shoponlineback.product.mapper.ProductDtoMapper;
+import com.shoponlineback.productGenres.ProductGenres;
+import com.shoponlineback.productGenres.ProductGenresRepository;
 import com.shoponlineback.productLanguage.ProductLanguage;
 import com.shoponlineback.productLanguage.ProductLanguageRepository;
 import com.shoponlineback.screenshot.Screenshot;
@@ -38,6 +43,8 @@ public class ProductService {
     private final JsonObjectToProductMapper jsonObjectToProductMapper;
     private final LanguageRepository languageRepository;
     private final ProductLanguageRepository productLanguageRepository;
+    private final GenreRepository genreRepository;
+    private final ProductGenresRepository productGenresRepository;
     private final static int REGION_EUROPE = 1;
     private final static int REGION_FREE = 3;
 
@@ -45,7 +52,7 @@ public class ProductService {
                           ProductPagingRepository productPagingRepository, VideoRepository videoRepository,
                           ScreenshotRepository screenshotRepository,
                           JsonObjectToProductMapper jsonObjectToProductMapper,
-                          LanguageRepository languageRepository, ProductLanguageRepository productLanguageRepository) {
+                          LanguageRepository languageRepository, ProductLanguageRepository productLanguageRepository, GenreRepository genreRepository, ProductGenresRepository productGenresRepository) {
         this.productDtoMapper = productDtoMapper;
         this.productRepository = productRepository;
         this.productPagingRepository = productPagingRepository;
@@ -54,6 +61,8 @@ public class ProductService {
         this.jsonObjectToProductMapper = jsonObjectToProductMapper;
         this.languageRepository = languageRepository;
         this.productLanguageRepository = productLanguageRepository;
+        this.genreRepository = genreRepository;
+        this.productGenresRepository = productGenresRepository;
     }
 
    ProductDto getProductById(long id){
@@ -92,7 +101,12 @@ public class ProductService {
                 ProductLanguage productLanguage = new ProductLanguage(product, language);
                 productLanguageRepository.save(productLanguage);
             });
-
+            List<String> genresNames = productDto.getGenres().stream()
+                    .map(GenreDto::getName)
+                    .toList();
+            genreRepository.findByNameIn(genresNames).forEach(genre -> {
+                productGenresRepository.save(new ProductGenres(product, genre));
+            });
             List<Video> videos = jsonObjectToProductMapper.getVideos(jsonObject);
             videos.forEach(video -> {
                 video.setProduct(productEntity);

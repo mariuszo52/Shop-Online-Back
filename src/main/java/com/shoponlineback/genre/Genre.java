@@ -25,4 +25,7 @@ public class Genre {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Product> products;
 
+    public Genre(String name) {
+        this.name = name;
+    }
 }

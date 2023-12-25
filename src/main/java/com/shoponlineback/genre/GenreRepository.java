@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface GenreRepository extends CrudRepository<Genre, Long> {
     List<Genre> findByNameIn(List<String> names);
+    Optional<Genre> findGenreByName(String name);
 }
