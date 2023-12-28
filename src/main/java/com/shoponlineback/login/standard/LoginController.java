@@ -1,5 +1,6 @@
 package com.shoponlineback.login.standard;
 
+import com.shoponlineback.exceptions.AccountDisabledException;
 import com.shoponlineback.jwt.JwtService;
 import com.shoponlineback.user.dto.UserLoginDto;
 import jakarta.mail.MessagingException;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.security.auth.login.AccountLockedException;
 
 @CrossOrigin
 @RestController
@@ -31,7 +34,11 @@ public class LoginController {
         boolean isAuthenticated;
         try{
            isAuthenticated = loginService.authenticateUser(userLoginDto);
-        }catch (RuntimeException e){
+
+        }catch (AccountDisabledException e){
+            return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
+        }
+        catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
         if(isAuthenticated){

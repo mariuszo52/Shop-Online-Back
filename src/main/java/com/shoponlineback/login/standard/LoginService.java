@@ -1,6 +1,7 @@
 package com.shoponlineback.login.standard;
 
 import com.shoponlineback.email.EmailService;
+import com.shoponlineback.exceptions.AccountDisabledException;
 import com.shoponlineback.exceptions.user.UserNotFoundException;
 import com.shoponlineback.jwt.JwtService;
 import com.shoponlineback.register.RegisterService;
@@ -17,6 +18,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.security.auth.login.AccountLockedException;
 
 @Service
 public class LoginService {
@@ -37,9 +40,12 @@ public class LoginService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean authenticateUser(UserLoginDto userLoginDto) {
+    public boolean authenticateUser(UserLoginDto userLoginDto){
         User user = userRepository.findUserByEmail(userLoginDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found."));
+        if(!user.getIsEnabled()){
+            throw new AccountDisabledException();
+        }
         if (user.getPassword() != null) {
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                     new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword());
