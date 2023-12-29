@@ -1,5 +1,6 @@
 package com.shoponlineback.product;
 
+import com.shoponlineback.order.Order;
 import com.shoponlineback.cart.Cart;
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.language.Language;
@@ -62,4 +63,6 @@ public class Product {
     private Long cartQuantity;
     @ManyToMany(mappedBy = "productList")
     List<Cart> carts;
+    @ManyToMany(mappedBy = "productList")
+    List<Order> orderList;
 }

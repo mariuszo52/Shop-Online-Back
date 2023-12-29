@@ -1,0 +1,29 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
+<changeSet id="0017" author="Mariusz">
+    <createTable tableName="orders">
+        <column name="id" type="BIGINT" autoIncrement="true">
+            <constraints nullable="false" unique="true" primaryKey="true"/>
+        </column>
+        <column name="user_id" type="BIGINT">
+            <constraints foreignKeyName="fk_user_7"
+                         referencedTableName="users"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="shipping_address_id" type="BIGINT">
+            <constraints foreignKeyName="fk_shipping_address_2"
+                         referencedTableName="shipping_address"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="payment_method" type="VARCHAR(50)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="total_price" type="DECIMAL(10,2)">
+            <constraints nullable="false"/>
+        </column>
+    </createTable>
+</changeSet>
+</databaseChangeLog>
