@@ -5,9 +5,7 @@ import com.shoponlineback.product.Product;
 import com.shoponlineback.shippingAddress.ShippingAddress;
 import com.shoponlineback.user.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,7 +13,8 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
-@Setter
+@AllArgsConstructor
+@Builder
 @Table(name = "orders")
 public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +22,7 @@ public class Order {
     private Long id;
     @OneToOne
     private User user;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     private ShippingAddress shippingAddress;
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;

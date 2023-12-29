@@ -18,6 +18,9 @@
                          referencedTableName="product"
                          referencedColumnNames="id"/>
         </column>
+        <column name="quantity" type="INTEGER">
+            <constraints nullable="false"/>
+        </column>
     </createTable>
 </changeSet>
 </databaseChangeLog>

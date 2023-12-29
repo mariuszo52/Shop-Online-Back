@@ -28,4 +28,12 @@ public class ShippingAddress {
     private String postalCode;
     @Size(min = 9, max = 9)
     private String phoneNumber;
+
+    public ShippingAddress(String address, String city, String country, String postalCode, String phoneNumber) {
+        this.address = address;
+        this.city = city;
+        this.country = country;
+        this.postalCode = postalCode;
+        this.phoneNumber = phoneNumber;
+    }
 }

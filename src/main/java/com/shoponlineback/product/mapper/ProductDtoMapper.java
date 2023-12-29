@@ -66,6 +66,7 @@ public class ProductDtoMapper {
                 .orElse(PlatformDtoMapper.map(productDto.getPlatformDto()));
 
         return Product.builder()
+                .id(productDto.getId())
                 .activationDetails(productDto.getActivationDetails())
                 .isPolishVersion(productDto.getIsPolishVersion())
                 .regionId(productDto.getRegionId())
