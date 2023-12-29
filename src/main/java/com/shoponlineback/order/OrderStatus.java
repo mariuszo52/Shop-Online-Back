@@ -1,0 +1,15 @@
+package com.shoponlineback.order;
+
+public enum OrderStatus {
+    ORDER_RECEIVED,
+    PAYMENT_CONFIRMATION,
+    ORDER_PROCESSING,
+    ORDER_SHIPPED,
+    OUT_FOR_DELIVERY,
+    DELIVERED,
+    ORDER_UPDATE,
+    CANCELLATION_CONFIRMATION,
+    RETURN_INITIATED,
+    REFUND_PROCESSED;
+}
+

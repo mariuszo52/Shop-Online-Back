@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "orders")
+@Setter
 public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -32,4 +33,6 @@ public class Order {
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> productList;
     private BigDecimal totalPrice;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 }

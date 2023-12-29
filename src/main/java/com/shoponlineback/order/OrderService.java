@@ -22,7 +22,9 @@ public class OrderService {
     }
 
     public Order saveOrder(OrderDto orderDto) {
-        Order order = orderRepository.save(orderDtoMapper.map(orderDto));
+        Order order = orderDtoMapper.map(orderDto);
+        order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+        Order orderEntity = orderRepository.save(order);
         orderDto.getProductList().forEach(productDto -> {
             Product product = productRepository.findById(productDto.getId()).orElseThrow(ProductNotFoundException::new);
             orderProductRepository.save(new OrderProduct(order, product, Math.toIntExact(productDto.getCartQuantity())));
