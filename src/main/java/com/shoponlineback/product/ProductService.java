@@ -65,11 +65,12 @@ public class ProductService {
         this.productGenresRepository = productGenresRepository;
     }
 
-   ProductDto getProductById(long id){
-       Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Cannot find product."));
-       return ProductDtoMapper.map(product);
-   }
-    Page<ProductDto> getAllProducts(Sort sort){
+    ProductDto getProductById(long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Cannot find product."));
+        return ProductDtoMapper.map(product);
+    }
+
+    Page<ProductDto> getAllProducts(Sort sort) {
         List<ProductDto> allProducts = StreamSupport.stream(productPagingRepository.findAll(sort).spliterator(), false)
                 .map(ProductDtoMapper::map)
                 .collect(Collectors.toList());
@@ -77,13 +78,14 @@ public class ProductService {
 
 
     }
+
     @Transactional
-   public void saveAllProducts(int pages) throws IOException {
+    public void saveAllProducts(int pages) throws IOException {
         for (int i = 1; i <= pages; i++) {
             System.out.println("Procent: " + (i * 100 / pages));
             saveProductsListPage(i);
         }
-   }
+    }
 
     @Transactional
     public void saveProductsListPage(int page) throws IOException {
@@ -113,7 +115,7 @@ public class ProductService {
                 videoRepository.save(video);
             });
             List<Screenshot> screenshots = jsonObjectToProductMapper.getScreenshots(jsonObject);
-            screenshots.forEach(screenshot ->{
+            screenshots.forEach(screenshot -> {
                 screenshot.setProduct(productEntity);
                 screenshotRepository.save(screenshot);
             });
@@ -124,7 +126,7 @@ public class ProductService {
 
     private static JSONArray createJsonArrayFromResponse(int page) throws IOException {
         URL url = new URL("https://gateway.kinguin.net/esa/api/v1/products?regionId="
-                + REGION_EUROPE + "&regionId=" + REGION_FREE + "&languages=Polish&limit=100&page=" +page);
+                + REGION_EUROPE + "&regionId=" + REGION_FREE + "&languages=Polish&limit=100&page=" + page);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("X-Api-Key", "98d4916a75acf3834bb87c6d223d5337");
         JSONObject jsonObject = UrlConnectionService.getConnectionResponse(httpURLConnection)

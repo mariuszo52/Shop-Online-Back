@@ -59,6 +59,9 @@ public class LoginService {
     public void sendResetPasswordConfirmEmail(String email) throws MessagingException {
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User with this email not exists"));
+        if(user.getPassword() == null){
+            throw new RuntimeException("You cannot reset password. Please log in via Facebook or Google.");
+        }
         String token = RegisterService.generateActivationToken();
         user.setActivationToken(token);
         String link = "http://localhost:3000/account/login?token=" + token;
