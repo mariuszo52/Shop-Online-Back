@@ -9,10 +9,12 @@ import jakarta.annotation.PostConstruct;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Properties;
 
@@ -62,39 +64,40 @@ public class EmailService {
         List<OrderProduct> orderProducts = orderProductRepository.findOrderProductsByOrderId(order.getId());
         ShippingAddress sa = order.getShippingAddress();
         final String content = String.format("""
-                <body>
-                    <h1>ORDER SUMMARY</h1>
-                    <p>BILLING ADDRESS:</p>
-                     <table>
-                        <tr>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>Country</th>
-                            <th>Postal code</th>
-                            <th>Phone number</th>
-                        </tr>
-                        <tr>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        </tr>
-                    </table>
-                    <p>PAYMENT METHOD: %s</p>
-                    <p>PRODUCTS:</p>
-                    <table>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                        </tr>
-                        %s
-                    </table>
-                    <h2>TOTAL PRICE: %s
-                </body>
-                """, sa.getAddress(), sa.getCity(), sa.getCountry(), sa.getPostalCode(), sa.getPhoneNumber(),
-                order.getPaymentMethod(),generateProductTable(orderProducts), order.getTotalPrice());
+                        <body>
+                            <h1>ORDER SUMMARY</h1>
+                            <p>BILLING ADDRESS:</p>
+                             <table>
+                                <tr>
+                                    <th>Address</th>
+                                    <th>City</th>
+                                    <th>Country</th>
+                                    <th>Postal code</th>
+                                    <th>Phone number</th>
+                                </tr>
+                                <tr>
+                                <td>%s</td>
+                                <td>%s</td>
+                                <td>%s</td>
+                                <td>%s</td>
+                                <td>%s</td>
+                                </tr>
+                            </table>
+                            <p>PAYMENT METHOD: %s</p>
+                            <p style='font-weight: bold;'>ORDER STATUS: %s</p>
+                            <p>PRODUCTS:</p>
+                            <table>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                                %s
+                            </table>
+                            <h2>TOTAL PRICE: %s
+                        </body>
+                        """, sa.getAddress(), sa.getCity(), sa.getCountry(), sa.getPostalCode(), sa.getPhoneNumber(),
+                order.getPaymentMethod(), order.getOrderStatus(), generateProductTable(orderProducts), order.getTotalPrice());
         MimeMessage mimeMessage = new MimeMessage(session);
         mimeMessage.setFrom("kontakt@mowebcreations.pl");
         mimeMessage.setSubject("Order nr: " + order.getId() + " summary.");
@@ -127,6 +130,7 @@ public class EmailService {
         properties.put("mail.debug", "true");
         properties.put("mail.smtp.host", mailServer);
         properties.put("mail.smtp.port", 465);
+        properties.put("mail.mime.charset", "UTF-8");
         return Session.getInstance(properties, new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
