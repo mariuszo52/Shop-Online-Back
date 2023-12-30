@@ -7,6 +7,7 @@ import com.shoponlineback.language.Language;
 import com.shoponlineback.platform.Platform;
 import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.systemRequirements.SystemRequirements;
+import com.shoponlineback.user.User;
 import com.shoponlineback.video.Video;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -62,7 +63,9 @@ public class Product {
     List<Screenshot> screenshots;
     private Long cartQuantity;
     @ManyToMany(mappedBy = "productList")
-    List<Cart> carts;
+    private List<Cart> carts;
     @ManyToMany(mappedBy = "productList")
-    List<Order> orderList;
+    private List<Order> orderList;
+    @ManyToMany(mappedBy = "favoriteProducts")
+    private List<User> users;
 }

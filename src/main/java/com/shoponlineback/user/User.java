@@ -1,6 +1,7 @@
 package com.shoponlineback.user;
 
 import com.shoponlineback.cart.Cart;
+import com.shoponlineback.product.Product;
 import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
 
@@ -35,7 +37,7 @@ public class User implements UserDetails {
     @Email
     private String email;
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$",
-    message = "Password must contain min 8 characters.(1 lowercase, 1 uppercase, 1 digit, 1 special character.)")
+            message = "Password must contain min 8 characters.(1 lowercase, 1 uppercase, 1 digit, 1 special character.)")
     private String password;
     @NotNull
     @OneToOne
@@ -49,6 +51,11 @@ public class User implements UserDetails {
     private String activationToken;
     @OneToOne(cascade = {PERSIST, REMOVE})
     private Cart cart;
+    @ManyToMany
+    @JoinTable(name = "favorite_products",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private List<Product> favoriteProducts;
 
     public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled, Cart cart) {
         this.username = username;
