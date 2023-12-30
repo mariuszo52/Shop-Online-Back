@@ -9,6 +9,7 @@ import com.shoponlineback.product.mapper.ProductDtoMapper;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,5 +40,9 @@ public class FavoriteProductsService {
                 .map(UserProducts::getProduct)
                 .map(ProductDtoMapper::map)
                 .toList();
+    }
+    @Transactional
+    public void deleteProduct(Long productId) {
+        favoriteProductsRepository.deleteByUserIdAndProductId(getLoggedUser().getId(), productId);
     }
 }
