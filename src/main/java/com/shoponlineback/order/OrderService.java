@@ -29,7 +29,7 @@ public class OrderService {
             Product product = productRepository.findById(productDto.getId()).orElseThrow(ProductNotFoundException::new);
             orderProductRepository.save(new OrderProduct(order, product, Math.toIntExact(productDto.getCartQuantity())));
         });
-        return order;
+        return orderEntity;
     }
 
 

@@ -18,14 +18,16 @@ public class OrderController {
     }
 
     @PostMapping("/order/checkout")
-    ResponseEntity<?> addOrder(@RequestBody OrderDto orderDto){System.out.println(orderDto);
-        Order order = orderService.saveOrder(orderDto);
+    ResponseEntity<?> addOrder(@RequestBody OrderDto orderDto) {
+        Order order;
         try {
+            order = orderService.saveOrder(orderDto);
             emailService.sendOrderConfirmationEmail(order);
-
-        }catch (MessagingException e){
+            return ResponseEntity.ok().build();
+        } catch (MessagingException e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok().build();
     }
 }

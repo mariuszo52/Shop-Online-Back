@@ -24,4 +24,10 @@ public class UserProducts {
     @JoinColumn(name = "user_id")
     private User user;
     private LocalDateTime addTime;
+
+    public UserProducts(Product product, User user, LocalDateTime addTime) {
+        this.product = product;
+        this.user = user;
+        this.addTime = addTime;
+    }
 }
