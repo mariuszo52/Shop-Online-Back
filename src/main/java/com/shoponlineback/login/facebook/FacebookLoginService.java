@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
@@ -44,7 +45,7 @@ public class FacebookLoginService {
         return facebookAppId;
     }
 
-    void facebookLogin(FacebookLoginDto facebookLoginDto, HttpServletRequest request) {
+    void facebookLogin(FacebookLoginDto facebookLoginDto, HttpServletRequest request) throws LoginException {
         String authorizationHeader = request.getHeader("Authorization");
         String token = authorizationHeader.substring(FB_HEADER_PREFIX.length());
         boolean tokenIsValid = verifyAccessToken(token);
@@ -55,6 +56,12 @@ public class FacebookLoginService {
             UserInfo userInfo = new UserInfo(facebookLoginDto.getFirstName(), facebookLoginDto.getLastName(), shippingAddress);
             User user = new User(facebookLoginDto.getUserId(), facebookLoginDto.getEmail(), userRole, userInfo, true, new Cart());
             userRepository.save(user);
+        }
+        if(userExist){
+            User user = userRepository.findUserByEmail(facebookLoginDto.getEmail()).get();
+            if(user.getPassword() != null){
+                throw new LoginException("Your email is used in standard account.");
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -29,6 +30,8 @@ public class GoogleLoginController {
         try {
             googleLoginService.googleLogin(request);
             return ResponseEntity.status(HttpStatus.CREATED).build();
+        }catch (LoginException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (RuntimeException | GeneralSecurityException | IOException e) {
             return ResponseEntity.badRequest().body("Invalid Id token");
         }

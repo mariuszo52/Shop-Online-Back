@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -57,7 +58,7 @@ public class GoogleLoginService {
         }
     }
 
-    private void registerUserIfNotExist(String email, GoogleIdToken.Payload payload) {
+    private void registerUserIfNotExist(String email, GoogleIdToken.Payload payload) throws LoginException {
         boolean existsUser = userRepository.existsUserByEmail(email);
         if (!existsUser) {
             String name = (String) payload.get("name");
@@ -68,6 +69,11 @@ public class GoogleLoginService {
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
             User user = new User(username, email, userRole, userInfo, true, new Cart());
             userRepository.save(user);
+        }else {
+            User user = userRepository.findUserByEmail(email).get();
+            if(user.getPassword() != null){
+                throw new LoginException("Your email is used in standard account.");
+            }
         }
     }
 
