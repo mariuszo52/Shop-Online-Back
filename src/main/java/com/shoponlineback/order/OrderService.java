@@ -5,7 +5,13 @@ import com.shoponlineback.orderProduct.OrderProduct;
 import com.shoponlineback.orderProduct.OrderProductRepository;
 import com.shoponlineback.product.Product;
 import com.shoponlineback.product.ProductRepository;
+import com.shoponlineback.user.UserService;
+import com.shoponlineback.userProducts.UserProducts;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static com.shoponlineback.user.UserService.*;
 
 @Service
 public class OrderService {
@@ -33,4 +39,9 @@ public class OrderService {
     }
 
 
+    public List<OrderDto> getUserOrders() {
+       return orderRepository.findAllByUser_Id(getLoggedUser().getId()).stream()
+                .map(OrderDtoMapper::map)
+                .toList();
+    }
 }

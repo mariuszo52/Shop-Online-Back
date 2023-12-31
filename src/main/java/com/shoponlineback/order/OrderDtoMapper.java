@@ -49,4 +49,19 @@ public class OrderDtoMapper {
                 .user(user)
                 .totalPrice(totalPrice).build();
     }
+
+    public static OrderDto map(Order order){
+        ShippingAddress sa = order.getShippingAddress();
+        ShippingAddressDto shippingAddressDto = new ShippingAddressDto(sa.getAddress(),
+                sa.getCity(), sa.getCountry(), sa.getPostalCode(), sa.getPhoneNumber());
+        List<ProductDto> productDtoList = order.getProductList().stream()
+                .map(ProductDtoMapper::map).toList();
+        return OrderDto.builder()
+                .id(order.getId())
+                .paymentMethod(order.getPaymentMethod().toString())
+                .shippingAddress(shippingAddressDto)
+                .productList(productDtoList)
+                .totalPrice(order.getTotalPrice())
+                .userId(order.getId()).build();
+    }
 }
