@@ -47,6 +47,7 @@ public class OrderDtoMapper {
                 .shippingAddress(new ShippingAddress(saDto.getAddress(), saDto.getCity(),
                         saDto.getCountry(), saDto.getPostalCode(), saDto.getPhoneNumber()))
                 .user(user)
+                .orderDate(orderDto.getOrderDate())
                 .totalPrice(totalPrice).build();
     }
 
@@ -62,6 +63,8 @@ public class OrderDtoMapper {
                 .shippingAddress(shippingAddressDto)
                 .productList(productDtoList)
                 .totalPrice(order.getTotalPrice())
+                .orderDate(order.getOrderDate())
+                .orderStatus(order.getOrderStatus().toString())
                 .userId(order.getId()).build();
     }
 }

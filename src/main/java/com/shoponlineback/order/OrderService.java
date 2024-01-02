@@ -9,6 +9,7 @@ import com.shoponlineback.user.UserService;
 import com.shoponlineback.userProducts.UserProducts;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.shoponlineback.user.UserService.*;
@@ -30,6 +31,7 @@ public class OrderService {
     public Order saveOrder(OrderDto orderDto) {
         Order order = orderDtoMapper.map(orderDto);
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+        order.setOrderDate(LocalDateTime.now());
         Order orderEntity = orderRepository.save(order);
         orderDto.getProductList().forEach(productDto -> {
             Product product = productRepository.findById(productDto.getId()).orElseThrow(ProductNotFoundException::new);

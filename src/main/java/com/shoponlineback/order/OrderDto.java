@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 @NoArgsConstructor
 @Getter
@@ -29,4 +30,8 @@ public class OrderDto {
     private BigDecimal totalPrice;
     @NotNull
     private String paymentMethod;
+    @NotNull
+    private LocalDateTime orderDate;
+    @NotNull
+    private String orderStatus;
 }

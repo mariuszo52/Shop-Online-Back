@@ -1,6 +1,7 @@
 package com.shoponlineback.user;
 
 import com.shoponlineback.cart.Cart;
+import com.shoponlineback.order.Order;
 import com.shoponlineback.product.Product;
 import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
@@ -56,6 +57,8 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> favoriteProducts;
+    @OneToOne(mappedBy = "user")
+    private Order order;
 
     public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled, Cart cart) {
         this.username = username;
