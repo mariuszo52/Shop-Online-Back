@@ -25,7 +25,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     @NotNull
     private User user;
     @OneToOne(cascade = CascadeType.PERSIST)

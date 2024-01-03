@@ -57,8 +57,8 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> favoriteProducts;
-    @OneToOne(mappedBy = "user")
-    private Order order;
+    @OneToMany(mappedBy = "user")
+    private List<Order> order;
 
     public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled, Cart cart) {
         this.username = username;
