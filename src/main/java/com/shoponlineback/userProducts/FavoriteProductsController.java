@@ -3,6 +3,7 @@ package com.shoponlineback.userProducts;
 import com.shoponlineback.product.dto.ProductDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,11 +36,20 @@ public class FavoriteProductsController {
     }
 
     @GetMapping("/favorite-product")
-    ResponseEntity<?> addProductToFavorite() {
+    ResponseEntity<?> getUserFavoriteProducts() {
         try {
             List<ProductDto> productDtoList = favoriteProductsService.getUserFavoriteProducts();
             return ResponseEntity.ok(productDtoList);
         } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @DeleteMapping("favorite-products-all")
+    ResponseEntity<String> deleteAllUserFavoriteProducts(){
+        try {
+            favoriteProductsService.deleteAllUserFavoriteProducts();
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

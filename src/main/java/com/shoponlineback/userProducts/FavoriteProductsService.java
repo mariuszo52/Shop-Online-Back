@@ -45,4 +45,8 @@ public class FavoriteProductsService {
     public void deleteProduct(Long productId) {
         favoriteProductsRepository.deleteByUserIdAndProductId(getLoggedUser().getId(), productId);
     }
+    @Transactional
+    public void deleteAllUserFavoriteProducts() {
+        favoriteProductsRepository.deleteAllByUserId(getLoggedUser().getId());
+    }
 }

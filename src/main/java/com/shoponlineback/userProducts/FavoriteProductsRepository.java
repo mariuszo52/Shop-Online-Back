@@ -10,4 +10,5 @@ import java.util.List;
 public interface FavoriteProductsRepository extends CrudRepository<UserProducts, Long> {
     List<UserProducts> findAllByUser_Id(Long userId);
     void deleteByUserIdAndProductId(Long userId, Long productId);
+    void deleteAllByUserId(Long userId);
 }
