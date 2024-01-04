@@ -44,7 +44,7 @@ public class FavoriteProductsController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @DeleteMapping("favorite-products-all")
+    @DeleteMapping("/favorite-product/all")
     ResponseEntity<String> deleteAllUserFavoriteProducts(){
         try {
             favoriteProductsService.deleteAllUserFavoriteProducts();

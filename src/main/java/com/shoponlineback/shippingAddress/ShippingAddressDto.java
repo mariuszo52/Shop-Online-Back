@@ -2,14 +2,12 @@ package com.shoponlineback.shippingAddress;
 
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder
 public class ShippingAddressDto {
     @Size(min = 2)
     private String address;

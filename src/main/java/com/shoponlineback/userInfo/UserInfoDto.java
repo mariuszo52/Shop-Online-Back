@@ -1,5 +1,6 @@
 package com.shoponlineback.userInfo;
 
+import com.shoponlineback.shippingAddress.ShippingAddressDto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,4 +19,5 @@ public class UserInfoDto {
     @NotNull
     @Size(min = 2)
     private String lastName;
+    private ShippingAddressDto shippingAddressDto;
 }
