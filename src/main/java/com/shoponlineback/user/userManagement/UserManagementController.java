@@ -2,9 +2,7 @@ package com.shoponlineback.user.userManagement;
 
 import com.shoponlineback.user.UserDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,9 @@ public class UserManagementController {
         List<UserDto> allUsers = userManagementService.getAllUsers();
         return ResponseEntity.ok().body(allUsers);
 
+    }
+    @PutMapping("/username")
+    ResponseEntity<?> updateUsername(@RequestParam Long userId){
+        return ResponseEntity.ok().build();
     }
 }
