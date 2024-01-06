@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface UserManagementRepository extends CrudRepository<User, Long> {
-
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }

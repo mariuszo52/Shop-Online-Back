@@ -1,6 +1,8 @@
 package com.shoponlineback.user.userManagement;
 
 import com.shoponlineback.user.UserDto;
+import com.shoponlineback.user.dto.UserEmailUpdateDto;
+import com.shoponlineback.user.dto.UsernameUpdateDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +24,39 @@ public class UserManagementController {
 
     }
     @PutMapping("/username")
-    ResponseEntity<?> updateUsername(@RequestParam Long userId){
-        return ResponseEntity.ok().build();
+    ResponseEntity<?> updateUsername(@RequestBody UsernameUpdateDto usernameDto){
+        try {
+            userManagementService.updateUsername(usernameDto);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PutMapping("/email")
+    ResponseEntity<?> updateEmail(@RequestBody UserEmailUpdateDto emailUpdateDto){
+        try {
+            userManagementService.updateEmail(emailUpdateDto);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PutMapping("/is-enabled")
+    ResponseEntity<?> updateIsEnabled(@RequestBody UserIsEnabledUpdateDto isEnabledUpdateDto){
+        try {
+            userManagementService.updateIsEnabled(isEnabledUpdateDto);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PutMapping("/role")
+    ResponseEntity<?> updateIsEnabled(@RequestBody UserRoleUpdateDto roleUpdateDto){
+        try {
+            userManagementService.updateUserRole(roleUpdateDto);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
