@@ -72,4 +72,8 @@ public class UserManagementService {
                 .orElseThrow(UserRoleNotFoundException::new);
         user.setUserRole(userRole);
     }
+    @Transactional
+    public void deleteUser(Long userId){
+        userManagementRepository.deleteById(userId);
+    }
 }

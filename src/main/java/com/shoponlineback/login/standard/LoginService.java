@@ -42,7 +42,7 @@ public class LoginService {
 
     public boolean authenticateUser(UserLoginDto userLoginDto){
         User user = userRepository.findUserByEmail(userLoginDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(UserNotFoundException::new);
         if(!user.getIsEnabled()){
             throw new AccountDisabledException();
         }

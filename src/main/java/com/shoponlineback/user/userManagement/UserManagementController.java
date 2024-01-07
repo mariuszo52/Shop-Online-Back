@@ -59,4 +59,13 @@ public class UserManagementController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @DeleteMapping("/user")
+    ResponseEntity<?> deleteUser(Long userId) {
+        try {
+            userManagementService.deleteUser(userId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
