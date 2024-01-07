@@ -76,4 +76,17 @@ public class UserManagementService {
     public void deleteUser(Long userId){
         userManagementRepository.deleteById(userId);
     }
+
+    public UserDto getUserByValues(String searchBy, String value) {
+        User user = switch (searchBy) {
+            case "id" -> userManagementRepository.findById(Long.parseLong(value))
+                    .orElseThrow(UserNotFoundException::new);
+            case "username" -> userManagementRepository.getUserByUsername(value)
+                    .orElseThrow(UserNotFoundException::new);
+            case "email" -> userManagementRepository.getUserByEmail(value)
+                    .orElseThrow(UserNotFoundException::new);
+            default -> throw new IllegalStateException("Unexpected value: " + searchBy);
+        };
+        return UserDtoMapper.map(user);
+    }
 }

@@ -1,5 +1,6 @@
 package com.shoponlineback.user.userManagement;
 
+import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserDto;
 import com.shoponlineback.user.dto.UserEmailUpdateDto;
 import com.shoponlineback.user.dto.UsernameUpdateDto;
@@ -65,6 +66,15 @@ public class UserManagementController {
             userManagementService.deleteUser(userId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping("/user")
+    ResponseEntity<?> getUserByValues(@RequestParam String searchBy, String value){
+        try {
+            UserDto userDto = userManagementService.getUserByValues(searchBy, value);
+            return ResponseEntity.ok(userDto);
+        }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
