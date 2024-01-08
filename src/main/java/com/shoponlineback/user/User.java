@@ -44,6 +44,9 @@ public class User implements UserDetails {
     @OneToOne
     private UserRole userRole;
     @NotNull
+    @Enumerated(EnumType.STRING)
+    private UserType type;
+    @NotNull
     @OneToOne(cascade = {PERSIST, REMOVE})
     private UserInfo userInfo;
     @NotNull
@@ -60,9 +63,11 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Order> order;
 
-    public User(String username, String email, UserRole userRole, UserInfo userInfo, Boolean isEnabled, Cart cart) {
+    public User(String username, String email, UserType type,  UserRole userRole,
+                UserInfo userInfo, Boolean isEnabled, Cart cart) {
         this.username = username;
         this.email = email;
+        this.type = type;
         this.userRole = userRole;
         this.userInfo = userInfo;
         this.isEnabled = isEnabled;

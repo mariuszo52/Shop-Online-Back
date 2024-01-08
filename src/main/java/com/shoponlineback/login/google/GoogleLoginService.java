@@ -11,6 +11,7 @@ import com.shoponlineback.shippingAddress.ShippingAddressRepository;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
 import com.shoponlineback.user.UserService;
+import com.shoponlineback.user.UserType;
 import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
 import com.shoponlineback.userRole.UserRoleRepository;
@@ -67,11 +68,11 @@ public class GoogleLoginService {
             ShippingAddress shippingAddress = shippingAddressRepository.save(new ShippingAddress());
             UserInfo userInfo = new UserInfo(name, givenName, shippingAddress);
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
-            User user = new User(username, email, userRole, userInfo, true, new Cart());
+            User user = new User(username, email, UserType.GOOGLE, userRole, userInfo, true, new Cart());
             userRepository.save(user);
         }else {
             User user = userRepository.findUserByEmail(email).get();
-            if(user.getPassword() != null){
+            if(user.getType().name().equals(UserType.STANDARD.name())){
                 throw new LoginException("Your email is used in standard account.");
             }
         }

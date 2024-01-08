@@ -7,6 +7,7 @@ import com.shoponlineback.jwt.JwtService;
 import com.shoponlineback.register.RegisterService;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
+import com.shoponlineback.user.UserType;
 import com.shoponlineback.user.dto.UserLoginDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -46,7 +47,7 @@ public class LoginService {
         if(!user.getIsEnabled()){
             throw new AccountDisabledException();
         }
-        if (user.getPassword() != null) {
+        if (user.getType().name().equals(UserType.STANDARD.name())) {
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                     new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword());
             return daoAuthenticationProvider.authenticate(usernamePasswordAuthenticationToken).isAuthenticated();
@@ -59,7 +60,7 @@ public class LoginService {
     public void sendResetPasswordConfirmEmail(String email) throws MessagingException {
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User with this email not exists"));
-        if(user.getPassword() == null){
+        if(!user.getType().name().equals(UserType.STANDARD.name())){
             throw new RuntimeException("You cannot reset password. Please log in via Facebook or Google.");
         }
         String token = RegisterService.generateActivationToken();

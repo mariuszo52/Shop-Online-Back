@@ -8,6 +8,7 @@ import com.shoponlineback.urlConnectionService.UrlConnectionService;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
 import com.shoponlineback.user.UserService;
+import com.shoponlineback.user.UserType;
 import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userRole.UserRole;
 import com.shoponlineback.userRole.UserRoleRepository;
@@ -54,12 +55,14 @@ public class FacebookLoginService {
             ShippingAddress shippingAddress = shippingAddressRepository.save(new ShippingAddress());
             UserRole userRole = userRoleRepository.findUserRoleByName("USER").orElseThrow(UserRoleNotFoundException::new);
             UserInfo userInfo = new UserInfo(facebookLoginDto.getFirstName(), facebookLoginDto.getLastName(), shippingAddress);
-            User user = new User(facebookLoginDto.getUserId(), facebookLoginDto.getEmail(), userRole, userInfo, true, new Cart());
+            User user = new User(facebookLoginDto.getUserId(), facebookLoginDto.getEmail(), UserType.FACEBOOK,
+                    userRole, userInfo, true, new Cart());
+
             userRepository.save(user);
         }
         if(userExist){
             User user = userRepository.findUserByEmail(facebookLoginDto.getEmail()).get();
-            if(user.getPassword() != null){
+            if(user.getType().name().equals(UserType.STANDARD.name())){
                 throw new LoginException("Your email is used in standard account.");
             }
         }

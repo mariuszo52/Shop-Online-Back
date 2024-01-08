@@ -20,6 +20,7 @@ public class UserDtoMapper {
                 .userInfo(UserInfoDtoMapper.map(user.getUserInfo()))
                 .activationToken(user.getActivationToken())
                 .email(user.getEmail())
+                .type(user.getType().toString())
                 .isEnabled(user.getIsEnabled())
                 .userRole(user.getUserRole().getName())
                 .username(user.getUsername())

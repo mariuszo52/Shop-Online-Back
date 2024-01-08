@@ -25,6 +25,9 @@ public class UserDto {
     @Email
     private String email;
     @NotNull
+    @Size(min = 1, max = 50)
+    private String type;
+    @NotNull
     @Size(min = 1, max = 30)
     private String userRole;
     @NotNull
