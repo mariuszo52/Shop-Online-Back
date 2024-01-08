@@ -4,6 +4,7 @@ import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserDto;
 import com.shoponlineback.user.dto.UserEmailUpdateDto;
 import com.shoponlineback.user.dto.UsernameUpdateDto;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,8 @@ public class UserManagementController {
     }
 
     @GetMapping("/all-users")
-    ResponseEntity<?> getAllUsers(){
-        List<UserDto> allUsers = userManagementService.getAllUsers();
+    ResponseEntity<?> getAllUsers(@RequestParam int page){
+        Page<UserDto> allUsers = userManagementService.getAllUsers(page);
         return ResponseEntity.ok().body(allUsers);
 
     }

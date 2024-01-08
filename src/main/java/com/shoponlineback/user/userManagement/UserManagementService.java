@@ -9,6 +9,10 @@ import com.shoponlineback.user.dto.UsernameUpdateDto;
 import com.shoponlineback.user.mapper.UserDtoMapper;
 import com.shoponlineback.userRole.UserRole;
 import com.shoponlineback.userRole.UserRoleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +31,15 @@ public class UserManagementService {
         this.userRoleRepository = userRoleRepository;
     }
 
-    List<UserDto> getAllUsers() {
+    Page<UserDto> getAllUsers(int page) {
+        int size = 50;
         Spliterator<User> usersSpliterator = userManagementRepository.findAll().spliterator();
-        return StreamSupport.stream(usersSpliterator, false)
-                .map(UserDtoMapper::map)
-                .toList();
+        List<UserDto> list = StreamSupport.stream(usersSpliterator, false)
+                .map(UserDtoMapper::map).toList();
+        List<UserDto> currentPage = list.subList(Math.min((page * size), list.size()),
+                Math.min((page * size + size), list.size()));
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return new PageImpl<>(currentPage, pageRequest, list.size());
     }
 
     @Transactional
