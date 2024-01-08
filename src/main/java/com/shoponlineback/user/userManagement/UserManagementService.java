@@ -67,7 +67,7 @@ public class UserManagementService {
         }
     }
 
-}
+
 
     @Transactional
     public void updateIsEnabled(UserIsEnabledUpdateDto isEnabledUpdateDto) {
