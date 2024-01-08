@@ -35,6 +35,9 @@
             <constraints nullable="false" referencedTableName="user_info" foreignKeyName="fk_user_info"
                          referencedColumnNames="id"/>
         </column>
+        <column name="type" type="VARCHAR(50)">
+            <constraints nullable="false"/>
+        </column>
     </createTable>
 </changeSet>
 </databaseChangeLog>

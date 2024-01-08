@@ -4,6 +4,7 @@ import com.shoponlineback.exceptions.user.UserNotFoundException;
 import com.shoponlineback.exceptions.userRole.UserRoleNotFoundException;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserDto;
+import com.shoponlineback.user.UserType;
 import com.shoponlineback.user.dto.UserEmailUpdateDto;
 import com.shoponlineback.user.dto.UsernameUpdateDto;
 import com.shoponlineback.user.mapper.UserDtoMapper;
@@ -55,14 +56,18 @@ public class UserManagementService {
 
     @Transactional
     public void updateEmail(UserEmailUpdateDto emailUpdateDto) {
-        if (!userManagementRepository.existsByEmail(emailUpdateDto.getEmail())) {
-            User user = userManagementRepository.findById(emailUpdateDto.getUserId())
-                    .orElseThrow(UserNotFoundException::new);
-            user.setEmail(emailUpdateDto.getEmail());
-        } else {
+        User user = userManagementRepository.findById(emailUpdateDto.getUserId())
+                .orElseThrow(UserNotFoundException::new);
+        if (userManagementRepository.existsByEmail(emailUpdateDto.getEmail())) {
             throw new RuntimeException("Email is already taken.");
+        } else if (user.getType() != UserType.STANDARD) {
+            throw new RuntimeException("Unable to change email. This account is not STANDARD type.");
+        } else {
+            user.setEmail(emailUpdateDto.getEmail());
         }
     }
+
+}
 
     @Transactional
     public void updateIsEnabled(UserIsEnabledUpdateDto isEnabledUpdateDto) {
@@ -78,10 +83,15 @@ public class UserManagementService {
                 .orElseThrow(UserNotFoundException::new);
         UserRole userRole = userRoleRepository.findUserRoleByName(roleUpdateDto.getRole())
                 .orElseThrow(UserRoleNotFoundException::new);
-        user.setUserRole(userRole);
+        if (user.getType().name().equals(UserType.STANDARD.name())) {
+            user.setUserRole(userRole);
+        } else {
+            throw new RuntimeException("Unable to change user role. This account is not STANDARD type.");
+        }
     }
+
     @Transactional
-    public void deleteUser(Long userId){
+    public void deleteUser(Long userId) {
         userManagementRepository.deleteById(userId);
     }
 

@@ -62,7 +62,7 @@ public class FacebookLoginService {
         }
         if(userExist){
             User user = userRepository.findUserByEmail(facebookLoginDto.getEmail()).get();
-            if(user.getType().name().equals(UserType.STANDARD.name())){
+            if(user.getType() == (UserType.STANDARD)){
                 throw new LoginException("Your email is used in standard account.");
             }
         }

@@ -72,7 +72,7 @@ public class GoogleLoginService {
             userRepository.save(user);
         }else {
             User user = userRepository.findUserByEmail(email).get();
-            if(user.getType().name().equals(UserType.STANDARD.name())){
+            if(user.getType() == UserType.STANDARD){
                 throw new LoginException("Your email is used in standard account.");
             }
         }
