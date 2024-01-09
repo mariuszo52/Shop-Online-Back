@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/product-management")
+@RequestMapping("/admin/product-management")
 public class ProductManagementController {
     private final ProductManagementService productManagementService;
 
