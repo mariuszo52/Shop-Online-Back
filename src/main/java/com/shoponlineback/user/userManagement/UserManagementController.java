@@ -71,7 +71,7 @@ public class UserManagementController {
         }
     }
     @GetMapping("/user")
-    ResponseEntity<?> getUserByValues(@RequestParam String searchBy, String value){
+    ResponseEntity<?> getUserByValues(@RequestParam String searchBy, @RequestParam String value){
         try {
             UserDto userDto = userManagementService.getUserByValues(searchBy, value);
             return ResponseEntity.ok(userDto);

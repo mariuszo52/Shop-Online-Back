@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductGenresRepository extends CrudRepository<ProductGenres, Long> {
+    void deleteAllByProductId(Long id);
 }

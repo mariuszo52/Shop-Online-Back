@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.*;
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -40,14 +42,14 @@ public class Product {
     private String coverImage;
     @ManyToMany(mappedBy = "products",
             fetch = FetchType.EAGER,
-            cascade = CascadeType.PERSIST)
+            cascade = {PERSIST})
     private List<Genre> genres;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = PERSIST)
     private Platform platform;
     private LocalDate releaseDate;
     private Boolean isPreorder;
     private String regionalLimitations;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {PERSIST, REMOVE})
     private SystemRequirements systemRequirements;
     private String ageRating;
     private String activationDetails;
@@ -57,9 +59,12 @@ public class Product {
             fetch = FetchType.EAGER)
     private List<Language> languages;
     @OneToMany(fetch = FetchType.EAGER,
+            cascade = REMOVE,
             mappedBy = "product")
     private List<Video> videos;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    @OneToMany(fetch = FetchType.EAGER,
+            cascade = REMOVE,
+            mappedBy = "product")
     List<Screenshot> screenshots;
     private Long cartQuantity;
     @ManyToMany(mappedBy = "productList")
