@@ -1,11 +1,9 @@
 package com.shoponlineback.order;
 
-import com.shoponlineback.exceptions.product.ProductNotFoundException;
 import com.shoponlineback.exceptions.user.UserNotFoundException;
-import com.shoponlineback.orderProduct.OrderProduct;
+import com.shoponlineback.order.dto.OrderDto;
 import com.shoponlineback.orderProduct.OrderProductRepository;
 import com.shoponlineback.paymentMethod.PaymentMethod;
-import com.shoponlineback.product.Product;
 import com.shoponlineback.product.ProductRepository;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.product.mapper.ProductDtoMapper;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderDtoMapper {

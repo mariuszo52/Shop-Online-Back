@@ -1,10 +1,7 @@
 package com.shoponlineback.orderProduct;
 
-import com.shoponlineback.order.Order;
-import com.shoponlineback.order.OrderDto;
-import com.shoponlineback.product.Product;
+import com.shoponlineback.order.dto.OrderDto;
 import com.shoponlineback.product.dto.ProductDto;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

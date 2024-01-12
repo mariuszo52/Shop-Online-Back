@@ -1,12 +1,11 @@
 package com.shoponlineback.order;
 
 import com.shoponlineback.exceptions.product.ProductNotFoundException;
+import com.shoponlineback.order.dto.OrderDto;
 import com.shoponlineback.orderProduct.OrderProduct;
 import com.shoponlineback.orderProduct.OrderProductRepository;
 import com.shoponlineback.product.Product;
 import com.shoponlineback.product.ProductRepository;
-import com.shoponlineback.user.UserService;
-import com.shoponlineback.userProducts.UserProducts;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

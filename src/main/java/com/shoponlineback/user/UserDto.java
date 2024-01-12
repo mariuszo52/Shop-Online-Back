@@ -1,6 +1,6 @@
 package com.shoponlineback.user;
 
-import com.shoponlineback.order.OrderDto;
+import com.shoponlineback.order.dto.OrderDto;
 import com.shoponlineback.userInfo.UserInfoDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

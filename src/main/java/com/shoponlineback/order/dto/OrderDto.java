@@ -1,4 +1,4 @@
-package com.shoponlineback.order;
+package com.shoponlineback.order.dto;
 
 import com.shoponlineback.paymentMethod.PaymentMethod;
 import com.shoponlineback.product.Product;
