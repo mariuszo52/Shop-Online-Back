@@ -62,6 +62,6 @@ public class OrderDtoMapper {
                 .totalPrice(order.getTotalPrice())
                 .orderDate(order.getOrderDate())
                 .orderStatus(order.getOrderStatus().toString())
-                .userId(order.getId()).build();
+                .userId(order.getUser().getId()).build();
     }
 }
