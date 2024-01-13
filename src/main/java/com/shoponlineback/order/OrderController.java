@@ -26,7 +26,8 @@ public class OrderController {
         Order order;
         try {
             order = orderService.saveOrder(orderDto);
-            emailService.sendOrderConfirmationEmail(order);
+            final String subject = "ORDER NR: " + order.getId() + " SUMMARY.";
+            emailService.sendOrderConfirmationEmail(order.getId(), subject);
             return ResponseEntity.ok().build();
         } catch (MessagingException e) {
             return ResponseEntity.internalServerError().body(e.getMessage());

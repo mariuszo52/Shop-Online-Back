@@ -1,5 +1,6 @@
 package com.shoponlineback.order.orderManagement;
 
+import com.shoponlineback.email.EmailService;
 import com.shoponlineback.order.dto.OrderDto;
 import com.shoponlineback.order.dto.OrderUpdateDto;
 import org.springframework.data.domain.Page;
@@ -13,9 +14,11 @@ import java.util.List;
 @RequestMapping("/admin/order-management")
 public class OrderManagementController {
     private final OrderManagementService orderManagementService;
+    private final EmailService emailService;
 
-    public OrderManagementController(OrderManagementService orderManagementService) {
+    public OrderManagementController(OrderManagementService orderManagementService, EmailService emailService) {
         this.orderManagementService = orderManagementService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/all-orders")
@@ -30,8 +33,11 @@ public class OrderManagementController {
 
     @PutMapping("/order-status")
     ResponseEntity<String> updateOrderStatus(@RequestBody OrderUpdateDto orderUpdate) {
+        final String subject = "ORDER NR: " + orderUpdate.getOrderId() +
+                " CHANGE STATUS ON " + orderUpdate.getOrderStatus();
         try {
             orderManagementService.updateOrderStatus(orderUpdate);
+            emailService.sendOrderConfirmationEmail(orderUpdate.getOrderId(), subject);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

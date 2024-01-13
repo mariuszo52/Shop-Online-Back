@@ -1,20 +1,19 @@
 package com.shoponlineback.email;
 
+import com.shoponlineback.exceptions.order.OrderNotFoundException;
 import com.shoponlineback.order.Order;
+import com.shoponlineback.order.OrderRepository;
 import com.shoponlineback.orderProduct.OrderProduct;
 import com.shoponlineback.orderProduct.OrderProductRepository;
-import com.shoponlineback.product.Product;
 import com.shoponlineback.shippingAddress.ShippingAddress;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Properties;
 
@@ -23,6 +22,7 @@ import static com.shoponlineback.user.UserService.*;
 @Service
 public class EmailService {
     private final OrderProductRepository orderProductRepository;
+    private final OrderRepository orderRepository;
     private Session session;
     @Value("${EMAIL_SERVER}")
     private String mailServer;
@@ -31,8 +31,9 @@ public class EmailService {
     @Value("${EMAIL_PASSWORD}")
     private String password;
 
-    public EmailService(OrderProductRepository orderProductRepository) {
+    public EmailService(OrderProductRepository orderProductRepository, OrderRepository orderRepository) {
         this.orderProductRepository = orderProductRepository;
+        this.orderRepository = orderRepository;
     }
 
     @PostConstruct
@@ -60,8 +61,9 @@ public class EmailService {
 
     }
 
-    public void sendOrderConfirmationEmail(Order order) throws MessagingException {
-        List<OrderProduct> orderProducts = orderProductRepository.findOrderProductsByOrderId(order.getId());
+    public void sendOrderConfirmationEmail(Long orderId, String subject) throws MessagingException {
+        List<OrderProduct> orderProducts = orderProductRepository.findOrderProductsByOrderId(orderId);
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         ShippingAddress sa = order.getShippingAddress();
         final String content = String.format("""
                         <body>
@@ -100,7 +102,7 @@ public class EmailService {
                 order.getPaymentMethod(), order.getOrderStatus(), generateProductTable(orderProducts), order.getTotalPrice());
         MimeMessage mimeMessage = new MimeMessage(session);
         mimeMessage.setFrom("kontakt@mowebcreations.pl");
-        mimeMessage.setSubject("Order nr: " + order.getId() + " summary.");
+        mimeMessage.setSubject(subject);
         mimeMessage.setContent(content, "text/html");
         mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(getLoggedUser().getEmail()));
         Transport.send(mimeMessage);
