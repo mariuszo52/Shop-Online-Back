@@ -5,7 +5,7 @@ import com.shoponlineback.product.mapper.ProductDtoMapper;
 
 public class OrderProductMapper {
 
-    static OrderProductDto map(OrderProduct orderProduct){
+   public static OrderProductDto map(OrderProduct orderProduct){
        return OrderProductDto.builder()
                .id(orderProduct.getId())
                .order(OrderDtoMapper.map(orderProduct.getOrder()))

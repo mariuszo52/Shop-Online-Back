@@ -3,6 +3,7 @@ package com.shoponlineback.order.orderManagement;
 import com.shoponlineback.email.EmailService;
 import com.shoponlineback.order.dto.OrderDto;
 import com.shoponlineback.order.dto.OrderUpdateDto;
+import com.shoponlineback.orderProduct.OrderProductDto;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,5 +70,14 @@ public class OrderManagementController {
     ResponseEntity<?> getAllOrderStatuses(){
         List<String> orderStatuses = orderManagementService.getAllOrderStatuses();
         return ResponseEntity.ok(orderStatuses);
+    }
+    @GetMapping("/order-products")
+    ResponseEntity<?> getOrderProducts(@RequestParam Long orderId){
+        try {
+            List<OrderProductDto> orderProducts = orderManagementService.getOrderProducts(orderId);
+            return ResponseEntity.ok(orderProducts);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
