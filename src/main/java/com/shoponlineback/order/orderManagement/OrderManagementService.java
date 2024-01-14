@@ -6,9 +6,14 @@ import com.shoponlineback.order.OrderDtoMapper;
 import com.shoponlineback.order.OrderStatus;
 import com.shoponlineback.order.dto.OrderDto;
 import com.shoponlineback.order.dto.OrderUpdateDto;
+import com.shoponlineback.orderProduct.OrderProduct;
 import com.shoponlineback.orderProduct.OrderProductDto;
 import com.shoponlineback.orderProduct.OrderProductMapper;
 import com.shoponlineback.orderProduct.OrderProductRepository;
+import com.shoponlineback.orderProduct.activationCode.ActivationCode;
+import com.shoponlineback.orderProduct.activationCode.ActivationCodeRepository;
+import com.shoponlineback.orderProduct.activationCode.ActivationCodeUpdateDto;
+import com.shoponlineback.orderProduct.activationCode.OrderProductQuantityUpdateDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -23,10 +28,11 @@ import java.util.stream.StreamSupport;
 public class OrderManagementService {
     private final OrderManagementRepository orderManagementRepository;
     private final OrderProductRepository orderProductRepository;
-
-    public OrderManagementService(OrderManagementRepository orderManagementRepository, OrderProductRepository orderProductRepository) {
+    private final ActivationCodeRepository activationCodeRepository;
+    public OrderManagementService(OrderManagementRepository orderManagementRepository, OrderProductRepository orderProductRepository, ActivationCodeRepository activationCodeRepository) {
         this.orderManagementRepository = orderManagementRepository;
         this.orderProductRepository = orderProductRepository;
+        this.activationCodeRepository = activationCodeRepository;
     }
 
     public Page<OrderDto> getAllOrders(int page) {
@@ -74,5 +80,23 @@ public class OrderManagementService {
     public List<OrderProductDto> getOrderProducts(Long orderId) {
         return orderProductRepository.findOrderProductsByOrderId(orderId).stream()
                 .map(OrderProductMapper::map).toList();
+    }
+
+    @Transactional
+    public void updateProductOrderCode(ActivationCodeUpdateDto codeUpdateDto) {
+        OrderProduct orderProduct = orderProductRepository.findById(codeUpdateDto.getOrderProductId())
+                .orElseThrow(OrderNotFoundException::new);
+        if (orderProduct.getActivationCodes().size() < orderProduct.getQuantity()) {
+            ActivationCode activationCode = new ActivationCode(codeUpdateDto.getCode(), orderProduct);
+            activationCodeRepository.save(activationCode);
+        }else {
+            throw new RuntimeException("Cannot add more codes to this order product.");
+        }
+    }
+    @Transactional
+    public void updateProductOrderQuantity(OrderProductQuantityUpdateDto quantityUpdateDto) {
+        OrderProduct orderProduct = orderProductRepository.findById(quantityUpdateDto.getOrderProductId())
+                .orElseThrow(OrderNotFoundException::new);
+        orderProduct.setQuantity(quantityUpdateDto.getQuantity());
     }
 }

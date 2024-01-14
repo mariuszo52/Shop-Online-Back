@@ -33,8 +33,10 @@ public class OrderService {
         order.setOrderDate(LocalDateTime.now());
         Order orderEntity = orderRepository.save(order);
         orderDto.getProductList().forEach(productDto -> {
-            Product product = productRepository.findById(productDto.getId()).orElseThrow(ProductNotFoundException::new);
-            orderProductRepository.save(new OrderProduct(order, product, Math.toIntExact(productDto.getCartQuantity())));
+            Product product = productRepository.findById(productDto.getId())
+                    .orElseThrow(ProductNotFoundException::new);
+            OrderProduct orderProduct = new OrderProduct(order, product, Math.toIntExact(productDto.getCartQuantity()));
+            orderProductRepository.save(orderProduct);
         });
         return orderEntity;
     }

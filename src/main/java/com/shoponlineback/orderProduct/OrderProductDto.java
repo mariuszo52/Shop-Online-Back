@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 @Builder
@@ -18,5 +20,6 @@ public class OrderProductDto {
     private ProductDto product;
     @NotNull
     private Integer quantity;
+    private List<String> activationCodes;
 
 }

@@ -3,23 +3,18 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
-<changeSet id="0019" author="Mariusz">
-    <createTable tableName="favorite_products">
+<changeSet id="0020" author="Mariusz">
+    <createTable tableName="activation_code">
         <column name="id" type="BIGINT" autoIncrement="true">
             <constraints nullable="false" unique="true" primaryKey="true"/>
         </column>
-        <column name="product_id" type="BIGINT">
-            <constraints foreignKeyName="fk_product_6"
-                         referencedTableName="product"
-                         referencedColumnNames="id"/>
-        </column>
-        <column name="user_id" type="BIGINT">
-            <constraints foreignKeyName="fk_user_8"
-                         referencedTableName="users"
-                         referencedColumnNames="id"/>
-        </column>
-        <column name="add_time" type="DATETIME">
+        <column name="code" type="VARCHAR(100)">
             <constraints nullable="false"/>
+        </column>
+        <column name="order_product_id" type="BIGINT">
+            <constraints foreignKeyName="fk_order_products"
+                         referencedTableName="order_products"
+                         referencedColumnNames="id"/>
         </column>
     </createTable>
 </changeSet>

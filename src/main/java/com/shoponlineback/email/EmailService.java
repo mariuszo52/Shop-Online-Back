@@ -5,6 +5,9 @@ import com.shoponlineback.order.Order;
 import com.shoponlineback.order.OrderRepository;
 import com.shoponlineback.orderProduct.OrderProduct;
 import com.shoponlineback.orderProduct.OrderProductRepository;
+import com.shoponlineback.orderProduct.activationCode.ActivationCode;
+import com.shoponlineback.orderProduct.activationCode.ActivationCodeRepository;
+import com.shoponlineback.orderProduct.activationCode.ActivationCodeUpdateDto;
 import com.shoponlineback.shippingAddress.ShippingAddress;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.*;
@@ -23,6 +26,7 @@ import static com.shoponlineback.user.UserService.*;
 public class EmailService {
     private final OrderProductRepository orderProductRepository;
     private final OrderRepository orderRepository;
+    private final ActivationCodeRepository activationCodeRepository;
     private Session session;
     @Value("${EMAIL_SERVER}")
     private String mailServer;
@@ -31,9 +35,10 @@ public class EmailService {
     @Value("${EMAIL_PASSWORD}")
     private String password;
 
-    public EmailService(OrderProductRepository orderProductRepository, OrderRepository orderRepository) {
+    public EmailService(OrderProductRepository orderProductRepository, OrderRepository orderRepository, ActivationCodeRepository activationCodeRepository) {
         this.orderProductRepository = orderProductRepository;
         this.orderRepository = orderRepository;
+        this.activationCodeRepository = activationCodeRepository;
     }
 
     @PostConstruct
@@ -60,7 +65,30 @@ public class EmailService {
         Transport.send(mimeMessage);
 
     }
+    public void sendActivationCodeEmail(ActivationCodeUpdateDto codeUpdateDto) throws MessagingException {
+        OrderProduct orderProduct = orderProductRepository.findById(codeUpdateDto.getOrderProductId())
+                .orElseThrow(OrderNotFoundException::new);
+        List<OrderProduct> orderProducts = orderProductRepository.
+                findOrderProductsByOrderId(orderProduct.getOrder().getId());
+        MimeMessage mimeMessage = new MimeMessage(session);
+        mimeMessage.setFrom(new InternetAddress("kontakt@mowebcreations.pl"));
+        mimeMessage.setSubject("ACTIVATION CODES TO ORDER NR: " + orderProduct.getOrder().getId());
+        mimeMessage.setContent(createActivationCodeEmailText(orderProducts), "text/html");
+        InternetAddress email = new InternetAddress(orderProduct.getOrder().getUser().getEmail());
+        mimeMessage.setRecipient(Message.RecipientType.TO, email);
+        Transport.send(mimeMessage);
 
+    }
+    private String createActivationCodeEmailText(List<OrderProduct> orderProducts){
+        StringBuilder text = new StringBuilder();
+        for (OrderProduct orderProduct : orderProducts) {
+            List<String> codes = activationCodeRepository.findAllByOrderProductId(orderProduct.getId()).stream()
+                    .map(ActivationCode::getCode).toList();
+            text.append("<p>PRODUCT NAME: ").append(orderProduct.getProduct().getName())
+                    .append(" ACTIVATION CODES: ").append(codes).append("</p>");
+        }
+        return text.toString();
+    }
     public void sendOrderConfirmationEmail(Long orderId, String subject) throws MessagingException {
         List<OrderProduct> orderProducts = orderProductRepository.findOrderProductsByOrderId(orderId);
         Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
@@ -93,6 +121,7 @@ public class EmailService {
                                     <th>Product Name</th>
                                     <th>Quantity</th>
                                     <th>Price</th>
+                                    <th>Activation Code</th>
                                 </tr>
                                 %s
                             </table>
@@ -113,10 +142,19 @@ public class EmailService {
         for (OrderProduct orderProduct : productList) {
             BigDecimal price = orderProduct.getProduct().getPrice()
                     .multiply(BigDecimal.valueOf(orderProduct.getQuantity()));
+            String codesText;
+            List<String> codes = activationCodeRepository.findAllByOrderProductId(orderProduct.getId()).stream()
+                    .map(ActivationCode::getCode).toList();
+            if(codes.isEmpty()){
+                codesText = "CODE IN REALIZATION";
+            }else {
+                codesText = codes.toString();
+            }
             tableRows.append("<tr>")
                     .append("<td>").append(orderProduct.getProduct().getName()).append("</td>")
                     .append("<td>").append(orderProduct.getQuantity()).append("</td>")
                     .append("<td>").append(price).append("</td>")
+                    .append("<td>").append(codesText).append("</td>")
                     .append("</tr>");
         }
         return tableRows.toString();

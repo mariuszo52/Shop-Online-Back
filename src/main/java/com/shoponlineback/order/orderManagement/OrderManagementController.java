@@ -4,6 +4,8 @@ import com.shoponlineback.email.EmailService;
 import com.shoponlineback.order.dto.OrderDto;
 import com.shoponlineback.order.dto.OrderUpdateDto;
 import com.shoponlineback.orderProduct.OrderProductDto;
+import com.shoponlineback.orderProduct.activationCode.ActivationCodeUpdateDto;
+import com.shoponlineback.orderProduct.activationCode.OrderProductQuantityUpdateDto;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,4 +82,24 @@ public class OrderManagementController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PutMapping("/order-product-code")
+    ResponseEntity<?> updateOrderProductQuantity(@RequestBody ActivationCodeUpdateDto codeUpdateDto) {
+        try {
+            orderManagementService.updateProductOrderCode(codeUpdateDto);
+            emailService.sendActivationCodeEmail(codeUpdateDto);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PutMapping("/order-product-quantity")
+    ResponseEntity<?> updateOrderProductQuantity(@RequestBody OrderProductQuantityUpdateDto quantityUpdateDto) {
+        try {
+            orderManagementService.updateProductOrderQuantity(quantityUpdateDto);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }
