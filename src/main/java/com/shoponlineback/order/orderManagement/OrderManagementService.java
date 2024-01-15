@@ -29,10 +29,12 @@ public class OrderManagementService {
     private final OrderManagementRepository orderManagementRepository;
     private final OrderProductRepository orderProductRepository;
     private final ActivationCodeRepository activationCodeRepository;
-    public OrderManagementService(OrderManagementRepository orderManagementRepository, OrderProductRepository orderProductRepository, ActivationCodeRepository activationCodeRepository) {
+    private final OrderProductMapper orderProductMapper;
+    public OrderManagementService(OrderManagementRepository orderManagementRepository, OrderProductRepository orderProductRepository, ActivationCodeRepository activationCodeRepository, OrderProductMapper orderProductMapper) {
         this.orderManagementRepository = orderManagementRepository;
         this.orderProductRepository = orderProductRepository;
         this.activationCodeRepository = activationCodeRepository;
+        this.orderProductMapper = orderProductMapper;
     }
 
     public Page<OrderDto> getAllOrders(int page) {
@@ -79,7 +81,7 @@ public class OrderManagementService {
 
     public List<OrderProductDto> getOrderProducts(Long orderId) {
         return orderProductRepository.findOrderProductsByOrderId(orderId).stream()
-                .map(OrderProductMapper::map).toList();
+                .map(orderProductMapper::map).toList();
     }
 
     @Transactional

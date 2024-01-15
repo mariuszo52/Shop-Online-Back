@@ -2,7 +2,6 @@ package com.shoponlineback.orderProduct;
 
 import com.shoponlineback.order.Order;
 import com.shoponlineback.order.OrderRepository;
-import com.shoponlineback.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +12,12 @@ import static com.shoponlineback.user.UserService.*;
 public class OrderProductService {
     private final OrderProductRepository orderProductRepository;
     private final OrderRepository orderRepository;
+    private final OrderProductMapper orderProductMapper;
 
-    public OrderProductService(OrderProductRepository orderProductRepository, OrderRepository orderRepository) {
+    public OrderProductService(OrderProductRepository orderProductRepository, OrderRepository orderRepository, OrderProductMapper orderProductMapper) {
         this.orderProductRepository = orderProductRepository;
         this.orderRepository = orderRepository;
+        this.orderProductMapper = orderProductMapper;
     }
 
     List<OrderProductDto> getOrderProducts(){
@@ -24,7 +25,7 @@ public class OrderProductService {
                 .map(Order::getId)
                 .toList();
         return orderProductRepository.findOrderProductsByOrderIdIn(userOrdersIds).stream()
-                .map(OrderProductMapper::map)
+                .map(orderProductMapper::map)
                 .toList();
 
     }
