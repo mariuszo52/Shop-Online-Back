@@ -1,6 +1,7 @@
 package com.shoponlineback;
 
 import com.shoponlineback.product.ProductService;
+import com.shoponlineback.product.ScrapProductsService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -17,6 +18,8 @@ import java.util.List;
 public class ShopOnlineBackApplication {
     public static void main(String[] args) throws IOException {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplication.class, args);
+        ScrapProductsService scrapProductsService = applicationContext.getBean(ScrapProductsService.class);
+        scrapProductsService.fetchPcGames();
         ProductService productService = applicationContext.getBean(ProductService.class);
         productService.saveAllProducts(1);
     }
