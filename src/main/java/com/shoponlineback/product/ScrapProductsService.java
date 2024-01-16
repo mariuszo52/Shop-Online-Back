@@ -23,6 +23,7 @@ public class ScrapProductsService {
         Elements elementsByClass = document.getElementsByClass("product-item-link");
         Set<Product> gameNames = new TreeSet<>(Comparator.comparing(Product::getName));
         for (Element element : elementsByClass) {
+            System.out.println("start");
             Product product = new Product();
             Attribute attribute = element.attribute("href");
             Document gamePage = Jsoup.connect(attribute.getValue()).get();
@@ -30,9 +31,13 @@ public class ScrapProductsService {
                     .attribute("data-text").getValue();
             BigDecimal price = BigDecimal.valueOf(Double.parseDouble(gamePage.getElementsByClass("price")
                     .get(0).text().substring(3)));
-            String description = gamePage.getElementsByClass("product attribute description")
-                    .get(0).getElementsByTag("p").text();
+            Elements descriptionDiv = gamePage.getElementsByClass("product attribute description").get(0).children();
+            StringBuilder description = new StringBuilder();
+            for (Element divElement : descriptionDiv) {
+                description.append(divElement.text()).append("\n");
+            }
             System.out.println("PRICE " + price + " " + description );
+            System.out.println("stop");
         }
         System.out.println(gameNames);
 
