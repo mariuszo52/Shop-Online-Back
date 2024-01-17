@@ -48,9 +48,7 @@ public class JsonObjectToProductMapper {
         PlatformDto platform = getPlatform(platformName);
         JSONArray offers = jsonObject.getJSONArray("offers");
         JSONObject jsonObject1 = offers.getJSONObject(0);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String releaseDateString = jsonObject1.optString("releaseDate");
-        LocalDate releaseDate = getReleaseDate(releaseDateString, dateTimeFormatter);
+        String releaseDate= jsonObject1.optString("releaseDate");
         Boolean isPreorder = jsonObject.getJSONArray("offers").getJSONObject(0).getBoolean("isPreorder");
         String regionalLimitations = jsonObject.getString("regionalLimitations");
         JSONArray systemRequirement = jsonObject.optJSONArray("systemRequirements");
@@ -144,16 +142,6 @@ public class JsonObjectToProductMapper {
             coverImage = "https://i0.wp.com/imicare.pl/wp-content/uploads/2018/06/brak-zdjecia_1030x578.jpg?ssl=1";
         }
         return coverImage;
-    }
-
-    private static LocalDate getReleaseDate(String releaseDateString, DateTimeFormatter dateTimeFormatter) {
-        LocalDate releaseDate;
-        if (!releaseDateString.isEmpty()) {
-            releaseDate = LocalDate.parse(releaseDateString, dateTimeFormatter);
-        } else {
-            releaseDate = LocalDate.now();
-        }
-        return releaseDate;
     }
 
     private static List<Genre> getGenreList(JSONObject jsonObject) {

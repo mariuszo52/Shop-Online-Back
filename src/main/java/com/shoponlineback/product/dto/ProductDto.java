@@ -34,7 +34,7 @@ public class ProductDto {
     private String description;
     private String coverImage;
     private List<GenreDto> genres;
-    private LocalDate releaseDate;
+    private String releaseDate;
     private Boolean isPreorder;
     private String regionalLimitations;
     private String system;

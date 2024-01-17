@@ -21,7 +21,7 @@
         <column name="platform_id" type="BIGINT">
             <constraints foreignKeyName="fk_platform" referencedTableName="platform" referencedColumnNames="id"/>
         </column>
-        <column name="release_date" type="DATE">
+        <column name="release_date" type="VARCHAR(30)">
         </column>
         <column name="is_preorder" type="BOOLEAN">
         </column>

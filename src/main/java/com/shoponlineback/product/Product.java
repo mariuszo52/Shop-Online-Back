@@ -46,7 +46,7 @@ public class Product {
     private List<Genre> genres;
     @OneToOne(cascade = PERSIST)
     private Platform platform;
-    private LocalDate releaseDate;
+    private String releaseDate;
     private Boolean isPreorder;
     private String regionalLimitations;
     @OneToOne(cascade = {PERSIST, REMOVE})
