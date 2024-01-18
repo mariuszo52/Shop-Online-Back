@@ -1,8 +1,6 @@
 package com.shoponlineback.urlConnectionService;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONObject;
-import org.json.JSONPointer;
 
 import java.io.BufferedReader;
 import java.io.IOException;

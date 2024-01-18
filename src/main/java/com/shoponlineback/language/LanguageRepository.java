@@ -11,6 +11,7 @@ import java.util.Set;
 
 @Repository
 public interface LanguageRepository extends CrudRepository<Language, Long>{
+    boolean existsByName(String name);
     Optional<Language> findLanguageByName(String name);
     List<Language> findAllByNameIn(List<String> names);
     @Query("SELECT p.languages FROM Product p WHERE p.id = :productId")

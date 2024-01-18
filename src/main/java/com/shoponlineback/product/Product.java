@@ -6,7 +6,6 @@ import com.shoponlineback.genre.Genre;
 import com.shoponlineback.language.Language;
 import com.shoponlineback.platform.Platform;
 import com.shoponlineback.screenshot.Screenshot;
-import com.shoponlineback.systemRequirements.SystemRequirements;
 import com.shoponlineback.user.User;
 import com.shoponlineback.video.Video;
 import jakarta.persistence.*;
@@ -16,7 +15,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
@@ -47,14 +45,10 @@ public class Product {
     @OneToOne(cascade = PERSIST)
     private Platform platform;
     private String releaseDate;
-    private Boolean isPreorder;
     private String regionalLimitations;
-    @OneToOne(cascade = {PERSIST, REMOVE})
-    private SystemRequirements systemRequirements;
     private String ageRating;
     private String activationDetails;
     private Integer regionId;
-    private Boolean isPolishVersion;
     @ManyToMany(mappedBy = "products",
             fetch = FetchType.EAGER)
     private List<Language> languages;

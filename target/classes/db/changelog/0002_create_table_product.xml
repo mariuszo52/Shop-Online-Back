@@ -21,14 +21,9 @@
         <column name="platform_id" type="BIGINT">
             <constraints foreignKeyName="fk_platform" referencedTableName="platform" referencedColumnNames="id"/>
         </column>
-        <column name="release_date" type="DATE">
-        </column>
-        <column name="is_preorder" type="BOOLEAN">
+        <column name="release_date" type="VARCHAR(30)">
         </column>
         <column name="regional_limitations" type="VARCHAR(100)">
-        </column>
-        <column name="system_requirements_id" type="BIGINT">
-            <constraints nullable="false" foreignKeyName="fk_systemRequirements" referencedTableName="system_requirements" referencedColumnNames="id"/>
         </column>
         <column name="age_rating" type="VARCHAR(100)">
         </column>

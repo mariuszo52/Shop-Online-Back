@@ -9,7 +9,6 @@ import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.dto.PlatformDto;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.screenshot.Screenshot;
-import com.shoponlineback.systemRequirements.SystemRequirements;
 import com.shoponlineback.video.Video;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,15 +46,11 @@ public class JsonObjectToProductMapper {
         JSONArray offers = jsonObject.getJSONArray("offers");
         JSONObject jsonObject1 = offers.getJSONObject(0);
         String releaseDate= jsonObject1.optString("releaseDate");
-        Boolean isPreorder = jsonObject.getJSONArray("offers").getJSONObject(0).getBoolean("isPreorder");
         String regionalLimitations = jsonObject.getString("regionalLimitations");
-        JSONArray systemRequirement = jsonObject.optJSONArray("systemRequirements");
-        SystemRequirements systemRequirements = getSystemRequirements(systemRequirement);
         String ageRating = jsonObject.optString("ageRating");
         String activationDetails = jsonObject.optString("activationDetails");
         int regionId = jsonObject.optInt("regionId");
         List<LanguageDto> languages = getLanguages(jsonObject);
-        boolean isPolishVersion = languages.toString().contains("Polish");
         return ProductDto.builder()
                 .name(name)
                 .price(price)
@@ -66,14 +59,10 @@ public class JsonObjectToProductMapper {
                 .genres(genres)
                 .releaseDate(releaseDate)
                 .platformDto(platform)
-                .isPreorder(isPreorder)
                 .regionalLimitations(regionalLimitations)
-                .system(systemRequirements.getSystem())
-                .systemRequirements(systemRequirements.getRequirements())
                 .ageRating(ageRating)
                 .activationDetails(activationDetails)
                 .regionId(regionId)
-                .isPolishVersion(isPolishVersion)
                 .languages(languages)
                 .cartQuantity(0L)
                 .build();
@@ -156,14 +145,4 @@ public class JsonObjectToProductMapper {
         return genres;
     }
 
-    private static SystemRequirements getSystemRequirements(JSONArray systemRequirement) {
-        if (!systemRequirement.isEmpty()) {
-            JSONObject jsonObjectSystem = systemRequirement.optJSONObject(0);
-            String system = jsonObjectSystem.optString("system");
-            String requirement = jsonObjectSystem.optJSONArray("requirement").toString();
-            return new SystemRequirements(system, requirement);
-        } else {
-            return new SystemRequirements("None", "None");
-        }
-    }
 }

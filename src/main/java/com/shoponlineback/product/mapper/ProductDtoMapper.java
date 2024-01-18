@@ -4,8 +4,6 @@ import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreDto;
 import com.shoponlineback.genre.GenreMapper;
 import com.shoponlineback.genre.GenreRepository;
-import com.shoponlineback.language.Language;
-import com.shoponlineback.language.LanguageDto;
 import com.shoponlineback.language.LanguageMapper;
 import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.Platform;
@@ -14,7 +12,6 @@ import com.shoponlineback.platform.PlatformRepository;
 import com.shoponlineback.product.Product;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.screenshot.Screenshot;
-import com.shoponlineback.systemRequirements.SystemRequirements;
 import com.shoponlineback.video.Video;
 import org.springframework.stereotype.Service;
 
@@ -41,14 +38,10 @@ public class ProductDtoMapper {
                 .coverImage(product.getCoverImage())
                 .genres(product.getGenres().stream().map(GenreMapper::map).toList())
                 .releaseDate(product.getReleaseDate())
-                .isPreorder(product.getIsPreorder())
                 .regionalLimitations(product.getRegionalLimitations())
-                .system(product.getSystemRequirements().getSystem())
-                .systemRequirements(product.getSystemRequirements().getRequirements())
                 .ageRating(product.getAgeRating())
                 .activationDetails(product.getActivationDetails())
                 .regionId(product.getRegionId())
-                .isPolishVersion(product.getIsPolishVersion())
                 .languages(product.getLanguages().stream().map(LanguageMapper::map).toList())
                 .platformDto(PlatformDtoMapper.map(product.getPlatform()))
                 .videoUrls(product.getVideos().stream().map(Video::getUrl).toList())
@@ -68,10 +61,7 @@ public class ProductDtoMapper {
         return Product.builder()
                 .id(productDto.getId())
                 .activationDetails(productDto.getActivationDetails())
-                .isPolishVersion(productDto.getIsPolishVersion())
                 .regionId(productDto.getRegionId())
-                .isPreorder(productDto.getIsPreorder())
-                .systemRequirements(new SystemRequirements(productDto.getSystem(), productDto.getSystemRequirements()))
                 .ageRating(productDto.getAgeRating())
                 .releaseDate(productDto.getReleaseDate())
                 .regionalLimitations(productDto.getRegionalLimitations())

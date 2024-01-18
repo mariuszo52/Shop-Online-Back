@@ -23,12 +23,7 @@
         </column>
         <column name="release_date" type="VARCHAR(30)">
         </column>
-        <column name="is_preorder" type="BOOLEAN">
-        </column>
         <column name="regional_limitations" type="VARCHAR(100)">
-        </column>
-        <column name="system_requirements_id" type="BIGINT">
-            <constraints nullable="false" foreignKeyName="fk_systemRequirements" referencedTableName="system_requirements" referencedColumnNames="id"/>
         </column>
         <column name="age_rating" type="VARCHAR(100)">
         </column>
