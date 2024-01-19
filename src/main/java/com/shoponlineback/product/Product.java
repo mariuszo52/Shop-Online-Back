@@ -7,7 +7,6 @@ import com.shoponlineback.language.Language;
 import com.shoponlineback.platform.Platform;
 import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.user.User;
-import com.shoponlineback.video.Video;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -52,15 +51,11 @@ public class Product {
     @ManyToMany(mappedBy = "products",
             fetch = FetchType.EAGER)
     private List<Language> languages;
-    @OneToMany(fetch = FetchType.EAGER,
-            cascade = REMOVE,
-            mappedBy = "product")
-    private List<Video> videos;
+    private String videoUrl;
     @OneToMany(fetch = FetchType.EAGER,
             cascade = REMOVE,
             mappedBy = "product")
     List<Screenshot> screenshots;
-    private Long cartQuantity;
     @ManyToMany(mappedBy = "productList")
     private List<Cart> carts;
     @ManyToMany(mappedBy = "productList")

@@ -4,14 +4,12 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
-    <include file="0001_create_table_system_requirements.xml" relativeToChangelogFile="true"/>
     <include file="0005_create_table_platform.xml" relativeToChangelogFile="true"/>
     <include file="0002_create_table_product.xml" relativeToChangelogFile="true"/>
     <include file="0003_create_table_genre.xml" relativeToChangelogFile="true"/>
     <include file="0004_create_table_product_genres.xml" relativeToChangelogFile="true"/>
     <include file="0006_create_table_language.xml" relativeToChangelogFile="true"/>
     <include file="0007_create_table_product_language.xml" relativeToChangelogFile="true"/>
-    <include file="0008_create_table_video.xml" relativeToChangelogFile="true"/>
     <include file="0009_create_table_screenshot.xml" relativeToChangelogFile="true"/>
     <include file="0010_create_table_user_role.xml" relativeToChangelogFile="true"/>
     <include file="0011_create_table_user_info.xml" relativeToChangelogFile="true"/>

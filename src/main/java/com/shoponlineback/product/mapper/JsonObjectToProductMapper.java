@@ -9,7 +9,6 @@ import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.dto.PlatformDto;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.screenshot.Screenshot;
-import com.shoponlineback.video.Video;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -68,22 +67,6 @@ public class JsonObjectToProductMapper {
                 .build();
     }
 
-    public List<Video> getVideos(JSONObject jsonObject) {
-        JSONArray jsonArrayVideos = jsonObject.optJSONArray("videos");
-        List<Video> videos = new ArrayList<>();
-        if(jsonArrayVideos != null) {
-            for (int i = 0; i < jsonArrayVideos.length(); i++) {
-                JSONObject videoObject = (JSONObject) jsonArrayVideos.get(i);
-                String videoId = videoObject.optString("video_id");
-                String videoUrl = VIDEO_PREFIX + videoId;
-                Video video = new Video();
-                video.setUrl(videoUrl);
-                videos.add(video);
-            }
-        }
-            return videos;
-
-    }
 
     private List<LanguageDto> getLanguages(JSONObject jsonObject) {
         JSONArray languages = jsonObject.getJSONArray("languages");

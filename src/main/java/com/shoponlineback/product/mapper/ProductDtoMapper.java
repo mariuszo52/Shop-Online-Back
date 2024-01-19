@@ -12,7 +12,6 @@ import com.shoponlineback.platform.PlatformRepository;
 import com.shoponlineback.product.Product;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.screenshot.Screenshot;
-import com.shoponlineback.video.Video;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public class ProductDtoMapper {
                 .regionId(product.getRegionId())
                 .languages(product.getLanguages().stream().map(LanguageMapper::map).toList())
                 .platformDto(PlatformDtoMapper.map(product.getPlatform()))
-                .videoUrls(product.getVideos().stream().map(Video::getUrl).toList())
+                .videoUrl(product.getVideoUrl())
                 .screenshotsUrls(product.getScreenshots().stream().map(Screenshot::getUrl).toList())
                 .cartQuantity(product.getCartQuantity())
                 .build();
@@ -71,6 +70,7 @@ public class ProductDtoMapper {
                 .coverImage(productDto.getCoverImage())
                 .description(productDto.getDescription())
                 .genres(genres)
+                .videoUrl(productDto.getVideoUrl())
                 .cartQuantity(productDto.getCartQuantity())
                 .build();
     }

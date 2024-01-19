@@ -27,6 +27,9 @@
         </column>
         <column name="age_rating" type="VARCHAR(100)">
         </column>
+        <column name="video_url" type="VARCHAR(500)">
+            <constraints nullable="true"/>
+        </column>
         <column name="activation_details" type="VARCHAR(5000)">
         </column>
         <column name="region_id" type="INTEGER">

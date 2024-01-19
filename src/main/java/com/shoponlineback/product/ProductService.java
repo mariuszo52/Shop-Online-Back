@@ -16,8 +16,6 @@ import com.shoponlineback.productLanguage.ProductLanguageRepository;
 import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.screenshot.ScreenshotRepository;
 import com.shoponlineback.urlConnectionService.UrlConnectionService;
-import com.shoponlineback.video.Video;
-import com.shoponlineback.video.VideoRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
@@ -38,7 +36,6 @@ public class ProductService {
     private final ProductDtoMapper productDtoMapper;
     private final ProductRepository productRepository;
     private final ProductPagingRepository productPagingRepository;
-    private final VideoRepository videoRepository;
     private final ScreenshotRepository screenshotRepository;
     private final JsonObjectToProductMapper jsonObjectToProductMapper;
     private final LanguageRepository languageRepository;
@@ -49,14 +46,12 @@ public class ProductService {
     private final static int REGION_FREE = 3;
 
     public ProductService(ProductDtoMapper productDtoMapper, ProductRepository productRepository,
-                          ProductPagingRepository productPagingRepository, VideoRepository videoRepository,
-                          ScreenshotRepository screenshotRepository,
+                          ProductPagingRepository productPagingRepository, ScreenshotRepository screenshotRepository,
                           JsonObjectToProductMapper jsonObjectToProductMapper,
                           LanguageRepository languageRepository, ProductLanguageRepository productLanguageRepository, GenreRepository genreRepository, ProductGenresRepository productGenresRepository) {
         this.productDtoMapper = productDtoMapper;
         this.productRepository = productRepository;
         this.productPagingRepository = productPagingRepository;
-        this.videoRepository = videoRepository;
         this.screenshotRepository = screenshotRepository;
         this.jsonObjectToProductMapper = jsonObjectToProductMapper;
         this.languageRepository = languageRepository;
@@ -108,11 +103,6 @@ public class ProductService {
                     .toList();
             genreRepository.findByNameIn(genresNames).forEach(genre -> {
                 productGenresRepository.save(new ProductGenres(product, genre));
-            });
-            List<Video> videos = jsonObjectToProductMapper.getVideos(jsonObject);
-            videos.forEach(video -> {
-                video.setProduct(productEntity);
-                videoRepository.save(video);
             });
             List<Screenshot> screenshots = jsonObjectToProductMapper.getScreenshots(jsonObject);
             screenshots.forEach(screenshot -> {

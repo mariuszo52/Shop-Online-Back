@@ -6,6 +6,7 @@ import com.shoponlineback.language.Language;
 import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.Platform;
 import com.shoponlineback.platform.PlatformRepository;
+import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.urlConnectionService.UrlConnectionService;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -97,7 +98,23 @@ public class ScrapProductsService {
                     languages.add(languageEntity);
                 }
             }
-            System.out.println(languages);
+            Elements videoElements = gamePage.getElementsByClass("product attribute video");
+            if (!videoElements.isEmpty()){
+                Element videoDivFirstElement = videoElements.get(0);
+                Elements iframeElements = videoDivFirstElement.getElementsByTag("iframe");
+                if(!iframeElements.isEmpty()){
+                    String video = iframeElements.get(0).attribute("data-src").getValue();
+                }
+            }
+            List<String> screenshotUrls = new ArrayList<>();
+            Elements screenshotElements = gamePage.getElementsByClass("screenshot-full");
+            for (Element screenshotElement : screenshotElements) {
+                String screenshotUrl = screenshotElement.getElementsByTag("img").get(0)
+                        .attribute("src").getValue();
+                screenshotUrls.add(screenshotUrl);
+            }
+            System.out.println(screenshotUrls);
+
 
             System.out.println("stop");
 
