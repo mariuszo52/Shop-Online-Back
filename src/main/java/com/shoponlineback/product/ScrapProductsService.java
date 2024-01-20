@@ -173,7 +173,7 @@ public class ScrapProductsService {
 
     private Platform getPlatform(String description, Document gamePage) {
         int deviceStartIndex = description.lastIndexOf("Platform");
-        int deviceLastIndex = description.lastIndexOf("(");
+        int deviceLastIndex = description.lastIndexOf("(") -1;
         String deviceName = description.substring(deviceStartIndex, deviceLastIndex).substring(9);
         String platformName = gamePage.getElementsByClass("product attribute-icon attribute platforms").first()
                 .getElementsByClass("value").first().text();

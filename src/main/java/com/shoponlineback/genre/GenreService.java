@@ -1,23 +1,20 @@
 package com.shoponlineback.genre;
 
-import com.shoponlineback.product.Product;
 import com.shoponlineback.product.ProductRepository;
-import com.shoponlineback.product.dto.ProductDto;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class GenreService {
     private final ProductRepository productRepository;
+    private final GenreRepository genreRepository;
 
-    public GenreService(ProductRepository productRepository) {
+    public GenreService(ProductRepository productRepository, GenreRepository genreRepository) {
         this.productRepository = productRepository;
+        this.genreRepository = genreRepository;
     }
 
 
