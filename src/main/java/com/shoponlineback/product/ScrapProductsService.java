@@ -141,8 +141,8 @@ public class ScrapProductsService {
                 .getElementsByClass("language-flag");
         List<Language> languages = new ArrayList<>();
         for (Element languageElement : languageElements) {
-            String name = languageElement.getElementsByTag("img").get(0).attribute("alt").toString();
-            String iconUrl = languageElement.getElementsByTag("img").get(0).attribute("src").toString();
+            String name = languageElement.getElementsByTag("img").first().attr("alt");
+            String iconUrl = languageElement.getElementsByTag("img").first().attr("src");
             Language language = new Language(name, iconUrl);
             if (!languageRepository.existsByName(name)) {
                 Language languageEntity = languageRepository.save(language);
@@ -196,7 +196,7 @@ public class ScrapProductsService {
     }
 
     private static String getImageCover(Document gamePage) {
-        return gamePage.getElementsByClass("product media").get(0).getElementsByTag("img").get(0)
+        return gamePage.getElementsByClass("product media").first().getElementsByTag("img").first()
                 .attribute("src").getValue();
     }
 
