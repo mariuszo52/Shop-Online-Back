@@ -40,6 +40,7 @@ public class ProductDto {
     private PlatformDto platformDto;
     private String videoUrl;
     private int cartQuantity;
+    private Boolean inStock;
     private List<String> screenshotsUrls;
 
 }

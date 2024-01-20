@@ -24,6 +24,7 @@
         <column name="release_date" type="VARCHAR(30)">
         </column>
         <column name="regional_limitations" type="VARCHAR(100)">
+            <constraints nullable="false"/>
         </column>
         <column name="video_url" type="VARCHAR(500)">
             <constraints nullable="true"/>
@@ -31,6 +32,10 @@
         <column name="activation_details" type="VARCHAR(5000)">
         </column>
         <column name="is_preorder" type="BOOLEAN">
+            <constraints nullable="false"/>
+        </column>
+        <column name="in_stock" type="BOOLEAN">
+            <constraints nullable="false"/>
         </column>
     </createTable>
 </changeSet>

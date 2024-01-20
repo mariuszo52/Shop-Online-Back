@@ -20,12 +20,11 @@ import java.util.List;
 public class ProductDtoMapper {
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
-    private final LanguageRepository languageRepository;
 
-    public ProductDtoMapper(GenreRepository genreRepository, PlatformRepository platformRepository, LanguageRepository languageRepository) {
+    public ProductDtoMapper(GenreRepository genreRepository,
+                            PlatformRepository platformRepository) {
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
-        this.languageRepository = languageRepository;
     }
 
     public static ProductDto map(Product product) {
@@ -43,6 +42,7 @@ public class ProductDtoMapper {
                 .languages(product.getLanguages().stream().map(LanguageMapper::map).toList())
                 .platformDto(PlatformDtoMapper.map(product.getPlatform()))
                 .videoUrl(product.getVideoUrl())
+                .inStock(product.getInStock())
                 .screenshotsUrls(product.getScreenshots().stream().map(Screenshot::getUrl).toList())
                 .build();
     }
@@ -67,6 +67,7 @@ public class ProductDtoMapper {
                 .coverImage(productDto.getCoverImage())
                 .description(productDto.getDescription())
                 .genres(genres)
+                .inStock(productDto.getInStock())
                 .videoUrl(productDto.getVideoUrl())
                 .build();
     }

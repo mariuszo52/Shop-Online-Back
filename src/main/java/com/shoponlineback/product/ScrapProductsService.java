@@ -80,6 +80,7 @@ public class ScrapProductsService {
             List<Screenshot> screenshots = getScreenshots(gamePage);
             Boolean isPreorder = isPreorder(gamePage);
             String activationDetails = getActivationDetails(gamePage);
+            Boolean inStock = inStock(gamePage);
             Product product = Product.builder()
                     .name(title)
                     .description(description)
@@ -90,7 +91,8 @@ public class ScrapProductsService {
                     .regionalLimitations(regionalLimitations)
                     .videoUrl(videoUrl)
                     .isPreorder(isPreorder)
-                    .activationDetails(activationDetails).build();
+                    .activationDetails(activationDetails)
+                    .inStock(inStock).build();
             Product productEntity = productRepository.save(product);
             System.out.println(productEntity.getId() + " saved");
             genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
@@ -173,7 +175,7 @@ public class ScrapProductsService {
 
     private Platform getPlatform(String description, Document gamePage) {
         int deviceStartIndex = description.lastIndexOf("Platform");
-        int deviceLastIndex = description.lastIndexOf("(") -1;
+        int deviceLastIndex = description.lastIndexOf("(") - 1;
         String deviceName = description.substring(deviceStartIndex, deviceLastIndex).substring(9);
         String platformName = gamePage.getElementsByClass("product attribute-icon attribute platforms").first()
                 .getElementsByClass("value").first().text();
@@ -218,5 +220,11 @@ public class ScrapProductsService {
     private static String getTitle(Document gamePage) {
         return gamePage.getElementsByClass("page-title").first()
                 .attr("data-text");
+    }
+
+    private static Boolean inStock(Document gamePage) {
+        return gamePage.getElementsByClass("product-usps-item attribute stock available").first()
+                .getElementsByClass("product-usps-text").text()
+                .equalsIgnoreCase("CURRENTLY IN STOCK");
     }
 }

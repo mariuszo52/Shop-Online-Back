@@ -46,6 +46,7 @@ public class Product {
     private Platform platform;
     private String releaseDate;
     private String regionalLimitations;
+    private Boolean inStock;
     private Boolean isPreorder;
     @Size(min = 1, max = 5000)
     private String activationDetails;
