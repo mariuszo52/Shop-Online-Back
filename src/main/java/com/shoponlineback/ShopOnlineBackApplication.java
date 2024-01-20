@@ -20,8 +20,6 @@ public class ShopOnlineBackApplication {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplication.class, args);
         ScrapProductsService scrapProductsService = applicationContext.getBean(ScrapProductsService.class);
         scrapProductsService.fetchPcGames();
-        ProductService productService = applicationContext.getBean(ProductService.class);
-        productService.saveAllProducts(1);
     }
 
 }

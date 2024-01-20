@@ -14,7 +14,7 @@
         <column name="price" type="DECIMAL(10,2)">
             <constraints nullable="false"/>
         </column>
-        <column name="description" type="VARCHAR(5000)">
+        <column name="description" type="VARCHAR(20000)">
         </column>
         <column name="cover_image" type="VARCHAR(500)">
         </column>
@@ -25,14 +25,12 @@
         </column>
         <column name="regional_limitations" type="VARCHAR(100)">
         </column>
-        <column name="age_rating" type="VARCHAR(100)">
+        <column name="video_url" type="VARCHAR(500)">
+            <constraints nullable="true"/>
         </column>
         <column name="activation_details" type="VARCHAR(5000)">
         </column>
-        <column name="region_id" type="INTEGER">
-        </column>
-        <column name="is_polish_version" type="BOOLEAN"/>
-        <column name="cart_quantity" type="BIGINT">
+        <column name="is_preorder" type="BOOLEAN">
         </column>
     </createTable>
 </changeSet>

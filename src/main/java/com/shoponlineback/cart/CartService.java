@@ -44,22 +44,22 @@ public class CartService {
         }
     }
 
+    //todo
     List<ProductDto> getLoggedUserCart() {
         List<CartProduct> cartProducts = cartProductRepository.findCartProductByCart_id(getLoggedUser().getCart().getId());
         return cartProducts.stream()
                 .map(cartProduct -> {
-                    cartProduct.getProduct().setCartQuantity((long) cartProduct.getQuantity());
                     return ProductDtoMapper.map(cartProduct.getProduct());
                 })
                 .collect(Collectors.toList());
     }
-
+//todo
     void updateProductQuantity(ProductDto productDto) {
         Cart cart = cartRepository.findById(getLoggedUser().getCart().getId())
                 .orElseThrow(() -> new RuntimeException("Cart not found."));
         CartProduct cartProduct = cartProductRepository.findByCart_IdAndProduct_Id(cart.getId(), productDto.getId())
                 .orElseThrow(() -> new RuntimeException("Cart product to update not found."));
-        cartProduct.setQuantity(Math.toIntExact(productDto.getCartQuantity()));
+        //cartProduct.setQuantity(Math.toIntExact(productDto.getCartQuantity()));
         cartProductRepository.save(cartProduct);
 
     }
@@ -74,15 +74,15 @@ public class CartService {
         cartProductRepository.deleteCartProductByCartIdAndProduct_id(getLoggedUser().getCart().getId(), id);
     }
 
+    //todo
     @Transactional
     public void updateAllCart(List<ProductDto> cartProductsDto) {
         List<Product> cartProducts = cartProductsDto.stream()
-                .map(productDto ->{
+                .map(productDto -> {
                     Product product = productRepository.findById(productDto.getId()).orElseThrow();
-                    product.setCartQuantity(productDto.getCartQuantity());
                     return product;
                 }).toList();
-        Cart loggedUserCart = getLoggedUser().getCart();
+        /*Cart loggedUserCart = getLoggedUser().getCart();
         cartProductRepository.deleteAllByCart_Id(loggedUserCart.getId());
         cartProducts.forEach(cartProduct -> {
             Product product = productRepository.findById(cartProduct.getId()).orElseThrow();
@@ -90,6 +90,8 @@ public class CartService {
                     product, Math.toIntExact(cartProduct.getCartQuantity()));
             cartProductRepository.save(cartProductToSave);
 
-        });
-}
+     });
+
+         */
+    }
 }

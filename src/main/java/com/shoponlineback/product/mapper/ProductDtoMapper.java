@@ -38,14 +38,12 @@ public class ProductDtoMapper {
                 .genres(product.getGenres().stream().map(GenreMapper::map).toList())
                 .releaseDate(product.getReleaseDate())
                 .regionalLimitations(product.getRegionalLimitations())
-                .ageRating(product.getAgeRating())
                 .activationDetails(product.getActivationDetails())
-                .regionId(product.getRegionId())
+                .isPreorder(product.getIsPreorder())
                 .languages(product.getLanguages().stream().map(LanguageMapper::map).toList())
                 .platformDto(PlatformDtoMapper.map(product.getPlatform()))
                 .videoUrl(product.getVideoUrl())
                 .screenshotsUrls(product.getScreenshots().stream().map(Screenshot::getUrl).toList())
-                .cartQuantity(product.getCartQuantity())
                 .build();
     }
 
@@ -60,8 +58,7 @@ public class ProductDtoMapper {
         return Product.builder()
                 .id(productDto.getId())
                 .activationDetails(productDto.getActivationDetails())
-                .regionId(productDto.getRegionId())
-                .ageRating(productDto.getAgeRating())
+                .isPreorder(productDto.getIsPreorder())
                 .releaseDate(productDto.getReleaseDate())
                 .regionalLimitations(productDto.getRegionalLimitations())
                 .name(productDto.getName())
@@ -71,7 +68,6 @@ public class ProductDtoMapper {
                 .description(productDto.getDescription())
                 .genres(genres)
                 .videoUrl(productDto.getVideoUrl())
-                .cartQuantity(productDto.getCartQuantity())
                 .build();
     }
 

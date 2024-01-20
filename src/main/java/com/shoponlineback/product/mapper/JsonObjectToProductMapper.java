@@ -59,11 +59,8 @@ public class JsonObjectToProductMapper {
                 .releaseDate(releaseDate)
                 .platformDto(platform)
                 .regionalLimitations(regionalLimitations)
-                .ageRating(ageRating)
                 .activationDetails(activationDetails)
-                .regionId(regionId)
                 .languages(languages)
-                .cartQuantity(0L)
                 .build();
     }
 

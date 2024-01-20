@@ -35,6 +35,7 @@ public class Product {
     @NotNull
     @Min(0)
     private BigDecimal price;
+    @Size(min = 1, max = 20000)
     private String description;
     private String coverImage;
     @ManyToMany(mappedBy = "products",
@@ -45,15 +46,15 @@ public class Product {
     private Platform platform;
     private String releaseDate;
     private String regionalLimitations;
-    private String ageRating;
+    private Boolean isPreorder;
+    @Size(min = 1, max = 5000)
     private String activationDetails;
-    private Integer regionId;
     @ManyToMany(mappedBy = "products",
             fetch = FetchType.EAGER)
     private List<Language> languages;
     private String videoUrl;
     @OneToMany(fetch = FetchType.EAGER,
-            cascade = REMOVE,
+            cascade = {MERGE,REMOVE},
             mappedBy = "product")
     List<Screenshot> screenshots;
     @ManyToMany(mappedBy = "productList")

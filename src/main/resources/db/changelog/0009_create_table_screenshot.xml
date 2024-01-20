@@ -13,7 +13,7 @@
         </column>
         <column name="product_id" type="BIGINT">
             <constraints foreignKeyName="fk_product3" referencedTableName="product" referencedColumnNames="id"
-                         nullable="false"/>
+                         nullable="true"/>
         </column>
     </createTable>
 </changeSet>

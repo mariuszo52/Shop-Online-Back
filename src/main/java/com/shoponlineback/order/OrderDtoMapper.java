@@ -30,22 +30,22 @@ public class OrderDtoMapper {
         this.orderProductRepository = orderProductRepository;
         this.productDtoMapper = productDtoMapper;
     }
-
+//todo
     Order map(OrderDto orderDto){
         ShippingAddressDto saDto = orderDto.getShippingAddress();
         User user = userRepository.findById(UserService.getLoggedUser().getId())
                 .orElseThrow(UserNotFoundException::new);
-        BigDecimal totalPrice = orderDto.getProductList().stream()
-                .map(product -> product.getPrice().multiply(BigDecimal.valueOf(product.getCartQuantity())))
-                .reduce(BigDecimal::add).orElseThrow(RuntimeException::new);
+       // BigDecimal totalPrice = orderDto.getProductList().stream()
+          //      .map(product -> product.getPrice().multiply(BigDecimal.valueOf(product.getCartQuantity())))
+            //    .reduce(BigDecimal::add).orElseThrow(RuntimeException::new);
         return Order.builder()
                 .id(orderDto.getId())
                 .paymentMethod(PaymentMethod.valueOf(orderDto.getPaymentMethod()))
                 .shippingAddress(new ShippingAddress(saDto.getAddress(), saDto.getCity(),
                         saDto.getCountry(), saDto.getPostalCode(), saDto.getPhoneNumber()))
                 .user(user)
-                .orderDate(orderDto.getOrderDate())
-                .totalPrice(totalPrice).build();
+                .orderDate(orderDto.getOrderDate()).build();
+              //  .totalPrice(totalPrice).build();
     }
 
     public static OrderDto map(Order order){

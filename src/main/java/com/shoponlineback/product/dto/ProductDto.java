@@ -26,20 +26,20 @@ public class ProductDto {
     @NotNull
     @Min(0)
     private BigDecimal price;
+    @Size(min = 1, max = 20000)
     private String description;
     private String coverImage;
     private List<GenreDto> genres;
     private String releaseDate;
     private String regionalLimitations;
     private String system;
-    private String ageRating;
+    private Boolean isPreorder;
+    @Size(min = 1, max = 5000)
     private String activationDetails;
-    private Integer regionId;
     private List<LanguageDto> languages;
     private PlatformDto platformDto;
     private String videoUrl;
     private List<String> screenshotsUrls;
-    private Long cartQuantity;
 
 }
 

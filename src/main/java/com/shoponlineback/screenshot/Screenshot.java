@@ -17,4 +17,8 @@ public class Screenshot {
     private String url;
     @ManyToOne
     private Product product;
+
+    public Screenshot(String url) {
+        this.url = url;
+    }
 }
