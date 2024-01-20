@@ -106,7 +106,7 @@ public class ScrapProductsService {
         for (Element activationListElement : activationListElements) {
             activationDetails.append(activationListElement.text()).append("\n");
         }
-        return activationDetails.toString();
+        return activationDetails.toString().replace("CDKeys.com", "cd-keys.com.pl");
     }
 
     private static Boolean isPreorder(Document gamePage) {
@@ -207,7 +207,7 @@ public class ScrapProductsService {
         for (Element divElement : descriptionDiv) {
             description.append(divElement.text()).append("\n");
         }
-        return description.toString();
+        return description.toString().replace("CDKeys.com", "cd-keys.com.pl");
     }
 
     private static BigDecimal getPrice(Document gamePage) {
