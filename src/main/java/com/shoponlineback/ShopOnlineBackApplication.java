@@ -19,7 +19,7 @@ public class ShopOnlineBackApplication {
     public static void main(String[] args) throws IOException {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplication.class, args);
         ScrapProductsService scrapProductsService = applicationContext.getBean(ScrapProductsService.class);
-        scrapProductsService.fetchPcGames();
+        scrapProductsService.fetchAllGames();
     }
 
 }

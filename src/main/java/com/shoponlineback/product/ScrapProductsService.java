@@ -6,6 +6,7 @@ import com.shoponlineback.language.Language;
 import com.shoponlineback.language.LanguageRepository;
 import com.shoponlineback.platform.Platform;
 import com.shoponlineback.platform.PlatformRepository;
+import com.shoponlineback.product.productManagement.ScrapUrl;
 import com.shoponlineback.productGenres.ProductGenres;
 import com.shoponlineback.productGenres.ProductGenresRepository;
 import com.shoponlineback.productLanguage.ProductLanguage;
@@ -32,6 +33,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.shoponlineback.product.productManagement.ScrapUrl.*;
+
 @Service
 public class ScrapProductsService {
     private final GenreRepository genreRepository;
@@ -41,6 +44,7 @@ public class ScrapProductsService {
     private final ProductGenresRepository productGenresRepository;
     private final ScreenshotRepository screenshotRepository;
     private final ProductLanguageRepository productLanguageRepository;
+    private final static Integer DEV_PAGE_NUMBER = 1;
 
     public ScrapProductsService(GenreRepository genreRepository,
                                 PlatformRepository platformRepository,
@@ -59,46 +63,75 @@ public class ScrapProductsService {
     }
 
     @Transactional
-    public void fetchPcGames() throws IOException {
-        Document document = Jsoup.connect("https://www.cdkeys.com/pc?p=2")
+    public void fetchAllGames() throws IOException {
+        //after finish tests change DEV_PAGE_NUMBERS to getPagesByDevice(ScrapUrl.value)!
+        for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
+            fetchGamesByDevice(PC_URL.value, i);
+        }
+        for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
+            fetchGamesByDevice(XBOX_URL.value, i);
+        }
+        for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
+            fetchGamesByDevice(NINTENDO_URL.value, i);
+        }
+        for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
+            fetchGamesByDevice(PSN_URL.value, i);
+        }
+        for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
+            fetchGamesByDevice(TOP_UP_URL.value, i);
+        }
+
+    }
+
+    private static int getPagesByDevice(ScrapUrl url) throws IOException {
+        Document document = Jsoup.connect(url.value).get();
+        return Integer.parseInt(document.getElementsByClass("items pages-items").first()
+                .getElementsByClass("page").last().text());
+    }
+
+
+    private void fetchGamesByDevice(String url, int page) throws IOException {
+        Document document = Jsoup.connect(url + "?p=" + page)
                 .header("Accept-Language", "pl_PL")
+                .timeout(60000)
                 .method(Connection.Method.GET).get();
-        Elements pages = document.getElementsByClass("product-item-link");
-        for (Element page : pages) {
-            Attribute singleProductLink = page.attribute("href");
+        Elements products = document.getElementsByClass("product-items").first()
+                .getElementsByClass("product-item-info");
+        for (Element product : products) {
+            Attribute singleProductLink = product.getElementsByTag("a").first().attribute("href");
             Document gamePage = Jsoup.connect(singleProductLink.getValue()).get();
             String title = getTitle(gamePage);
-            BigDecimal price = getPrice(gamePage);
-            String description = getDescription(gamePage);
-            String coverImage = getImageCover(gamePage);
-            List<Genre> genres = getGenres(description);
-            Platform platform = getPlatform(description, gamePage);
-            String releaseDate = getReleaseDate(gamePage);
-            String regionalLimitations = getRegionalLimitations(gamePage);
-            List<Language> languages = getLanguages(gamePage);
-            String videoUrl = getVideoUrl(gamePage);
-            List<Screenshot> screenshots = getScreenshots(gamePage);
-            Boolean isPreorder = isPreorder(gamePage);
-            String activationDetails = getActivationDetails(gamePage);
-            Boolean inStock = inStock(gamePage);
-            Product product = Product.builder()
-                    .name(title)
-                    .description(description)
-                    .price(price)
-                    .coverImage(coverImage)
-                    .platform(platform)
-                    .releaseDate(releaseDate)
-                    .regionalLimitations(regionalLimitations)
-                    .videoUrl(videoUrl)
-                    .isPreorder(isPreorder)
-                    .activationDetails(activationDetails)
-                    .inStock(inStock).build();
-            Product productEntity = productRepository.save(product);
-            System.out.println(productEntity.getId() + " saved");
-            genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
-            screenshots.forEach(screenshot -> screenshot.setProduct(productEntity));
-            languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
-        }
+                BigDecimal price = getPrice(gamePage);
+                String description = getDescription(gamePage);
+                String coverImage = getImageCover(gamePage);
+                List<Genre> genres = getGenres(description);
+                Platform platform = getPlatform(description, gamePage);
+                String releaseDate = getReleaseDate(gamePage);
+                String regionalLimitations = getRegionalLimitations(gamePage);
+                List<Language> languages = getLanguages(gamePage);
+                String videoUrl = getVideoUrl(gamePage);
+                List<Screenshot> screenshots = getScreenshots(gamePage);
+                Boolean isPreorder = isPreorder(gamePage);
+                String activationDetails = getActivationDetails(gamePage);
+                Boolean inStock = inStock(gamePage);
+                Product productToSave = Product.builder()
+                        .name(title)
+                        .description(description)
+                        .price(price)
+                        .coverImage(coverImage)
+                        .platform(platform)
+                        .releaseDate(releaseDate)
+                        .regionalLimitations(regionalLimitations)
+                        .videoUrl(videoUrl)
+                        .isPreorder(isPreorder)
+                        .activationDetails(activationDetails)
+                        .inStock(inStock).build();
+                Product productEntity = productRepository.save(productToSave);
+                System.out.println(productEntity.getId() + " saved");
+                genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
+                screenshots.forEach(screenshot -> screenshot.setProduct(productEntity));
+                languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
+            }
     }
 
     private static String getActivationDetails(Document gamePage) {
@@ -175,18 +208,25 @@ public class ScrapProductsService {
 
     private Platform getPlatform(String description, Document gamePage) {
         int deviceStartIndex = description.lastIndexOf("Platform");
+        System.out.println(deviceStartIndex + "start index");
         int deviceLastIndex = description.lastIndexOf("(") - 1;
-        String deviceName = description.substring(deviceStartIndex, deviceLastIndex).substring(9);
-        String platformName = gamePage.getElementsByClass("product attribute-icon attribute platforms").first()
-                .getElementsByClass("value").first().text();
-        return platformRepository.findByName(platformName)
-                .orElseGet(() -> platformRepository.save(new Platform(platformName, deviceName)));
+        System.out.println(deviceLastIndex + "last index");
+        if (deviceStartIndex > -1 && deviceLastIndex > -1) {
+            String deviceName = description.substring(deviceStartIndex, deviceLastIndex).substring(9);
+            String platformName = gamePage.getElementsByClass("product attribute-icon attribute platforms").first()
+                    .getElementsByClass("value").first().text();
+            return platformRepository.findByName(platformName)
+                    .orElseGet(() -> platformRepository.save(new Platform(platformName, deviceName)));
+        } else {
+            return platformRepository.findByName("OTHER")
+                    .orElse(platformRepository.save(new Platform("OTHER", "OTHER")));
+        }
     }
 
     private List<Genre> getGenres(String description) {
         int genreStartIndex = description.lastIndexOf("Genre");
         int genreLastIndex = description.lastIndexOf("Platform") - 1;
-        if (genreStartIndex != -1) {
+        if (genreStartIndex > -1 && genreLastIndex > -1) {
             return Arrays.stream(description.substring(genreStartIndex, genreLastIndex).substring(6)
                             .trim().split(","))
                     .map(genreName -> genreRepository.findGenreByName(genreName)
@@ -223,8 +263,13 @@ public class ScrapProductsService {
     }
 
     private static Boolean inStock(Document gamePage) {
-        return gamePage.getElementsByClass("product-usps-item attribute stock available").first()
-                .getElementsByClass("product-usps-text").text()
-                .equalsIgnoreCase("CURRENTLY IN STOCK");
+        Elements divElements = gamePage.getElementsByClass("product-usps-item attribute stock available");
+        if (!divElements.isEmpty()) {
+            Elements textElements = divElements.first().getElementsByClass("product-usps-text");
+            if (!textElements.isEmpty()) {
+                return textElements.first().text().equalsIgnoreCase("CURRENTLY IN STOCK");
+            }
+        }
+        return null;
     }
 }
