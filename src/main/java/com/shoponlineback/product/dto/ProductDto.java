@@ -39,6 +39,7 @@ public class ProductDto {
     private List<LanguageDto> languages;
     private PlatformDto platformDto;
     private String videoUrl;
+    private int cartQuantity;
     private List<String> screenshotsUrls;
 
 }

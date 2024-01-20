@@ -20,35 +20,29 @@ import java.util.List;
 @Service
 public class OrderDtoMapper {
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
-    private final OrderProductRepository orderProductRepository;
-    private final ProductDtoMapper productDtoMapper;
 
-    public OrderDtoMapper(UserRepository userRepository, ProductRepository productRepository, OrderProductRepository orderProductRepository, ProductDtoMapper productDtoMapper) {
+    public OrderDtoMapper(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.productRepository = productRepository;
-        this.orderProductRepository = orderProductRepository;
-        this.productDtoMapper = productDtoMapper;
     }
-//todo
-    Order map(OrderDto orderDto){
+
+    Order map(OrderDto orderDto) {
         ShippingAddressDto saDto = orderDto.getShippingAddress();
         User user = userRepository.findById(UserService.getLoggedUser().getId())
                 .orElseThrow(UserNotFoundException::new);
-       // BigDecimal totalPrice = orderDto.getProductList().stream()
-          //      .map(product -> product.getPrice().multiply(BigDecimal.valueOf(product.getCartQuantity())))
-            //    .reduce(BigDecimal::add).orElseThrow(RuntimeException::new);
+        BigDecimal totalPrice = orderDto.getProductList().stream()
+                .map(product -> product.getPrice().multiply(BigDecimal.valueOf(product.getCartQuantity())))
+                .reduce(BigDecimal::add).orElseThrow(RuntimeException::new);
         return Order.builder()
                 .id(orderDto.getId())
                 .paymentMethod(PaymentMethod.valueOf(orderDto.getPaymentMethod()))
                 .shippingAddress(new ShippingAddress(saDto.getAddress(), saDto.getCity(),
                         saDto.getCountry(), saDto.getPostalCode(), saDto.getPhoneNumber()))
                 .user(user)
-                .orderDate(orderDto.getOrderDate()).build();
-              //  .totalPrice(totalPrice).build();
+                .orderDate(orderDto.getOrderDate())
+                .totalPrice(totalPrice).build();
     }
 
-    public static OrderDto map(Order order){
+    public static OrderDto map(Order order) {
         ShippingAddress sa = order.getShippingAddress();
         ShippingAddressDto shippingAddressDto = new ShippingAddressDto(sa.getAddress(),
                 sa.getCity(), sa.getCountry(), sa.getPostalCode(), sa.getPhoneNumber());

@@ -26,7 +26,6 @@ public class OrderService {
         this.productRepository = productRepository;
         this.orderDtoMapper = orderDtoMapper;
     }
-//todo
     public Order saveOrder(OrderDto orderDto) {
         Order order = orderDtoMapper.map(orderDto);
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
@@ -35,8 +34,8 @@ public class OrderService {
         orderDto.getProductList().forEach(productDto -> {
             Product product = productRepository.findById(productDto.getId())
                     .orElseThrow(ProductNotFoundException::new);
-           // OrderProduct orderProduct = new OrderProduct(order, product, Math.toIntExact(productDto.getCartQuantity()));
-           // orderProductRepository.save(orderProduct);
+           OrderProduct orderProduct = new OrderProduct(order, product, productDto.getCartQuantity());
+           orderProductRepository.save(orderProduct);
         });
         return orderEntity;
     }
