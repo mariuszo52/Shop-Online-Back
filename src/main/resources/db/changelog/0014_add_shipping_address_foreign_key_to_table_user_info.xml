@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
-    <changeSet id="0016" author="Mariusz">
+    <changeSet id="0014" author="Mariusz">
         <addColumn tableName="user_info">
             <column name="shipping_address_id" type="BIGINT">
                 <constraints foreignKeyName="fk_shipping_address" referencedTableName="shipping_address"

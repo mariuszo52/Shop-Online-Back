@@ -3,19 +3,16 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
-<changeSet id="0014" author="Mariusz">
-    <createTable tableName="cart_product">
+<changeSet id="0006" author="Mariusz">
+    <createTable tableName="product_language">
         <column name="id" type="BIGINT" autoIncrement="true">
             <constraints nullable="false" unique="true" primaryKey="false"/>
         </column>
-        <column name="cart_id" type="BIGINT">
-            <constraints foreignKeyName="fk_cart2" referencedTableName="cart" referencedColumnNames="id"/>
-        </column>
         <column name="product_id" type="BIGINT">
-            <constraints foreignKeyName="fk_product4" referencedTableName="product" referencedColumnNames="id"/>
+            <constraints nullable="false"/>
         </column>
-        <column name="quantity" type="INTEGER" defaultOnNull="true" defaultValue="0">
-            <constraints nullable="true"/>
+        <column name="language_id" type="BIGINT">
+            <constraints nullable="false"/>
         </column>
     </createTable>
 </changeSet>

@@ -3,16 +3,16 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
-<changeSet id="0004" author="Mariusz">
-    <createTable tableName="product_genres">
+<changeSet id="0005" author="Mariusz">
+    <createTable tableName="language">
         <column name="id" type="BIGINT" autoIncrement="true">
             <constraints nullable="false" unique="true" primaryKey="false"/>
         </column>
-        <column name="product_id" type="BIGINT">
-            <constraints nullable="false" foreignKeyName="fk_product1" referencedTableName="product" referencedColumnNames="id"/>
+        <column name="name" type="VARCHAR(255)">
+            <constraints nullable="false"/>
         </column>
-        <column name="genre_id" type="BIGINT">
-        <constraints nullable="false" foreignKeyName="fk_genre1" referencedTableName="genre" referencedColumnNames="id"/>
+        <column name="icon_url" type="VARCHAR(500)">
+            <constraints nullable="false"/>
         </column>
     </createTable>
 </changeSet>
