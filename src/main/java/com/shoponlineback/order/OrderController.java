@@ -2,6 +2,9 @@ package com.shoponlineback.order;
 
 import com.shoponlineback.email.EmailService;
 import com.shoponlineback.order.dto.OrderDto;
+import com.shoponlineback.product.Product;
+import com.shoponlineback.product.ProductService;
+import com.shoponlineback.product.dto.ProductDto;
 import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +18,12 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final EmailService emailService;
+    private final ProductService productService;
 
-    public OrderController(OrderService orderService, EmailService emailService) {
+    public OrderController(OrderService orderService, EmailService emailService, ProductService productService) {
         this.orderService = orderService;
         this.emailService = emailService;
+        this.productService = productService;
     }
 
     @PostMapping("/order/checkout")
@@ -28,6 +33,7 @@ public class OrderController {
             order = orderService.saveOrder(orderDto);
             final String subject = "ORDER NR: " + order.getId() + " SUMMARY.";
             emailService.sendOrderConfirmationEmail(order.getId(), subject);
+            productService.updateProductSellQuantity(order);
             return ResponseEntity.ok().build();
         } catch (MessagingException e) {
             return ResponseEntity.internalServerError().body(e.getMessage());

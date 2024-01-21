@@ -2,7 +2,6 @@ package com.shoponlineback.product.productManagement;
 
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.product.dto.ProductNameUpdateDto;
-import com.shoponlineback.user.UserDto;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,4 +60,5 @@ public class ProductManagementController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 }

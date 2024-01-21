@@ -43,6 +43,7 @@ public class ProductDtoMapper {
                 .platformDto(PlatformDtoMapper.map(product.getPlatform()))
                 .videoUrl(product.getVideoUrl())
                 .inStock(product.getInStock())
+                .sellQuantity(product.getSellQuantity())
                 .screenshotsUrls(product.getScreenshots().stream().map(Screenshot::getUrl).toList())
                 .build();
     }
@@ -68,6 +69,7 @@ public class ProductDtoMapper {
                 .description(productDto.getDescription())
                 .genres(genres)
                 .inStock(productDto.getInStock())
+                .sellQuantity(productDto.getSellQuantity())
                 .videoUrl(productDto.getVideoUrl())
                 .build();
     }

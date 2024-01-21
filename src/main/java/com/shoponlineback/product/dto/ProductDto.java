@@ -42,6 +42,7 @@ public class ProductDto {
     private int cartQuantity;
     private Boolean inStock;
     private List<String> screenshotsUrls;
+    private Integer sellQuantity;
 
 }
 

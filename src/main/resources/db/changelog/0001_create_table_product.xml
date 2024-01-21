@@ -37,6 +37,9 @@
         <column name="in_stock" type="BOOLEAN">
             <constraints nullable="true"/>
         </column>
+        <column name="sell_quantity" type="INTEGER">
+            <constraints nullable="false"/>
+        </column>
     </createTable>
 </changeSet>
 </databaseChangeLog>

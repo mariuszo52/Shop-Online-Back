@@ -54,6 +54,7 @@ public class Product {
             fetch = FetchType.EAGER)
     private List<Language> languages;
     private String videoUrl;
+    private int sellQuantity;
     @OneToMany(fetch = FetchType.EAGER,
             cascade = {MERGE,REMOVE},
             mappedBy = "product")

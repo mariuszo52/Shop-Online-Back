@@ -1,15 +1,11 @@
 package com.shoponlineback.product.productManagement;
 
 import com.shoponlineback.exceptions.product.ProductNotFoundException;
-import com.shoponlineback.exceptions.user.UserNotFoundException;
 import com.shoponlineback.product.Product;
 import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.product.dto.ProductNameUpdateDto;
 import com.shoponlineback.product.mapper.ProductDtoMapper;
 import com.shoponlineback.productGenres.ProductGenresRepository;
-import com.shoponlineback.user.User;
-import com.shoponlineback.user.UserDto;
-import com.shoponlineback.user.mapper.UserDtoMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -66,5 +62,7 @@ public class ProductManagementService {
             };
             return ProductDtoMapper.map(product);
         }
-    }
+
+}
+
 
