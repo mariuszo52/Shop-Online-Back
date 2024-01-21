@@ -17,4 +17,12 @@ public class PlatformController {
     ResponseEntity<Set<String>> getAllDevicePlatforms(@RequestParam String device){
         return ResponseEntity.ok(platformService.getAllPlatformNamesByDevice(device));
     }
+    @GetMapping("/all-devices")
+    ResponseEntity<?> getAllDevices(){
+        try{
+            return ResponseEntity.ok(platformService.getAllDevicesNames());
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
