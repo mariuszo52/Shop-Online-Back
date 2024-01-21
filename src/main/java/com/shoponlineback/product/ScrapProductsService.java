@@ -45,6 +45,7 @@ public class ScrapProductsService {
     private final ScreenshotRepository screenshotRepository;
     private final ProductLanguageRepository productLanguageRepository;
     private final static Integer DEV_PAGE_NUMBER = 1;
+    private final static String DEFAULT_COVER_IMAGE_URL = "https://www.prokerala.com/movies/assets/img/no-poster-available.webp";
 
     public ScrapProductsService(GenreRepository genreRepository,
                                 PlatformRepository platformRepository,
@@ -83,70 +84,131 @@ public class ScrapProductsService {
 
     }
 
-    private static int getPagesByDevice(ScrapUrl url) throws IOException {
-        Document document = Jsoup.connect(url.value).get();
-        return Integer.parseInt(document.getElementsByClass("items pages-items").first()
-                .getElementsByClass("page").last().text());
+    private static int getPagesByDevice(ScrapUrl url) {
+        Document document;
+        int tries = 1;
+        while (tries < 3) {
+            try {
+                document = Jsoup.connect(url.value)
+                        .timeout(10000)
+                        .get();
+                Elements elementsPageItems = document.getElementsByClass("items pages-items");
+                if (!elementsPageItems.isEmpty()) {
+                    Elements elementsPage = elementsPageItems.first().getElementsByClass("page");
+                    if (!elementsPage.isEmpty()) {
+                        return Integer.parseInt(elementsPage.last().text());
+                    }
+                }
+            } catch (IOException e) {
+                tries++;
+                System.out.println("Cannot connect with product page. Try " + tries + " / 3");
+            }
+        }
+        return -1;
     }
 
-
-    private void fetchGamesByDevice(String url, int page) throws IOException {
-        Document document = Jsoup.connect(url + "?p=" + page)
-                .header("Accept-Language", "pl_PL")
-                .timeout(60000)
-                .method(Connection.Method.GET).get();
-        Elements products = document.getElementsByClass("product-items").first()
-                .getElementsByClass("product-item-info");
-        for (Element product : products) {
-            Attribute singleProductLink = product.getElementsByTag("a").first().attribute("href");
-            Document gamePage = Jsoup.connect(singleProductLink.getValue()).get();
-            String title = getTitle(gamePage);
-                BigDecimal price = getPrice(gamePage);
-                String description = getDescription(gamePage);
-                String coverImage = getImageCover(gamePage);
-                List<Genre> genres = getGenres(description);
-                Platform platform = getPlatform(description, gamePage);
-                String releaseDate = getReleaseDate(gamePage);
-                String regionalLimitations = getRegionalLimitations(gamePage);
-                List<Language> languages = getLanguages(gamePage);
-                String videoUrl = getVideoUrl(gamePage);
-                List<Screenshot> screenshots = getScreenshots(gamePage);
-                Boolean isPreorder = isPreorder(gamePage);
-                String activationDetails = getActivationDetails(gamePage);
-                Boolean inStock = inStock(gamePage);
-                Product productToSave = Product.builder()
-                        .name(title)
-                        .description(description)
-                        .price(price)
-                        .coverImage(coverImage)
-                        .platform(platform)
-                        .releaseDate(releaseDate)
-                        .regionalLimitations(regionalLimitations)
-                        .videoUrl(videoUrl)
-                        .isPreorder(isPreorder)
-                        .activationDetails(activationDetails)
-                        .inStock(inStock).build();
-                Product productEntity = productRepository.save(productToSave);
-                System.out.println(productEntity.getId() + " saved");
-                genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
-                screenshots.forEach(screenshot -> screenshot.setProduct(productEntity));
-                languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
+    private Document connectWithPageToScrap(String url, int page) {
+        int tries = 1;
+        while (tries < 3) {
+            try {
+                return Jsoup.connect(url + "?p=" + page)
+                        .header("Accept-Language", "pl_PL")
+                        .timeout(10000)
+                        .method(Connection.Method.GET).get();
+            } catch (IOException e) {
+                tries++;
+                System.out.println("Cannot connect with product. Try " + tries + " / 3");
             }
+        }
+        return null;
+    }
+
+    private Document connectWithProductToScrap(String url) {
+        int tries = 1;
+        while (tries < 3) {
+            try {
+                return Jsoup.connect(url)
+                        .header("Accept-Language", "pl_PL")
+                        .timeout(10000)
+                        .method(Connection.Method.GET).get();
+            } catch (IOException e) {
+                tries++;
+                System.out.println("Cannot connect with product. Try " + tries + " / 3");
+            }
+        }
+        return null;
+    }
+
+    private void fetchGamesByDevice(String url, int page) {
+        Document document = connectWithPageToScrap(url, page);
+        if (document != null) {
+            Elements products = document.getElementsByClass("product-items").first()
+                    .getElementsByClass("product-item-info");
+            for (Element product : products) {
+                Attribute singleProductLink = product.getElementsByTag("a").first().attribute("href");
+                Document gamePage = connectWithProductToScrap(singleProductLink.getValue());
+                if (gamePage != null) {
+                    try {
+                        String title = getTitle(gamePage);
+                        BigDecimal price = getPrice(gamePage);
+                        String regionalLimitations = getRegionalLimitations(gamePage);
+                        String description = getDescription(gamePage);
+                        String coverImage = getImageCover(gamePage);
+                        List<Genre> genres = getGenres(description);
+                        Platform platform = getPlatform(description, gamePage);
+                        String releaseDate = getReleaseDate(gamePage);
+                        List<Language> languages = getLanguages(gamePage);
+                        String videoUrl = getVideoUrl(gamePage);
+                        List<Screenshot> screenshots = getScreenshots(gamePage);
+                        Boolean isPreorder = isPreorder(gamePage);
+                        String activationDetails = getActivationDetails(gamePage);
+                        Boolean inStock = inStock(gamePage);
+                        Product productToSave = Product.builder()
+                                .name(title)
+                                .description(description)
+                                .price(price)
+                                .coverImage(coverImage)
+                                .platform(platform)
+                                .releaseDate(releaseDate)
+                                .regionalLimitations(regionalLimitations)
+                                .videoUrl(videoUrl)
+                                .isPreorder(isPreorder)
+                                .activationDetails(activationDetails)
+                                .inStock(inStock).build();
+                        Product productEntity = productRepository.save(productToSave);
+                        System.out.println(productEntity.getId() + " saved");
+                        genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
+                        screenshots.forEach(screenshot -> screenshot.setProduct(productEntity));
+                        languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
+                    }catch (IOException e){
+                        System.out.println("Cannot save product " + e.getMessage());
+                    }
+                }
+            }
+        }
     }
 
     private static String getActivationDetails(Document gamePage) {
-        Elements activationListElements = gamePage.getElementsByClass("product attribute platforms").first()
-                .getElementsByTag("li");
-        StringBuilder activationDetails = new StringBuilder();
-        for (Element activationListElement : activationListElements) {
-            activationDetails.append(activationListElement.text()).append("\n");
+        Elements productAttributePlatforms = gamePage.getElementsByClass("product attribute platforms");
+        if (!productAttributePlatforms.isEmpty()) {
+            Element activationListElementFirst = productAttributePlatforms.first();
+            Elements activationListElements = activationListElementFirst.getElementsByTag("li");
+            StringBuilder activationDetails = new StringBuilder();
+            for (Element activationListElement : activationListElements) {
+                activationDetails.append(activationListElement.text()).append("\n");
+            }
+            return activationDetails.toString().replace("CDKeys.com", "cd-keys.com.pl");
         }
-        return activationDetails.toString().replace("CDKeys.com", "cd-keys.com.pl");
+        return null;
     }
 
     private static Boolean isPreorder(Document gamePage) {
-        String buttonTitle = gamePage.getElementById("product-addtocart-button").attr("title");
-        return !buttonTitle.equals("Buy Now");
+        Element buttonTitle = gamePage.getElementById("product-addtocart-button");
+        if (buttonTitle != null) {
+            return buttonTitle.attr("title").equals("Buy Now");
+        }
+        return null;
+
     }
 
     private List<Screenshot> getScreenshots(Document gamePage) {
@@ -172,45 +234,52 @@ public class ScrapProductsService {
 
 
     private List<Language> getLanguages(Document gamePage) {
-        Elements languageElements = gamePage.getElementsByClass("product attribute language").first()
-                .getElementsByClass("language-flag");
         List<Language> languages = new ArrayList<>();
-        for (Element languageElement : languageElements) {
-            String name = languageElement.getElementsByTag("img").first().attr("alt");
-            String iconUrl = languageElement.getElementsByTag("img").first().attr("src");
-            Language language = new Language(name, iconUrl);
-            if (!languageRepository.existsByName(name)) {
-                Language languageEntity = languageRepository.save(language);
-                languages.add(languageEntity);
-            } else {
-                Language languageEntity = languageRepository.findLanguageByName(name).get();
-                languages.add(languageEntity);
+        Elements productAttributesLanguage = gamePage.getElementsByClass("product attribute language");
+        if (!productAttributesLanguage.isEmpty()) {
+            Elements languageElements = productAttributesLanguage.first()
+                    .getElementsByClass("language-flag");
+            for (Element languageElement : languageElements) {
+                String name = languageElement.getElementsByTag("img").first().attr("alt");
+                String iconUrl = languageElement.getElementsByTag("img").first().attr("src");
+                Language language = new Language(name, iconUrl);
+                if (!languageRepository.existsByName(name)) {
+                    Language languageEntity = languageRepository.save(language);
+                    languages.add(languageEntity);
+                } else {
+                    Language languageEntity = languageRepository.findLanguageByName(name).get();
+                    languages.add(languageEntity);
+                }
             }
         }
         return languages;
     }
 
     private static String getRegionalLimitations(Document gamePage) throws IOException {
-        String productId = gamePage.getElementsByClass("price-box price-final_price").first()
-                .attr("data-product-id");
-        URL url = new URL("https://www.cdkeys.com/restrictions/index/product/id/" + productId + "/locale/PL");
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        JSONObject responseObject = UrlConnectionService.getConnectionResponse(httpURLConnection)
-                .orElseThrow(() -> new RuntimeException("Error during fetching product locale restrictions."));
-        String message = responseObject.optString("message");
-        return message.startsWith("Warning") ? "CANNOT ACTIVATE IN POLAND" : "CAN ACTIVATE IN POLAND";
+        Elements productIdDivs = gamePage.getElementsByClass("price-box price-final_price");
+        if (!productIdDivs.isEmpty()) {
+            String productId = productIdDivs.first().attr("data-product-id");
+            URL url = new URL("https://www.cdkeys.com/restrictions/index/product/id/" + productId + "/locale/PL");
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            JSONObject responseObject = UrlConnectionService.getConnectionResponse(httpURLConnection)
+                    .orElseThrow(() -> new RuntimeException("Error during fetching product locale restrictions."));
+            String message = responseObject.optString("message");
+            return message.startsWith("Warning") ? "CANNOT ACTIVATE IN POLAND" : "CAN ACTIVATE IN POLAND";
+        }
+        return null;
     }
 
     private static String getReleaseDate(Document gamePage) {
-        return gamePage.getElementsByClass("product attribute release_date").first()
-                .getElementsByClass("value").first().text();
+        Elements productAttributeReleaseDate = gamePage.getElementsByClass("product attribute release_date");
+        if (!productAttributeReleaseDate.isEmpty()) {
+            return productAttributeReleaseDate.first().getElementsByClass("value").first().text();
+        }
+        return null;
     }
 
     private Platform getPlatform(String description, Document gamePage) {
         int deviceStartIndex = description.lastIndexOf("Platform");
-        System.out.println(deviceStartIndex + "start index");
         int deviceLastIndex = description.lastIndexOf("(") - 1;
-        System.out.println(deviceLastIndex + "last index");
         if (deviceStartIndex > -1 && deviceLastIndex > -1) {
             String deviceName = description.substring(deviceStartIndex, deviceLastIndex).substring(9);
             String platformName = gamePage.getElementsByClass("product attribute-icon attribute platforms").first()
@@ -238,28 +307,46 @@ public class ScrapProductsService {
     }
 
     private static String getImageCover(Document gamePage) {
-        return gamePage.getElementsByClass("product media").first().getElementsByTag("img").first()
-                .attribute("src").getValue();
+        Elements productMediaElements = gamePage.getElementsByClass("product media");
+        if (!productMediaElements.isEmpty()) {
+            Elements imgElements = productMediaElements.first().getElementsByTag("img");
+            if (!imgElements.isEmpty()) {
+                Attribute src = imgElements.first().attribute("src");
+                if (src != null) {
+                    return src.getValue();
+                }
+            }
+        }
+        return DEFAULT_COVER_IMAGE_URL;
     }
 
     private static String getDescription(Document gamePage) {
-        Elements descriptionDiv = gamePage.getElementsByClass("product attribute description")
-                .first().children();
-        StringBuilder description = new StringBuilder();
-        for (Element divElement : descriptionDiv) {
-            description.append(divElement.text()).append("\n");
+        Elements descriptionDiv = gamePage.getElementsByClass("product attribute description");
+        if(!descriptionDiv.isEmpty()){
+            Elements descriptionParagraphs = descriptionDiv.first().children();
+            StringBuilder description = new StringBuilder();
+            for (Element divElement : descriptionParagraphs) {
+                description.append(divElement.text()).append("\n");
+            }
+            return description.toString().replace("CDKeys.com", "cd-keys.com.pl");
         }
-        return description.toString().replace("CDKeys.com", "cd-keys.com.pl");
+        return "DESCRIPTION NOT AVAILABLE";
     }
 
-    private static BigDecimal getPrice(Document gamePage) {
-        return BigDecimal.valueOf(Double.parseDouble(gamePage.getElementsByClass("price")
-                .first().text().substring(3)));
+    private static BigDecimal getPrice(Document gamePage) throws IOException {
+        Elements priceElements = gamePage.getElementsByClass("price");
+        if(!priceElements.isEmpty()){
+            return BigDecimal.valueOf(Double.parseDouble(priceElements.first().text().substring(3)));
+        }
+        throw new IOException("Cannot find class to scrap product price.");
     }
 
-    private static String getTitle(Document gamePage) {
-        return gamePage.getElementsByClass("page-title").first()
-                .attr("data-text");
+    private static String getTitle(Document gamePage) throws IOException {
+        Elements pageTitleElements = gamePage.getElementsByClass("page-title");
+        if (!pageTitleElements.isEmpty()) {
+            return pageTitleElements.first().attr("data-text");
+        }
+        throw new IOException("Cannot find class to scrap product title.");
     }
 
     private static Boolean inStock(Document gamePage) {
