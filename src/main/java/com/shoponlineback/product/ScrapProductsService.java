@@ -336,7 +336,7 @@ public class ScrapProductsService {
     private static BigDecimal getPrice(Document gamePage) throws IOException {
         Elements priceElements = gamePage.getElementsByClass("price");
         if(!priceElements.isEmpty()){
-            return BigDecimal.valueOf(Double.parseDouble(priceElements.first().text().substring(3)));
+            return BigDecimal.valueOf(Double.parseDouble(priceElements.first().text().substring(3)) + 30);
         }
         throw new IOException("Cannot find class to scrap product price.");
     }
