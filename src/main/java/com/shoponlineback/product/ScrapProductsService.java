@@ -181,7 +181,10 @@ public class ScrapProductsService {
                 Product productEntity = productRepository.save(productToSave);
                 System.out.println(productEntity.getId() + " saved");
                 genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
-                screenshots.forEach(screenshot -> screenshot.setProduct(productEntity));
+                screenshots.forEach(screenshot -> {
+                    screenshot.setProduct(productEntity);
+                    screenshotRepository.save(screenshot);
+                });
                 languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
             }catch (IOException e){
                 System.out.println("Cannot save product " + e.getMessage());
