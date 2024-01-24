@@ -62,8 +62,6 @@ public class ScrapProductsService {
         this.screenshotRepository = screenshotRepository;
         this.productLanguageRepository = productLanguageRepository;
     }
-
-    @Transactional
     public void fetchAllGames() throws IOException {
         //after finish tests change DEV_PAGE_NUMBERS to getPagesByDevice(ScrapUrl.value)!
         for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
@@ -139,51 +137,54 @@ public class ScrapProductsService {
         return null;
     }
 
-    private void fetchGamesByDevice(String url, int page) {
+    public void fetchGamesByDevice(String url, int page) {
         Document document = connectWithPageToScrap(url, page);
         if (document != null) {
             Elements products = document.getElementsByClass("product-items").first()
                     .getElementsByClass("product-item-info");
             for (Element product : products) {
-                Attribute singleProductLink = product.getElementsByTag("a").first().attribute("href");
-                Document gamePage = connectWithProductToScrap(singleProductLink.getValue());
-                if (gamePage != null) {
-                    try {
-                        String title = getTitle(gamePage);
-                        BigDecimal price = getPrice(gamePage);
-                        String regionalLimitations = getRegionalLimitations(gamePage);
-                        String description = getDescription(gamePage);
-                        String coverImage = getImageCover(gamePage);
-                        List<Genre> genres = getGenres(description);
-                        Platform platform = getPlatform(description, gamePage);
-                        String releaseDate = getReleaseDate(gamePage);
-                        List<Language> languages = getLanguages(gamePage);
-                        String videoUrl = getVideoUrl(gamePage);
-                        List<Screenshot> screenshots = getScreenshots(gamePage);
-                        Boolean isPreorder = isPreorder(gamePage);
-                        String activationDetails = getActivationDetails(gamePage);
-                        Boolean inStock = inStock(gamePage);
-                        Product productToSave = Product.builder()
-                                .name(title)
-                                .description(description)
-                                .price(price)
-                                .coverImage(coverImage)
-                                .platform(platform)
-                                .releaseDate(releaseDate)
-                                .regionalLimitations(regionalLimitations)
-                                .videoUrl(videoUrl)
-                                .isPreorder(isPreorder)
-                                .activationDetails(activationDetails)
-                                .inStock(inStock).build();
-                        Product productEntity = productRepository.save(productToSave);
-                        System.out.println(productEntity.getId() + " saved");
-                        genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
-                        screenshots.forEach(screenshot -> screenshot.setProduct(productEntity));
-                        languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
-                    }catch (IOException e){
-                        System.out.println("Cannot save product " + e.getMessage());
-                    }
-                }
+                saveSingleProduct(product);
+            }
+        }
+    }
+    public void saveSingleProduct(Element product) {
+        Attribute singleProductLink = product.getElementsByTag("a").first().attribute("href");
+        Document gamePage = connectWithProductToScrap(singleProductLink.getValue());
+        if (gamePage != null) {
+            try {
+                String title = getTitle(gamePage);
+                BigDecimal price = getPrice(gamePage);
+                String regionalLimitations = getRegionalLimitations(gamePage);
+                String description = getDescription(gamePage);
+                String coverImage = getImageCover(gamePage);
+                List<Genre> genres = getGenres(description);
+                Platform platform = getPlatform(description, gamePage);
+                String releaseDate = getReleaseDate(gamePage);
+                List<Language> languages = getLanguages(gamePage);
+                String videoUrl = getVideoUrl(gamePage);
+                List<Screenshot> screenshots = getScreenshots(gamePage);
+                Boolean isPreorder = isPreorder(gamePage);
+                String activationDetails = getActivationDetails(gamePage);
+                Boolean inStock = inStock(gamePage);
+                Product productToSave = Product.builder()
+                        .name(title)
+                        .description(description)
+                        .price(price)
+                        .coverImage(coverImage)
+                        .platform(platform)
+                        .releaseDate(releaseDate)
+                        .regionalLimitations(regionalLimitations)
+                        .videoUrl(videoUrl)
+                        .isPreorder(isPreorder)
+                        .activationDetails(activationDetails)
+                        .inStock(inStock).build();
+                Product productEntity = productRepository.save(productToSave);
+                System.out.println(productEntity.getId() + " saved");
+                genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
+                screenshots.forEach(screenshot -> screenshot.setProduct(productEntity));
+                languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
+            }catch (IOException e){
+                System.out.println("Cannot save product " + e.getMessage());
             }
         }
     }
@@ -288,7 +289,7 @@ public class ScrapProductsService {
                     .orElseGet(() -> platformRepository.save(new Platform(platformName, deviceName)));
         } else {
             return platformRepository.findByName("OTHER")
-                    .orElse(platformRepository.save(new Platform("OTHER", "OTHER")));
+                    .orElseGet(() -> platformRepository.save(new Platform("OTHER", "OTHER")));
         }
     }
 

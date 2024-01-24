@@ -42,7 +42,7 @@ public class Product {
             fetch = FetchType.EAGER,
             cascade = {PERSIST})
     private List<Genre> genres;
-    @OneToOne(cascade = PERSIST)
+    @OneToOne
     private Platform platform;
     private String releaseDate;
     private String regionalLimitations;
