@@ -138,6 +138,7 @@ public class JwtFilter extends OncePerRequestFilter {
         return path.equals("/") || path.startsWith("/login") || path.startsWith("/register")
                 || path.contains("/h2-console")
                 || path.startsWith("/genre") || path.startsWith("/language")
-                || path.contains("/platform") || path.startsWith("/product");
+                || path.contains("/platform") || path.startsWith("/product")
+                || path.startsWith("/translate");
     }
 }

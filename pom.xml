@@ -16,8 +16,18 @@
     <properties>
         <java.version>17</java.version>
     </properties>
-
+    <repositories>
+        <repository>
+            <id>clojars.org</id>
+            <url>https://repo.clojars.org</url>
+        </repository>
+    </repositories>
     <dependencies>
+        <dependency>
+            <groupId>net.clojars.suuft</groupId>
+            <artifactId>libretranslate-java</artifactId>
+            <version>1.0.5</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -97,6 +107,7 @@
             <artifactId>jsoup</artifactId>
             <version>1.17.2</version>
         </dependency>
+
     </dependencies>
 
     <build>

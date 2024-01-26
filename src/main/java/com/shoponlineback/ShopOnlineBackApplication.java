@@ -2,6 +2,8 @@ package com.shoponlineback;
 
 import com.shoponlineback.product.ProductService;
 import com.shoponlineback.product.ScrapProductsService;
+import net.suuft.libretranslate.Language;
+import net.suuft.libretranslate.Translator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
