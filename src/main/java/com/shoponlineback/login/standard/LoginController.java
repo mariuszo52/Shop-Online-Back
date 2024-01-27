@@ -70,6 +70,8 @@ public class LoginController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
 
     }
