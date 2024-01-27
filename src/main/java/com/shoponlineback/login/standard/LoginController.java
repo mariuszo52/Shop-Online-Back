@@ -1,5 +1,6 @@
 package com.shoponlineback.login.standard;
 
+import com.shoponlineback.GlobalControllerAdvice;
 import com.shoponlineback.exceptions.AccountDisabledException;
 import com.shoponlineback.jwt.JwtService;
 import com.shoponlineback.user.dto.UserLoginDto;
@@ -7,12 +8,16 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.login.AccountLockedException;
+import java.util.Locale;
 
 @CrossOrigin
 @RestController
@@ -23,6 +28,8 @@ public class LoginController {
     private String accessTokenSecret;
     @Value("${REFRESH_TOKEN_SECRET}")
     private String refreshTokenSecret;
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
+
 
     public LoginController(LoginService loginService, JwtService jwtService) {
         this.loginService = loginService;
@@ -36,10 +43,10 @@ public class LoginController {
            isAuthenticated = loginService.authenticateUser(userLoginDto);
 
         }catch (AccountDisabledException e){
-            return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.LOCKED).body(e.getLocalizedMessage());
         }
         catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getLocalizedMessage());
         }
         if(isAuthenticated){
             String accessToken = jwtService
@@ -49,7 +56,8 @@ public class LoginController {
             LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken);
             return ResponseEntity.status(HttpStatus.CREATED).body(loginResponseDto);
         }else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bad credentials.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Bad Credentials.");
         }
     }
     @GetMapping("/login/forget-password")
@@ -57,7 +65,10 @@ public class LoginController {
         try {
             loginService.sendResetPasswordConfirmEmail(email);
             return ResponseEntity.ok("Mail sent");
-        } catch (MessagingException | RuntimeException e ) {
+        } catch (MessagingException e){
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
@@ -69,6 +80,9 @@ public class LoginController {
             return ResponseEntity.ok("Password has changed.");
         } catch (RuntimeException e ) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            LOGGER.error(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
     @GetMapping("/login/access-token")

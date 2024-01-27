@@ -1,5 +1,6 @@
 package com.shoponlineback.product;
 
+import com.shoponlineback.ShopOnlineBackApplication;
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreRepository;
 import com.shoponlineback.language.Language;
@@ -21,8 +22,9 @@ import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -37,6 +39,7 @@ import static com.shoponlineback.product.productManagement.ScrapUrl.*;
 
 @Service
 public class ScrapProductsService {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ShopOnlineBackApplication.class);
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
     private final LanguageRepository languageRepository;
@@ -143,7 +146,11 @@ public class ScrapProductsService {
             Elements products = document.getElementsByClass("product-items").first()
                     .getElementsByClass("product-item-info");
             for (Element product : products) {
-                saveSingleProduct(product);
+                try {
+                    saveSingleProduct(product);
+                }catch (Exception e){
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
     }

@@ -8,5 +8,14 @@ spring:
       ddl-auto: validate
   liquibase:
     change-log: classpath:db/changelog/master.xml
+logging:
+  file:
+    path: /
+    name: log.txt
+  level:
+    com: error
+
+
+
 
 

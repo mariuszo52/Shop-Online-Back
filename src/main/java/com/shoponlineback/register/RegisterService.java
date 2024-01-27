@@ -8,6 +8,7 @@ import com.shoponlineback.shippingAddress.ShippingAddress;
 import com.shoponlineback.shippingAddress.ShippingAddressRepository;
 import com.shoponlineback.user.User;
 import com.shoponlineback.user.UserRepository;
+import com.shoponlineback.user.UserType;
 import com.shoponlineback.user.dto.UserRegisterDto;
 import com.shoponlineback.userInfo.UserInfo;
 import com.shoponlineback.userInfo.UserInfoRepository;
@@ -61,6 +62,7 @@ public class RegisterService {
                     .orElseThrow(UserRoleNotFoundException::new);
             String token = generateActivationToken();
             User user = User.builder()
+                    .type(UserType.STANDARD)
                     .isEnabled(false)
                     .username(userRegisterDto.getUsername())
                     .email(userRegisterDto.getEmail())

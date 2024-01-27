@@ -1,27 +1,25 @@
 package com.shoponlineback;
 
-import com.shoponlineback.product.ProductService;
 import com.shoponlineback.product.ScrapProductsService;
-import net.suuft.libretranslate.Language;
-import net.suuft.libretranslate.Translator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.io.IOException;
-import java.util.List;
 
 @SpringBootApplication
 public class ShopOnlineBackApplication {
-    public static void main(String[] args) throws IOException {
-        ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplication.class, args);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ShopOnlineBackApplication.class);
+
+    public static void main(String[] args) {
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplication.class, args);;
         ScrapProductsService scrapProductsService = applicationContext.getBean(ScrapProductsService.class);
-        scrapProductsService.fetchAllGames();
+        try {
+            scrapProductsService.fetchAllGames();
+        }catch (Exception e){
+            LOGGER.error(e.getMessage());
+        }
+
     }
 
 }
