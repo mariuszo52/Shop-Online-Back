@@ -40,6 +40,9 @@
         <column name="sell_quantity" type="INTEGER">
             <constraints nullable="false"/>
         </column>
+        <column name="added_date" type="DATE">
+            <constraints nullable="false"/>
+        </column>
     </createTable>
 </changeSet>
 </databaseChangeLog>

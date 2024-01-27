@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
@@ -55,6 +56,7 @@ public class Product {
     private List<Language> languages;
     private String videoUrl;
     private int sellQuantity;
+    private LocalDate addedDate;
     @OneToMany(fetch = FetchType.EAGER,
             cascade = {MERGE,REMOVE},
             mappedBy = "product")

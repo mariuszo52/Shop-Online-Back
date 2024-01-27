@@ -24,12 +24,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -65,6 +67,7 @@ public class ScrapProductsService {
         this.screenshotRepository = screenshotRepository;
         this.productLanguageRepository = productLanguageRepository;
     }
+    @Scheduled(cron = "0 0 0 * * *")
     public void fetchAllGames() throws IOException {
         //after finish tests change DEV_PAGE_NUMBERS to getPagesByDevice(ScrapUrl.value)!
         for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
@@ -82,6 +85,7 @@ public class ScrapProductsService {
         for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
             fetchGamesByDevice(TOP_UP_URL.value, i);
         }
+        productRepository.deleteAllByAddedDateIsBefore(LocalDate.now());
 
     }
 
@@ -140,6 +144,7 @@ public class ScrapProductsService {
         return null;
     }
 
+
     public void fetchGamesByDevice(String url, int page) {
         Document document = connectWithPageToScrap(url, page);
         if (document != null) {
@@ -153,6 +158,7 @@ public class ScrapProductsService {
                 }
             }
         }
+
     }
     public void saveSingleProduct(Element product) {
         Attribute singleProductLink = product.getElementsByTag("a").first().attribute("href");
@@ -161,42 +167,67 @@ public class ScrapProductsService {
             try {
                 String title = getTitle(gamePage);
                 BigDecimal price = getPrice(gamePage);
-                String regionalLimitations = getRegionalLimitations(gamePage);
-                String description = getDescription(gamePage);
-                String coverImage = getImageCover(gamePage);
-                List<Genre> genres = getGenres(description);
-                Platform platform = getPlatform(description, gamePage);
-                String releaseDate = getReleaseDate(gamePage);
-                List<Language> languages = getLanguages(gamePage);
-                String videoUrl = getVideoUrl(gamePage);
-                List<Screenshot> screenshots = getScreenshots(gamePage);
                 Boolean isPreorder = isPreorder(gamePage);
-                String activationDetails = getActivationDetails(gamePage);
                 Boolean inStock = inStock(gamePage);
-                Product productToSave = Product.builder()
-                        .name(title)
-                        .description(description)
-                        .price(price)
-                        .coverImage(coverImage)
-                        .platform(platform)
-                        .releaseDate(releaseDate)
-                        .regionalLimitations(regionalLimitations)
-                        .videoUrl(videoUrl)
-                        .isPreorder(isPreorder)
-                        .activationDetails(activationDetails)
-                        .inStock(inStock).build();
-                Product productEntity = productRepository.save(productToSave);
-                System.out.println(productEntity.getId() + " saved");
-                genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
-                screenshots.forEach(screenshot -> {
-                    screenshot.setProduct(productEntity);
-                    screenshotRepository.save(screenshot);
-                });
-                languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
+                if(!productRepository.existsByName(title)) {
+                    addNewProduct(gamePage, title, price, isPreorder, inStock);
+                }else {
+                    updateProduct(title, price, isPreorder, inStock);
+                }
             }catch (IOException e){
+                LOGGER.error(e.getMessage());
                 System.out.println("Cannot save product " + e.getMessage());
             }
         }
+    }
+
+    private void addNewProduct(Document gamePage, String title, BigDecimal price, Boolean isPreorder, Boolean inStock) throws IOException {
+        String regionalLimitations = getRegionalLimitations(gamePage);
+        String description = getDescription(gamePage);
+        String coverImage = getImageCover(gamePage);
+        List<Genre> genres = getGenres(description);
+        Platform platform = getPlatform(description, gamePage);
+        String releaseDate = getReleaseDate(gamePage);
+        List<Language> languages = getLanguages(gamePage);
+        String videoUrl = getVideoUrl(gamePage);
+        List<Screenshot> screenshots = getScreenshots(gamePage);
+        String activationDetails = getActivationDetails(gamePage);
+        Product productToSave = Product.builder()
+                .name(title)
+                .description(description)
+                .price(price)
+                .coverImage(coverImage)
+                .platform(platform)
+                .releaseDate(releaseDate)
+                .regionalLimitations(regionalLimitations)
+                .videoUrl(videoUrl)
+                .isPreorder(isPreorder)
+                .activationDetails(activationDetails)
+                .addedDate(LocalDate.now())
+                .inStock(inStock).build();
+        Product productEntity = productRepository.save(productToSave);
+        System.out.println(productEntity.getId() + " saved");
+        genres.forEach(genre -> productGenresRepository.save(new ProductGenres(productEntity, genre)));
+        screenshots.forEach(screenshot -> {
+            screenshot.setProduct(productEntity);
+            screenshotRepository.save(screenshot);
+        });
+        languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
+    }
+
+    private void updateProduct(String title, BigDecimal price, Boolean isPreorder, Boolean inStock) {
+        Product productToUpdate = productRepository.findByName(title).get();
+        if(!productToUpdate.getPrice().equals(price)){
+            productToUpdate.setPrice(price);
+        }
+        if(productToUpdate.getIsPreorder() != isPreorder){
+            productToUpdate.setIsPreorder(isPreorder);
+        }
+        if(productToUpdate.getInStock() != inStock){
+            productToUpdate.setInStock(inStock);
+        }
+        productToUpdate.setAddedDate(LocalDate.now());
+        productRepository.save(productToUpdate);
     }
 
     private static String getActivationDetails(Document gamePage) {
