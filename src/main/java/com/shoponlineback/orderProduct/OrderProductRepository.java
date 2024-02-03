@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface OrderProductRepository extends CrudRepository<OrderProduct,Long> {
     List<OrderProduct> findOrderProductsByOrderIdIn(List<Long> orderIds);
     List<OrderProduct> findOrderProductsByOrderId(Long orderId);
+    void deleteAllByOrderId(Long orderId);
 }

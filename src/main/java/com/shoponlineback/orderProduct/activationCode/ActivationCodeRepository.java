@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface ActivationCodeRepository extends CrudRepository<ActivationCode, Long> {
     List<ActivationCode> findAllByOrderProductId(Long orderProductId);
+
+    void deleteAllByOrderProductId(Long id);
 }

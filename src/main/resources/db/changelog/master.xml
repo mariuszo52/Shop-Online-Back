@@ -22,5 +22,6 @@
     <include file="0016_create_table_order_products.xml" relativeToChangelogFile="true"/>
     <include file="0017_create_table_favorite_products.xml" relativeToChangelogFile="true"/>
     <include file="0018_create_table_activation_code.xml" relativeToChangelogFile="true"/>
-    <include file="0019_initial_inserts.xml" relativeToChangelogFile="true"/>
+    <include file="0019_initial_inserts_dev.xml" relativeToChangelogFile="true"/>
+    <include file="0020_initial_inserts_prod.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
