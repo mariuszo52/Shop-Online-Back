@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/shopOnlineTest
+    username: root
+    password: Lechpoznan1!
   jpa:
     hibernate:
       ddl-auto: validate

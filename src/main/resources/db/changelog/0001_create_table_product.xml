@@ -14,7 +14,7 @@
         <column name="price" type="DECIMAL(10,2)">
             <constraints nullable="false"/>
         </column>
-        <column name="description" type="VARCHAR(20000)">
+        <column name="description" type="TEXT">
         </column>
         <column name="cover_image" type="VARCHAR(500)">
         </column>
@@ -31,10 +31,10 @@
         </column>
         <column name="activation_details" type="VARCHAR(5000)">
         </column>
-        <column name="is_preorder" type="BOOLEAN">
+        <column name="is_preorder" type="BIT">
             <constraints nullable="true"/>
         </column>
-        <column name="in_stock" type="BOOLEAN">
+        <column name="in_stock" type="BIT">
             <constraints nullable="true"/>
         </column>
         <column name="sell_quantity" type="INTEGER">

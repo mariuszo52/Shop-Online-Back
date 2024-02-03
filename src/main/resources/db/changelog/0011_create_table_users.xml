@@ -17,7 +17,7 @@
         <column name="password" type="VARCHAR(150)">
             <constraints nullable="true"/>
         </column>
-        <column name="is_enabled" type="BOOLEAN">
+        <column name="is_enabled" type="BIT">
             <constraints nullable="false"/>
         </column>
         <column name="activation_token" type="VARCHAR(40)">

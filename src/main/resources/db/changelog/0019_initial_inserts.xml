@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.10.xsd">
+
+    <changeSet id="0019" author="mariusz" context="dev">
+        <sql>
+            INSERT IGNORE INTO shipping_address (address, city, country, postal_code, phone_number)
+            VALUES ('Krakowska 1', 'Cracow', 'Poland', '30003', '123456789');
+        </sql>
+        <sql>
+            INSERT IGNORE INTO shipping_address (address, city, country, postal_code, phone_number)
+            VALUES ('Batorego 56', 'Nowy Sącz', 'Poland', '33300', '987654321');
+        </sql>
+        <sql>
+            INSERT IGNORE INTO user_info (name, last_name, shipping_address_id)
+            VALUES ('mariusz', 'ozga', 1);
+        </sql>
+        <sql>
+            INSERT IGNORE INTO user_info (name, last_name, shipping_address_id)
+            VALUES ('adminName', 'adminLastName', 2);
+        </sql>
+        <sql>
+            INSERT IGNORE INTO user_role (name) VALUES ('ADMIN'), ('USER');
+        </sql>
+        <sql>
+            INSERT IGNORE INTO cart () VALUES ();
+        </sql>
+        <sql>
+            INSERT IGNORE INTO cart () VALUES ();
+        </sql>
+        <sql>
+            INSERT IGNORE INTO users (username, email, password, user_role_id, user_info_id, is_enabled, cart_id, type)
+            VALUES ('mariuszo', 'mariuszo8@vp.pl', '{bcrypt}$2a$10$K9bRFxj3dvfQFQQ6hl.wuua.FRiOQhZNKbn3tvC2Od6c8kvohEp7e', 2, 1, true, 1, 'STANDARD');
+        </sql>
+        <sql>
+            INSERT IGNORE INTO users (username, email, password, user_role_id, user_info_id, is_enabled, cart_id, type)
+            VALUES ('admin', 'kontakt@mowebcreations.pl', '{bcrypt}$2a$10$K9bRFxj3dvfQFQQ6hl.wuua.FRiOQhZNKbn3tvC2Od6c8kvohEp7e', 1, 2, true, 2, 'STANDARD');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
