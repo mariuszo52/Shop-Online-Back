@@ -49,7 +49,7 @@ public class UserService {
         return username;
     }
     @Transactional
-    public void deleteStandardAccount(HttpServletRequest request) {
+    public void deleteStandardUserOrderProducts(HttpServletRequest request) {
         String password = request.getHeader("password");
         if (password != null) {
             User loggedUser = getLoggedUser();
@@ -59,11 +59,8 @@ public class UserService {
                         activationCodeRepository.deleteAllByOrderProductId(orderProduct.getId());
                         orderProductRepository.delete(orderProduct);
                     });
-                    orderRepository.delete(order);
-
                 });
 
-                //  userRepository.deleteById(loggedUser.getId());
             } else {
                 throw new RuntimeException("Wrong password.");
             }
@@ -71,27 +68,38 @@ public class UserService {
             throw new RuntimeException("Empty password.");
         }
     }
-    public void deleteUser(User loggedUser) {
-        orderRepository.findAllByUser_Id(loggedUser.getId()).forEach(order -> {
-            orderProductRepository.findOrderProductsByOrderId(order.getId()).forEach(orderProduct -> {
-                activationCodeRepository.deleteAllByOrderProductId(orderProduct.getId());
-            });
-        });
-        userRepository.deleteById(loggedUser.getId());
+    @Transactional
+    public void deleteStandardUser(HttpServletRequest request) {
+        String password = request.getHeader("password");
+        if (password != null) {
+            User loggedUser = getLoggedUser();
+            if (passwordEncoder.matches(password, loggedUser.getPassword())) {
+                orderRepository.findAllByUser_Id(loggedUser.getId()).forEach(order -> {
+                   orderRepository.deleteById(order.getId());
+                    });
+                userRepository.deleteById(loggedUser.getId());
+            } else {
+                throw new RuntimeException("Wrong password.");
+            }
+        } else {
+            throw new RuntimeException("Empty password.");
+        }
     }
-
-    public void deleteSocialMediaAccount() {
-        User loggedUser = getLoggedUser();
-
-        orderRepository.findAllByUser_Id(loggedUser.getId()).forEach(order -> {
+    @Transactional
+    public void deleteSocialMediaUserOrdersProducts() {
+        orderRepository.findAllByUser_Id(getLoggedUser().getId()).forEach(order -> {
             orderProductRepository.findOrderProductsByOrderId(order.getId()).forEach(orderProduct -> {
                 activationCodeRepository.deleteAllByOrderProductId(orderProduct.getId());
                 orderProductRepository.delete(orderProduct);
             });
-            orderRepository.delete(order);
         });
-
-          userRepository.deleteById(loggedUser.getId());
+    }
+    @Transactional
+    public void deleteSocialMediaUser() {
+        orderRepository.findAllByUser_Id(getLoggedUser().getId()).forEach(order -> {
+            orderRepository.deleteById(order.getId());
+            });
+        userRepository.deleteById(getLoggedUser().getId());
     }
 
 
