@@ -1,11 +1,11 @@
-FROM openjdk:17.0.1-jdk-bullseye
+FROM openjdk:17
 
-WORKDIR /app
+RUN apt-get update && apt-get install -y maven
 
-COPY . .
+COPY . /usr/src/app
 
-RUN ./mvnw clean install -DskipTests
+WORKDIR /usr/src/app
 
-EXPOSE 8080
+RUN mvn clean install -DskipTests
 
-CMD ["java", "-jar", "target/Shop-Online-Back-1.0.0.jar"]
+CMD ["java", "-jar", "target/your-application.jar"]
