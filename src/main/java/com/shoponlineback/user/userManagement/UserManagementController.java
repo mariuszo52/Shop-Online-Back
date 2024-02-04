@@ -64,7 +64,8 @@ public class UserManagementController {
     @DeleteMapping("/user")
     ResponseEntity<?> deleteUser(Long userId) {
         try {
-            userManagementService.deleteUser(userId);
+            userManagementService.deleteUserOrderProducts(userId);
+            userManagementService.deleteUserAccount(userId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
