@@ -1,4 +1,8 @@
 spring:
+  datasource:
+    url: jdbc:mysql://mysql:3306/shoponline?autoReconnect=true&useSSL=false
+    username: root
+    password: Lechpoznan1
   jpa:
     hibernate:
       ddl-auto: validate
