@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/shopOnlineTest
+    url: jdbc:mysql://192.168.0.2:3306/shoponline
     username: root
-    password: Lechpoznan1!
+    password: Lechpoznan1
   jpa:
     hibernate:
       ddl-auto: validate
@@ -15,7 +15,7 @@ logging:
   level:
     com: error
 server:
-  address: 192.168.8.139
+  address: 192.168.0.3
   port: 8080
 
 
