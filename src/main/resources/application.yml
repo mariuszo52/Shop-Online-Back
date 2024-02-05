@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://192.168.32.2:3306/shoponline?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://192.168.0.2:3306/shoponline?allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: Lechpoznan1
   jpa:
@@ -15,7 +15,7 @@ logging:
   level:
     com: error
 server:
-  address:
+  address: 192.168.0.3
   port: 8080
 
 
