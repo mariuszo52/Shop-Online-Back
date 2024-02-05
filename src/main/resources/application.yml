@@ -15,7 +15,7 @@ logging:
   level:
     com: error
 server:
-  address: 192.168.16.3
+  address:
   port: 8080
 
 
