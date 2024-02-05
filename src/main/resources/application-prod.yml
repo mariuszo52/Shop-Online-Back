@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://192.168.64.2:3306/ShopOnline?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://mysql:3306/database?autoReconnect=true&useSSL=false
     username: root
     password: Lechpoznan1
   liquibase:
