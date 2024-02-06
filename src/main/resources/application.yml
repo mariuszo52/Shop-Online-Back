@@ -1,9 +1,7 @@
 spring:
   datasource:
     url: jdbc:mysql://mysqldatabase:3306/shoponline
-    username: user
-    password: Lechpoznan1
-    driver-class-name: com.mysql.jdbc.Driver
+    username: root
   jpa:
     hibernate:
       ddl-auto: validate
