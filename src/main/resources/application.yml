@@ -3,6 +3,7 @@ spring:
     url: jdbc:mysql://mysqldatabase:3306/shoponline?autoReconnect=true&useSSL=false
     username: root
     password: Lechpoznan1
+    driver-class-name: com.mysql.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: validate
