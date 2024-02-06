@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class ShopOnlineBackApplication {
+
     private final static Logger LOGGER = LoggerFactory.getLogger(ShopOnlineBackApplication.class);
 
     public static void main(String[] args) {
