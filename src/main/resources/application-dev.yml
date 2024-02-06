@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ShopOnlineTest
+    url: jdbc:mysql://mysqldatabase/shoponline?autoReconnect=true&useSSL=false
     username: root
-    password: Lechpoznan1!
+    password: Lechpoznan1
   liquibase:
-    contexts: dev
+    contexts: prod
