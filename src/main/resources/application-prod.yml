@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost/shoponline
+    url: jdbc:mysql://mysqldatabase:3306/shoponline
     username: root
     password: Lechpoznan1
     driver-class-name: com.mysql.jdbc.Driver
