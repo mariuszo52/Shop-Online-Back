@@ -11,8 +11,14 @@ logging:
   level:
     com: error
 server:
-  address: 0.0.0.0
+  ssl:
+    key-store: classpath:keystore.jks
+    key-store-password: Lechpoznan1!
+    key-password: Lechpoznan1!
+    enabled: true
   port: 8080
+  address: 0.0.0.0
+
 
 
 
