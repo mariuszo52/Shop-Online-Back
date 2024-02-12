@@ -13,8 +13,8 @@ logging:
 server:
   ssl:
     key-store: classpath:keystore.jks
-    key-store-password: Lechpoznan1!
-    key-password: Lechpoznan1!
+    key-store-password: ${PASS}
+    key-password: ${PASS}
     enabled: true
   port: 8080
   address: 0.0.0.0

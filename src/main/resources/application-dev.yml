@@ -2,6 +2,6 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/ShopOnlineTest
     username: root
-    password: Lechpoznan1!
+    password: ${PASS}
   liquibase:
     contexts: dev
