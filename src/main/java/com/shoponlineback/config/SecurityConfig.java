@@ -1,6 +1,8 @@
 package com.shoponlineback.config;
 
 import com.shoponlineback.jwt.JwtFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.tomcat.util.file.ConfigurationSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +18,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.util.List;
 
@@ -36,6 +40,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspector);
         return http
+                .cors()
+                .and()
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(configurer -> configurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

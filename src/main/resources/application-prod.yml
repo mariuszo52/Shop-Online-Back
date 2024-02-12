@@ -6,3 +6,9 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   liquibase:
     contexts: prod
+server:
+  ssl:
+    key-store: classpath:keystore.jks
+    key-store-password: ${PASS}
+    key-password: ${PASS}
+    enabled: true
