@@ -4,6 +4,10 @@
 *.iml
 
 /target/*
+/node_modules/*
+*.log
+*.gz
+log.txt
 
 !/target/*.jar
 
