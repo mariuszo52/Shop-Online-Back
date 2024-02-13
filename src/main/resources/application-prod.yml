@@ -3,7 +3,6 @@ spring:
     url: jdbc:mysql://localhost:3306/shoponline
     username: root
     password: ${PASS}
-    driver-class-name: com.mysql.jdbc.Driver
   liquibase:
     contexts: prod
 server:

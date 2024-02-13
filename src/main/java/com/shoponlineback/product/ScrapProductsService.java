@@ -1,6 +1,6 @@
 package com.shoponlineback.product;
 
-import com.shoponlineback.ShopOnlineBackApplication;
+import com.shoponlineback.ShopOnlineBackApplicationProd;
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.genre.GenreRepository;
 import com.shoponlineback.language.Language;
@@ -24,6 +24,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ import static com.shoponlineback.product.productManagement.ScrapUrl.*;
 
 @Service
 public class ScrapProductsService {
-    private final static Logger LOGGER = LoggerFactory.getLogger(ShopOnlineBackApplication.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ShopOnlineBackApplicationProd.class);
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
     private final LanguageRepository languageRepository;
@@ -68,8 +69,8 @@ public class ScrapProductsService {
         this.productLanguageRepository = productLanguageRepository;
     }
     @Scheduled(cron = "0 0 0 * * *")
-    public void fetchAllGames() throws IOException {
-        //after finish tests change DEV_PAGE_NUMBERS to getPagesByDevice(ScrapUrl.value)!
+    @Profile("dev")
+    public void fetchExampleGames() {
         for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
             fetchGamesByDevice(PC_URL.value, i);
         }
@@ -83,6 +84,27 @@ public class ScrapProductsService {
             fetchGamesByDevice(PSN_URL.value, i);
         }
         for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
+            fetchGamesByDevice(TOP_UP_URL.value, i);
+        }
+        productRepository.deleteAllByAddedDateIsBefore(LocalDate.now());
+
+    }
+    @Scheduled(cron = "0 0 0 * * *")
+    @Profile("prod")
+    public void fetchAllGames() {
+        for (int i = 1; i <= getPagesByDevice(PC_URL); i++) {
+            fetchGamesByDevice(PC_URL.value, i);
+        }
+        for (int i = 1; i <= getPagesByDevice(XBOX_URL); i++) {
+            fetchGamesByDevice(XBOX_URL.value, i);
+        }
+        for (int i = 1; i <= getPagesByDevice(NINTENDO_URL); i++) {
+            fetchGamesByDevice(NINTENDO_URL.value, i);
+        }
+        for (int i = 1; i <= getPagesByDevice(PSN_URL); i++) {
+            fetchGamesByDevice(PSN_URL.value, i);
+        }
+        for (int i = 1; i <= getPagesByDevice(TOP_UP_URL); i++) {
             fetchGamesByDevice(TOP_UP_URL.value, i);
         }
         productRepository.deleteAllByAddedDateIsBefore(LocalDate.now());
