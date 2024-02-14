@@ -20,7 +20,8 @@ public class ShopOnlineBackApplicationDev {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplicationDev.class, args);
         ScrapProductsService scrapProductsService = applicationContext.getBean(ScrapProductsService.class);
         try {
-            scrapProductsService.fetchAllGames();
+            scrapProductsService.fetchExampleGames();
+            scrapProductsService.markUnavailableProducts();
         }catch (Exception e){
             LOGGER.error(e.getMessage());
         }

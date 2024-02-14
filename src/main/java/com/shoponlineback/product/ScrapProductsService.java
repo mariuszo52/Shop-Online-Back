@@ -24,9 +24,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -86,29 +88,35 @@ public class ScrapProductsService {
         for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
             fetchGamesByDevice(TOP_UP_URL.value, i);
         }
-        productRepository.deleteAllByAddedDateIsBefore(LocalDate.now());
-
     }
     @Scheduled(cron = "0 0 0 * * *")
     @Profile("prod")
     public void fetchAllGames() {
         for (int i = 1; i <= getPagesByDevice(PC_URL); i++) {
+            System.out.println("Fetching page " + i + " of " + getPagesByDevice(PC_URL) + " category: " + PC_URL.name());
             fetchGamesByDevice(PC_URL.value, i);
         }
         for (int i = 1; i <= getPagesByDevice(XBOX_URL); i++) {
+            System.out.println("Fetching page " + i + " of " + getPagesByDevice(XBOX_URL) + " category: " + XBOX_URL.name());
             fetchGamesByDevice(XBOX_URL.value, i);
         }
         for (int i = 1; i <= getPagesByDevice(NINTENDO_URL); i++) {
+            System.out.println("Fetching page " + i + " of " + getPagesByDevice(NINTENDO_URL) + " category: " + NINTENDO_URL.name());
             fetchGamesByDevice(NINTENDO_URL.value, i);
         }
         for (int i = 1; i <= getPagesByDevice(PSN_URL); i++) {
+            System.out.println("Fetching page " + i + " of " + getPagesByDevice(PSN_URL) + " category: " + PSN_URL.name());
             fetchGamesByDevice(PSN_URL.value, i);
         }
         for (int i = 1; i <= getPagesByDevice(TOP_UP_URL); i++) {
+            System.out.println("Fetching page " + i + " of " + getPagesByDevice(TOP_UP_URL) + " category: " + TOP_UP_URL.name());
             fetchGamesByDevice(TOP_UP_URL.value, i);
         }
-        productRepository.deleteAllByAddedDateIsBefore(LocalDate.now());
-
+    }
+    @Transactional
+    public void markUnavailableProducts(){
+        List<Product> unavailableProducts = productRepository.findAllByAddedDateIsBefore(LocalDate.now());
+        unavailableProducts.forEach(product -> product.setInStock(false));
     }
 
     private static int getPagesByDevice(ScrapUrl url) {

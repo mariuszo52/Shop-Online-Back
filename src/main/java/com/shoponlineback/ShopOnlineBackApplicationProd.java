@@ -21,6 +21,7 @@ public class ShopOnlineBackApplicationProd {
         ScrapProductsService scrapProductsService = applicationContext.getBean(ScrapProductsService.class);
         try {
             scrapProductsService.fetchAllGames();
+            scrapProductsService.markUnavailableProducts();
         }catch (Exception e){
             LOGGER.error(e.getMessage());
         }

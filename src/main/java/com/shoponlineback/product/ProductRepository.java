@@ -18,5 +18,5 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     Boolean existsByName(String name);
     List<Product> findAllByPlatform_Device(String deviceName);
     List<Product> findAllByPlatform_Name(String platformName);
-    void deleteAllByAddedDateIsBefore(LocalDate localDate);
+    List<Product> findAllByAddedDateIsBefore(LocalDate localDate);
 }
