@@ -53,6 +53,7 @@ public class ScrapProductsService {
     private final ScreenshotRepository screenshotRepository;
     private final ProductLanguageRepository productLanguageRepository;
     private final static Integer DEV_PAGE_NUMBER = 1;
+    private final static Integer GAMES_FOR_PAGE = 20;
     private final static String DEFAULT_COVER_IMAGE_URL = "https://www.prokerala.com/movies/assets/img/no-poster-available.webp";
 
     public ScrapProductsService(GenreRepository genreRepository,
@@ -127,11 +128,11 @@ public class ScrapProductsService {
                 document = Jsoup.connect(url.value)
                         .timeout(10000)
                         .get();
-                Elements elementsPageItems = document.getElementsByClass("items pages-items");
-                if (!elementsPageItems.isEmpty()) {
-                    Elements elementsPage = elementsPageItems.first().getElementsByClass("page");
+                Elements toolbarNumber = document.getElementsByClass("toolbar-number");
+                if (!toolbarNumber.isEmpty()) {
+                    Elements elementsPage = toolbarNumber.first().getElementsByTag("span");
                     if (!elementsPage.isEmpty()) {
-                        return Integer.parseInt(elementsPage.last().text());
+                        return Integer.parseInt(elementsPage.last().text()) / GAMES_FOR_PAGE;
                     }
                 }
             } catch (IOException e) {
