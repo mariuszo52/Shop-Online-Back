@@ -19,4 +19,5 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     List<Product> findAllByPlatform_Device(String deviceName);
     List<Product> findAllByPlatform_Name(String platformName);
     List<Product> findAllByAddedDateIsBefore(LocalDate localDate);
+    long countAllBy();
 }

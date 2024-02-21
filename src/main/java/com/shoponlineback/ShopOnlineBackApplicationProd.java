@@ -17,15 +17,14 @@ public class ShopOnlineBackApplicationProd {
     private final static Logger LOGGER = LoggerFactory.getLogger(ShopOnlineBackApplicationProd.class);
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplicationProd.class, args);;
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(ShopOnlineBackApplicationProd.class, args);
+        ;
         ScrapProductsService scrapProductsService = applicationContext.getBean(ScrapProductsService.class);
         try {
             scrapProductsService.fetchAllGames();
             scrapProductsService.markUnavailableProducts();
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
-
     }
-
 }

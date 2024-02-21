@@ -23,8 +23,6 @@ import static org.springframework.data.domain.Sort.Direction.*;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
-    private final static int ALL_PAGES = 83;
-
 
     public ProductController(ProductService productService) {
         this.productService = productService;
@@ -42,30 +40,17 @@ public class ProductController {
     @GetMapping("/products")
     Page<ProductDto> getProducts(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "25") int size,
-                                 @RequestParam(defaultValue = "") String name,
-                                 @RequestParam(defaultValue = "") String device,
-                                 @RequestParam(defaultValue = "") String platform,
-                                 @RequestParam(defaultValue = "") String genre,
-                                 @RequestParam(defaultValue = "") String language,
-                                 @RequestParam(required = false) BigDecimal minPrice,
-                                 @RequestParam(required = false) BigDecimal maxPrice,
+                                 @RequestParam Optional<String> name,
+                                 @RequestParam Optional<String> device,
+                                 @RequestParam Optional<String> platform,
+                                 @RequestParam Optional<String> genre,
+                                 @RequestParam Optional<String> language,
+                                 @RequestParam Optional<BigDecimal> minPrice,
+                                 @RequestParam Optional<BigDecimal> maxPrice,
                                  @RequestParam(defaultValue = "DESC,name") String sort) {
         String[] sortTable = sort.split(",");
         Sort sortBy = Sort.by(fromString(sortTable[0]),sortTable[1]);
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<ProductDto> allProducts = productService.getAllProducts(sortBy).stream()
-                .filter(productDto -> name.isEmpty() || productDto.getName().toLowerCase().contains(name.toLowerCase()))
-                .filter(productDto -> device.isEmpty() || productDto.getPlatformDto().getDevice().contains(device))
-                .filter(productDto -> platform.isEmpty() || productDto.getPlatformDto().getName().contains(platform))
-                .filter(productDto -> genre.isEmpty() || productDto.getGenres().stream().map(GenreDto::getName).toList().contains(genre))
-                .filter(productDto -> language.isEmpty() || productDto.getLanguages().stream().map(LanguageDto::getName).toList().contains(language))
-                .filter(productDto -> minPrice == null || productDto.getPrice().compareTo(minPrice) >= 0)
-                .filter(productDto -> maxPrice == null || productDto.getPrice().compareTo(maxPrice) <= 0)
-                .toList();
-        List<ProductDto> currentPage = allProducts.subList(Math.min((page * size), allProducts.size()) ,
-                Math.min((page * size + size),allProducts.size()));
-        return new PageImpl<>(currentPage, pageRequest, allProducts.size());
-
+        return productService.getProducts(page, size, sortBy, name, device, platform, genre, language, minPrice, maxPrice);
     }
 
     @GetMapping("/similar-products")

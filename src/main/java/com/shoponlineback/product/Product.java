@@ -5,6 +5,8 @@ import com.shoponlineback.cart.Cart;
 import com.shoponlineback.genre.Genre;
 import com.shoponlineback.language.Language;
 import com.shoponlineback.platform.Platform;
+import com.shoponlineback.productGenres.ProductGenres;
+import com.shoponlineback.productLanguage.ProductLanguage;
 import com.shoponlineback.screenshot.Screenshot;
 import com.shoponlineback.user.User;
 import jakarta.persistence.*;
@@ -67,4 +69,8 @@ public class Product {
     private List<Order> orderList;
     @ManyToMany(mappedBy = "favoriteProducts")
     private List<User> users;
+    @OneToMany(mappedBy = "product")
+    private List<ProductGenres> productGenres;
+    @OneToMany(mappedBy = "product")
+    private List<ProductLanguage> productLanguages;
 }
