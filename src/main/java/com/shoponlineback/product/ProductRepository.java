@@ -16,8 +16,6 @@ import java.util.Optional;
 public interface ProductRepository extends CrudRepository<Product, Long> {
     Optional<Product> findByName(String name);
     Boolean existsByName(String name);
-    List<Product> findAllByPlatform_Device(String deviceName);
     List<Product> findAllByPlatform_Name(String platformName);
     List<Product> findAllByAddedDateIsBefore(LocalDate localDate);
-    long countAllBy();
 }

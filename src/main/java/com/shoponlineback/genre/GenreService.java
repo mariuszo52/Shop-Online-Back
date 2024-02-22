@@ -1,28 +1,25 @@
 package com.shoponlineback.genre;
 
-import com.shoponlineback.product.ProductRepository;
+import com.shoponlineback.productGenres.ProductGenres;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class GenreService {
-    private final ProductRepository productRepository;
     private final GenreRepository genreRepository;
 
-    public GenreService(ProductRepository productRepository, GenreRepository genreRepository) {
-        this.productRepository = productRepository;
+    public GenreService(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;
     }
 
 
-    Set<String> getAllGenresNamesByDevice(String device){
-        return productRepository.findAllByPlatform_Device(device).stream()
-                .flatMap(product -> product.getGenres().stream())
+    Set<String> getAllGenresNames() {
+        return StreamSupport.stream(genreRepository.findAll().spliterator(), false)
                 .map(Genre::getName)
-                .collect(Collectors.toCollection(TreeSet::new));
-
+                .collect(Collectors.toSet());
     }
+
 }

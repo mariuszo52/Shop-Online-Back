@@ -3,7 +3,6 @@ package com.shoponlineback.genre;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 @CrossOrigin
 @RestController
@@ -17,8 +16,8 @@ public class GenreController {
 
 
     @GetMapping("/device-genres")
-    ResponseEntity<Set<String>> getAllDeviceGenres(@RequestParam String device){
-        return ResponseEntity.ok(genreService.getAllGenresNamesByDevice(device));
+    ResponseEntity<Set<String>> getAllDeviceGenres(){
+        return ResponseEntity.ok(genreService.getAllGenresNames());
 
     }
 
