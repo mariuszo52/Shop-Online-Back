@@ -1,21 +1,22 @@
 package com.shoponlineback.product;
 
-import com.shoponlineback.language.Language;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
-import java.nio.file.LinkOption;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends CrudRepository<Product, Long> {
+public interface ProductRepository extends CrudRepository<Product, Long>, PagingAndSortingRepository<Product, Long>,
+        JpaSpecificationExecutor<Product> {
     Optional<Product> findByName(String name);
     Boolean existsByName(String name);
-    List<Product> findAllByPlatform_Name(String platformName);
+    Page<Product> findAllByPlatformName(String platformName, Pageable pageable);
+    Long countAllByPlatformName(String platformName);
     List<Product> findAllByAddedDateIsBefore(LocalDate localDate);
 }

@@ -45,14 +45,9 @@ public class UserManagementService {
     }
 
     Page<UserDto> getAllUsers(int page) {
-        int size = 50;
-        Spliterator<User> usersSpliterator = userManagementRepository.findAll().spliterator();
-        List<UserDto> list = StreamSupport.stream(usersSpliterator, false)
-                .map(UserDtoMapper::map).toList();
-        List<UserDto> currentPage = list.subList(Math.min((page * size), list.size()),
-                Math.min((page * size + size), list.size()));
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return new PageImpl<>(currentPage, pageRequest, list.size());
+        PageRequest pageRequest = PageRequest.of(page, 50);
+        return userManagementRepository.findAll(pageRequest)
+                .map(UserDtoMapper::map);
     }
 
     @Transactional

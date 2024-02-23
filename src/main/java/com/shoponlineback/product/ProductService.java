@@ -21,26 +21,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.StreamSupport;
 
 import static com.mysql.cj.conf.PropertyKey.logger;
 import static com.mysql.cj.conf.PropertyKey.pedantic;
+import static java.lang.Math.*;
 
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductPagingRepository productPagingRepository;
 
     private final OrderProductRepository orderProductRepository;
-    public ProductService(ProductRepository productRepository,
-                          ProductPagingRepository productPagingRepository, OrderProductRepository orderProductRepository) {
+    public ProductService(ProductRepository productRepository, OrderProductRepository orderProductRepository) {
         this.productRepository = productRepository;
-        this.productPagingRepository = productPagingRepository;
         this.orderProductRepository = orderProductRepository;
     }
 
@@ -49,25 +46,18 @@ public class ProductService {
         return ProductDtoMapper.map(product);
     }
 
-    Page<ProductDto> getAllProducts(Sort sort) {
-        List<ProductDto> allProducts = StreamSupport.stream(productPagingRepository.findAll(sort).spliterator(), false)
-                .map(ProductDtoMapper::map)
-                .collect(Collectors.toList());
-        return new PageImpl<>(allProducts);
-
-
-    }
 
     public List<ProductDto> getSimilarProducts(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found."));
-        List<Product> allByPlatformName = productRepository.findAllByPlatform_Name(product.getPlatform().getName());
-        Collections.shuffle(allByPlatformName);
-        return allByPlatformName.stream()
-                .limit(5)
+        long pages =  productRepository.countAllByPlatformName(product.getPlatform().getName()) / 5;
+        Random random = new Random();
+        Long page = random.longs(1, 0, pages - 1).boxed().findFirst()
+                .orElseThrow(() -> new RuntimeException("Cannot find random page number"));
+        PageRequest pageRequest = PageRequest.of(toIntExact(page), 5);
+        return productRepository.findAllByPlatformName(product.getPlatform().getName(), pageRequest).stream()
                 .map(ProductDtoMapper::map)
-                .collect(Collectors.toList());
-
+                .toList();
     }
     @Transactional
     public void updateProductSellQuantity(Order order) {
@@ -100,7 +90,7 @@ public class ProductService {
             maxPrice.ifPresent(value -> predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), value)));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        return productPagingRepository.findAll(productSpecification, pageRequest).map(ProductDtoMapper::map);
+        return productRepository.findAll(productSpecification, pageRequest).map(ProductDtoMapper::map);
 
     }
 }

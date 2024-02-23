@@ -26,13 +26,9 @@ public class ProductManagementService {
     }
 
     public Page<ProductDto> getAllProducts(int page) {
-        int size = 50;
-        List<ProductDto> productDtoList = StreamSupport.stream(productManagementRepository.findAll().spliterator(), false)
-                .map(ProductDtoMapper::map).toList();
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<ProductDto> currentPage = productDtoList.subList(Math.min(page * size, productDtoList.size()),
-                Math.min(page * size + size, productDtoList.size()));
-        return new PageImpl<>(currentPage, pageRequest, productDtoList.size());
+        PageRequest pageRequest = PageRequest.of(page, 50);
+        return productManagementRepository.findAll(pageRequest)
+                .map(ProductDtoMapper::map);
     }
     @Transactional
     public void updateProductName(ProductNameUpdateDto productNameUpdateDto) {

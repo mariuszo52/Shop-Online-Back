@@ -15,14 +15,12 @@ import com.shoponlineback.orderProduct.activationCode.ActivationCodeRepository;
 import com.shoponlineback.orderProduct.activationCode.ActivationCodeUpdateDto;
 import com.shoponlineback.orderProduct.activationCode.OrderProductQuantityUpdateDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 @Service
 public class OrderManagementService {
@@ -30,6 +28,7 @@ public class OrderManagementService {
     private final OrderProductRepository orderProductRepository;
     private final ActivationCodeRepository activationCodeRepository;
     private final OrderProductMapper orderProductMapper;
+
     public OrderManagementService(OrderManagementRepository orderManagementRepository, OrderProductRepository orderProductRepository, ActivationCodeRepository activationCodeRepository, OrderProductMapper orderProductMapper) {
         this.orderManagementRepository = orderManagementRepository;
         this.orderProductRepository = orderProductRepository;
@@ -38,13 +37,8 @@ public class OrderManagementService {
     }
 
     public Page<OrderDto> getAllOrders(int page) {
-        final int size = 50;
-        List<OrderDto> orders = StreamSupport.stream(orderManagementRepository.findAll().spliterator(), false)
-                .map(OrderDtoMapper::map).toList();
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<OrderDto> currentPage = orders.subList(Math.min(page * size, orders.size()),
-                Math.min(page * size + size, orders.size()));
-        return new PageImpl<>(currentPage, pageRequest, orders.size());
+        PageRequest pageRequest = PageRequest.of(page, 50);
+        return orderManagementRepository.findAll(pageRequest).map(OrderDtoMapper::map);
     }
 
     @Transactional
@@ -60,17 +54,16 @@ public class OrderManagementService {
     }
 
     public Page<OrderDto> getOrdersByParameter(String searchBy, String value, int page) {
-        final int size = 50;
-        List<Order> orders = switch (searchBy) {
-            case "userId" -> orderManagementRepository.findOrdersByUserId(Long.parseLong(value));
-            case "orderStatus" -> orderManagementRepository.findOrdersByOrderStatus(OrderStatus.valueOf(value));
+        PageRequest pageRequest = PageRequest.of(page, 50);
+        return switch (searchBy) {
+            case "userId" -> orderManagementRepository.findOrdersByUserId(Long.parseLong(value), pageRequest)
+                    .map(OrderDtoMapper::map);
+            case "orderStatus" ->
+                    orderManagementRepository.findOrdersByOrderStatus(OrderStatus.valueOf(value), pageRequest)
+                            .map(OrderDtoMapper::map);
             default -> throw new IllegalStateException("Unexpected value: " + searchBy);
         };
-        List<OrderDto> currentPage = orders.subList(Math.min(page * size, orders.size()),
-                        Math.min(page * size + size, orders.size())).stream()
-                .map(OrderDtoMapper::map).toList();
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return new PageImpl<>(currentPage, pageRequest, orders.size());
+
 
     }
 
@@ -91,10 +84,11 @@ public class OrderManagementService {
         if (orderProduct.getActivationCodes().size() < orderProduct.getQuantity()) {
             ActivationCode activationCode = new ActivationCode(codeUpdateDto.getCode(), orderProduct);
             activationCodeRepository.save(activationCode);
-        }else {
+        } else {
             throw new RuntimeException("Cannot add more codes to this order product.");
         }
     }
+
     @Transactional
     public void updateProductOrderQuantity(OrderProductQuantityUpdateDto quantityUpdateDto) {
         OrderProduct orderProduct = orderProductRepository.findById(quantityUpdateDto.getOrderProductId())
