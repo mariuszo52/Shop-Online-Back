@@ -3,46 +3,46 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
-<changeSet id="0001" author="Mariusz">
-    <createTable tableName="product">
-        <column name="id" type="BIGINT" autoIncrement="true">
-            <constraints nullable="false" unique="true" primaryKey="false"/>
-        </column>
-        <column name="name" type="VARCHAR(500)">
-            <constraints nullable="false"/>
-        </column>
-        <column name="price" type="DECIMAL(10,2)">
-            <constraints nullable="false"/>
-        </column>
-        <column name="description" type="TEXT">
-        </column>
-        <column name="cover_image" type="VARCHAR(500)">
-        </column>
-        <column name="platform_id" type="BIGINT">
-            <constraints foreignKeyName="fk_platform" referencedTableName="platform" referencedColumnNames="id"/>
-        </column>
-        <column name="release_date" type="VARCHAR(30)">
-        </column>
-        <column name="regional_limitations" type="VARCHAR(100)">
-            <constraints nullable="true"/>
-        </column>
-        <column name="video_url" type="VARCHAR(500)">
-            <constraints nullable="true"/>
-        </column>
-        <column name="activation_details" type="VARCHAR(5000)">
-        </column>
-        <column name="is_preorder" type="BIT">
-            <constraints nullable="true"/>
-        </column>
-        <column name="in_stock" type="BIT">
-            <constraints nullable="true"/>
-        </column>
-        <column name="sell_quantity" type="INTEGER">
-            <constraints nullable="false"/>
-        </column>
-        <column name="added_date" type="DATE">
-            <constraints nullable="false"/>
-        </column>
-    </createTable>
-</changeSet>
+    <changeSet id="0001" author="Mariusz">
+        <createTable tableName="product">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="false"/>
+            </column>
+            <column name="name" type="VARCHAR(500)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+            </column>
+            <column name="cover_image" type="VARCHAR(500)">
+            </column>
+            <column name="platform_id" type="BIGINT">
+                <constraints foreignKeyName="fk_platform" referencedTableName="platform" referencedColumnNames="id"/>
+            </column>
+            <column name="release_date" type="VARCHAR(30)">
+            </column>
+            <column name="regional_limitations" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="video_url" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="activation_details" type="VARCHAR(10000)">
+            </column>
+            <column name="is_preorder" type="BIT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="in_stock" type="BIT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="sell_quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="added_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

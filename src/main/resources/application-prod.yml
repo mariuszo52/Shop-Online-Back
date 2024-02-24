@@ -1,8 +1,12 @@
 spring:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
   datasource:
-    url: jdbc:mysql://localhost:3306/shoponline
+    url: jdbc:mysql://cdkeys.com.pl:3306/shoponline
     username: root
-    password: ${PASS}
+    password: Lechpoznan1
   liquibase:
     contexts: prod
 server:

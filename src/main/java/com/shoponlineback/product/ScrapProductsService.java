@@ -86,9 +86,6 @@ public class ScrapProductsService {
         for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
             fetchGamesByDevice(PSN_URL.value, i);
         }
-        for (int i = 1; i <= DEV_PAGE_NUMBER; i++) {
-            fetchGamesByDevice(TOP_UP_URL.value, i);
-        }
     }
     @Scheduled(cron = "0 0 0 * * *")
     @Profile("prod")
@@ -97,7 +94,7 @@ public class ScrapProductsService {
             System.out.println("Fetching page " + i + " of " + getPagesByDevice(PC_URL) + " category: " + PC_URL.name());
             fetchGamesByDevice(PC_URL.value, i);
         }
-        for (int i = 1; i <= getPagesByDevice(XBOX_URL); i++) {
+        for (int i = 5; i <= getPagesByDevice(XBOX_URL); i++) {
             System.out.println("Fetching page " + i + " of " + getPagesByDevice(XBOX_URL) + " category: " + XBOX_URL.name());
             fetchGamesByDevice(XBOX_URL.value, i);
         }
