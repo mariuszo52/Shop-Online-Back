@@ -35,6 +35,8 @@ public class Product {
     @NotNull
     @Size(min = 1)
     private String name;
+    @Min(0)
+    private BigDecimal oldPrice;
     @NotNull
     @Min(0)
     private BigDecimal price;

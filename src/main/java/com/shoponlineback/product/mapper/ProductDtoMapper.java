@@ -14,7 +14,11 @@ import com.shoponlineback.product.dto.ProductDto;
 import com.shoponlineback.screenshot.Screenshot;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+
+import static java.math.RoundingMode.*;
 
 @Service
 public class ProductDtoMapper {
@@ -32,6 +36,8 @@ public class ProductDtoMapper {
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
+                .oldPrice(product.getOldPrice())
+                .discount(getProductDiscount(product))
                 .description(product.getDescription())
                 .coverImage(product.getCoverImage())
                 .genres(product.getGenres().stream().map(GenreMapper::map).toList())
@@ -46,6 +52,14 @@ public class ProductDtoMapper {
                 .sellQuantity(product.getSellQuantity())
                 .screenshotsUrls(product.getScreenshots().stream().map(Screenshot::getUrl).toList())
                 .build();
+    }
+
+    private static Integer getProductDiscount(Product product) {
+        if(product.getPrice() != null && product.getOldPrice() != null){
+            return product.getPrice().divide(product.getOldPrice().multiply(BigDecimal.valueOf(100)), HALF_UP).intValue();
+        }else {
+            return null;
+        }
     }
 
     public Product map(ProductDto productDto) {
@@ -71,6 +85,7 @@ public class ProductDtoMapper {
                 .inStock(productDto.getInStock())
                 .sellQuantity(productDto.getSellQuantity())
                 .videoUrl(productDto.getVideoUrl())
+                .oldPrice(productDto.getOldPrice())
                 .build();
     }
 

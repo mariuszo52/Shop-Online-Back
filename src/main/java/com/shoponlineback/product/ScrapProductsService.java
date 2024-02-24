@@ -195,12 +195,13 @@ public class ScrapProductsService {
             try {
                 String title = getTitle(gamePage);
                 BigDecimal price = getPrice(gamePage);
+                BigDecimal oldPrice = getOldPrice(gamePage);
                 Boolean isPreorder = isPreorder(gamePage);
                 Boolean inStock = inStock(gamePage);
                 if(!productRepository.existsByName(title)) {
-                    addNewProduct(gamePage, title, price, isPreorder, inStock);
+                    addNewProduct(gamePage, title, price, isPreorder, inStock, oldPrice);
                 }else {
-                    updateProduct(title, price, isPreorder, inStock);
+                    updateProduct(title, price, isPreorder, inStock, oldPrice);
                 }
             }catch (IOException e){
                 LOGGER.error(e.getMessage());
@@ -209,7 +210,21 @@ public class ScrapProductsService {
         }
     }
 
-    private void addNewProduct(Document gamePage, String title, BigDecimal price, Boolean isPreorder, Boolean inStock) throws IOException {
+    private BigDecimal getOldPrice(Document gamePage) throws IOException {
+        Elements oldPriceElements = gamePage.getElementsByClass("old-price");
+        if(!oldPriceElements.isEmpty()){
+            Elements price = oldPriceElements.first().getElementsByClass("price");
+            if (!price.isEmpty()) {
+                return BigDecimal.valueOf(Double.parseDouble(price.first().text().substring(3)) + 30);
+            }
+        }
+        throw new IOException("Cannot find class to scrap product old price.");
+
+    }
+
+    private void addNewProduct(Document gamePage, String title,
+                               BigDecimal price, Boolean isPreorder, Boolean inStock,
+                               BigDecimal oldPrice) throws IOException {
         String regionalLimitations = getRegionalLimitations(gamePage);
         String description = getDescription(gamePage);
         String coverImage = getImageCover(gamePage);
@@ -224,6 +239,7 @@ public class ScrapProductsService {
                 .name(title)
                 .description(description)
                 .price(price)
+                .oldPrice(oldPrice)
                 .coverImage(coverImage)
                 .platform(platform)
                 .releaseDate(releaseDate)
@@ -243,10 +259,14 @@ public class ScrapProductsService {
         languages.forEach(language -> productLanguageRepository.save(new ProductLanguage(productEntity, language)));
     }
 
-    private void updateProduct(String title, BigDecimal price, Boolean isPreorder, Boolean inStock) {
+    private void updateProduct(String title, BigDecimal price, Boolean isPreorder,
+                               Boolean inStock, BigDecimal oldPrice) {
         Product productToUpdate = productRepository.findByName(title).get();
         if(!productToUpdate.getPrice().equals(price)){
             productToUpdate.setPrice(price);
+        }
+        if (productToUpdate.getOldPrice() != null && !productToUpdate.getOldPrice().equals(oldPrice)) {
+            productToUpdate.setOldPrice(oldPrice);
         }
         if(productToUpdate.getIsPreorder() != isPreorder){
             productToUpdate.setIsPreorder(isPreorder);

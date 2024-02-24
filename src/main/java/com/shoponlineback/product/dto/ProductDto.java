@@ -19,6 +19,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 public class ProductDto {
+
     private Long id;
     @NotNull
     @Size(min = 1)
@@ -26,6 +27,10 @@ public class ProductDto {
     @NotNull
     @Min(0)
     private BigDecimal price;
+    @Min(0)
+    private BigDecimal oldPrice;
+    @Min(0)
+    private Integer discount;
     @Size(min = 1, max = 20000)
     private String description;
     private String coverImage;

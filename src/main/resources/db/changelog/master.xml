@@ -24,4 +24,5 @@
     <include file="0018_create_table_activation_code.xml" relativeToChangelogFile="true"/>
     <include file="0019_initial_inserts_dev.xml" relativeToChangelogFile="true"/>
     <include file="0020_initial_inserts_prod.xml" relativeToChangelogFile="true"/>
+    <include file="0021_add_old_price_column_to_table_product.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
