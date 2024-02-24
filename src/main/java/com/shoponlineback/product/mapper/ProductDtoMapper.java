@@ -56,7 +56,8 @@ public class ProductDtoMapper {
 
     private static Integer getProductDiscount(Product product) {
         if(product.getPrice() != null && product.getOldPrice() != null){
-            return product.getOldPrice().divide(product.getPrice(), HALF_UP).multiply(BigDecimal.valueOf(100)).intValue() -100;
+            return (product.getOldPrice().subtract(product.getPrice())).divide(product.getOldPrice(), HALF_UP)
+                    .multiply(BigDecimal.valueOf(100)).intValue();
         }else {
             return null;
         }
