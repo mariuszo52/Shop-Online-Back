@@ -215,7 +215,9 @@ public class ScrapProductsService {
         if(!oldPriceElements.isEmpty()){
             Elements price = oldPriceElements.first().getElementsByClass("price");
             if (!price.isEmpty()) {
-                return BigDecimal.valueOf(Double.parseDouble(price.first().text().substring(3)) + 30);
+                int lastIndex = price.first().text().indexOf(" ");
+                return BigDecimal.valueOf(Double.parseDouble(price.first().text().substring(0, lastIndex)
+                        .replace(",", ".")) + 30);
             }
         }
         throw new IOException("Cannot find class to scrap product old price.");
@@ -426,7 +428,9 @@ public class ScrapProductsService {
     private static BigDecimal getPrice(Document gamePage) throws IOException {
         Elements priceElements = gamePage.getElementsByClass("price");
         if(!priceElements.isEmpty()){
-            return BigDecimal.valueOf(Double.parseDouble(priceElements.first().text().substring(3)) + 30);
+            int lastIndex = priceElements.first().text().indexOf(" ");
+            return BigDecimal.valueOf(Double.parseDouble(priceElements.first().text().substring(0, lastIndex)
+                    .replace(",", ".")) + 30);
         }
         throw new IOException("Cannot find class to scrap product price.");
     }
